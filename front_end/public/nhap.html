@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Products</h1>
+    <div id="product-list"></div>
+
+    <script>
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer mybearertoken"); // Gửi token trong header
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch('http://127.0.0.1:8000/demo/products/', requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Chuyển đổi phản hồi thành JSON
+            })
+            .then(data => {
+                console.log(data); // Hiển thị dữ liệu sản phẩm
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+
+        const formData = {
+            name: 'Sản phẩm A',
+            description: 'Mô tả sản phẩm A',
+            price: 100000,
+        };
+        fetch('http://127.0.0.1:8000/demo/check/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+    </script>
+</body>
+
+</html>

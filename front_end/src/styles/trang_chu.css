@@ -1,0 +1,404 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    width: 100vw;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+    background-color: #111;
+    color: #fff;
+
+}
+
+a {
+    color: #fff;
+    text-decoration: none;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    /* Chiều rộng của thanh cuộn */
+}
+
+::-webkit-scrollbar-track {
+    background: black;
+}
+
+/* Tùy chỉnh màu của thanh cuộn */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+
+/* phần header chứa các nội dung như thể loại quốc gia,... */
+header {
+    height: 100px;
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+    width: 100%;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+header ul {
+    list-style: none;
+    color: gray;
+    display: flex;
+    margin-top: 70px;
+}
+
+header ul li {
+    margin-right: 10px;
+    margin-left: 10px;
+    padding: 0px;
+    color: #fff;
+    position: relative;
+}
+
+.cr {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    z-index: 101;
+}
+
+.cr1 {
+    height: 300px;
+    width: 200px;
+    overflow: visible;
+    position: absolute;
+    top: 20px;
+    background-color: #808080;
+    display: none;
+    z-index: 102;
+}
+
+/* banner chưa nối dung phim hot */
+#qc {
+    width: 100vw;
+    overflow: hidden;
+}
+
+.if_video {
+    position: relative;
+    transform: translate(0vw);
+}
+
+#qc video {
+    width: 100vw;
+
+}
+
+.bottom_backgroud {
+    position: absolute;
+    bottom: 0px;
+    background-image: linear-gradient(0deg, #111 0, rgba(17, 17, 17, 0) 82%);
+    height: 200px;
+    width: 100vw;
+}
+
+.info {
+    position: absolute;
+    bottom: 0px;
+    color: #fff;
+    width: 80%;
+}
+
+#control {
+    background-color: #111111ff;
+    color: #fff;
+    position: relative;
+    width: 100vw;
+    height: 50px;
+}
+
+#control_div {
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+    display: flex;
+}
+
+.control_div a {
+    color: #fff;
+
+}
+
+#control_div i {
+    width: 35px;
+    height: 35px;
+    border: 1px solid #fff;
+    display: grid;
+    place-items: center;
+    border-radius: 100%;
+    margin-right: 10px;
+}
+
+.control_movie {
+    display: flex;
+}
+
+.control_movie a {
+    text-decoration: none;
+}
+
+.control_movie div {
+    text-decoration: none;
+    border: 1px solid #fff;
+    border-radius: 3px;
+    padding: 10px;
+    color: #fff;
+    background: none;
+    text-align: center;
+    margin: 5px;
+    width: 100px;
+}
+
+#qc_video {
+    display: flex;
+    transform: translateX(0vw);
+    transition: all 1s ease-out;
+
+}
+
+/* từng ô chứa nội dung của phim sau mỗi hình ảnh của bộ phim */
+.img img {
+    height: 72px;
+    width: 128px;
+    margin: 5px;
+}
+
+.img {
+    height: 72px;
+    width: 128px;
+    margin-right: 10px;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+
+/* video được ẩn sau hình ảnh của bộ phim có thể hiện lên khi hover vào img */
+.video {
+    all: unset;
+    width: 384px;
+    height: 0px;
+    display: none;
+    transition: all 0.8s ease;
+    transition-delay: 0.8s;
+    background-color: #151515;
+    position: absolute;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: 3;
+
+
+}
+
+.video video {
+    height: 216px;
+    width: 384px;
+}
+
+.img:hover>.video {
+    display: inline;
+
+}
+
+.video .control {
+    width: 100%;
+    color: #fff;
+    position: absolute;
+    bottom: 0px;
+    display: grid;
+}
+
+.control div {
+    display: flex;
+}
+
+.control a {
+    text-decoration: none;
+    display: flex;
+}
+
+.control a div {
+    color: #fff;
+    width: 121px;
+    height: 36px;
+    margin-left: 3px;
+    border: 1px solid #fff;
+    background: none;
+    border-radius: 2px;
+    display: grid;
+    place-items: center;
+}
+
+/* tạo ra 1 thanh chưng bầy chứa .img của bộ phim */
+.display {
+    display: flex;
+    margin-right: 30px;
+    margin-left: 30px;
+    position: relative;
+    height: 80px;
+    margin-bottom: 50px;
+}
+
+.display .next {
+    position: absolute;
+    right: -20px;
+    color: #fff;
+    z-index: 1;
+    height: 80px;
+    border: none;
+    border-radius: 3px;
+    background-color: rgba(128, 128, 128, 0.5);
+    width: 30px;
+}
+
+.xemthem {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    width: 400px;
+
+}
+
+
+.xemthem .xemtatca {
+    margin: auto;
+    margin-left: 10px;
+    transform: translateX(-500px);
+    transition: all 1s ease;
+}
+
+.xemthem:hover .xemtatca {
+    transform: translateX(0px);
+}
+
+.display .back {
+    position: absolute;
+    left: -20px;
+    color: #fff;
+    z-index: 1;
+    height: 80px;
+    width: 30px;
+    border: none;
+    border-radius: 3px;
+    background-color: rgba(128, 128, 128, 0.5);
+}
+
+:root {
+    --trans: 0px;
+}
+
+.display_list {
+    display: flex;
+    transform: translateX(var(--trans));
+    transition: all 1s ease;
+}
+
+.phimqc {
+    width: 100%;
+    display: flex;
+}
+
+.phimqc video {
+    width: 60%;
+}
+
+@media screen and (max-width:900px) {
+    .phimqc {
+        display: block;
+    }
+
+    .phimqc video {
+        width: 100%;
+    }
+}
+
+.display_show {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.display_show:hover>button {
+    display: flex;
+}
+
+.display_show button {
+    position: absolute;
+    color: #fff;
+    z-index: 1;
+    font-size: 200%;
+    border: none;
+    border-radius: 3px;
+    background: none;
+    display: none;
+}
+
+.display_show .next {
+    right: 0px;
+}
+
+.show_display_list {
+    margin-left: 2vw;
+    display: flex;
+    transform: translate(-0%);
+    transition: all 1s ease;
+}
+
+.show_display_list a img {
+    width: 96vw;
+}
+
+
+/* phần footer */
+footer .container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: black;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+footer .logo {
+
+    font-weight: bold;
+    color: #333;
+    margin: 0px;
+}
+
+footer .footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+footer .contact-info {
+    color: #777;
+}
+
+footer .nav-links {
+    display: flex;
+    flex-direction: column;
+    margin-right: 50px;
+}
+
+footer .nav-link {
+    margin-bottom: 10px;
+    color: #fff;
+    text-decoration: none;
+}
+
+footer .qr-code {
+    margin-top: 20px;
+}
