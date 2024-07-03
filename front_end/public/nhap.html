@@ -40,6 +40,7 @@
             description: 'Mô tả sản phẩm A',
             price: 100000,
         };
+<<<<<<< HEAD
         const myHeaders1 = new Headers();
         myHeaders.append('Accept', 'application/json');
 
@@ -82,6 +83,14 @@
             },
             body: JSON.stringify(formData),
             credentials: 'include' // Gửi cookie cùng với request 
+=======
+        fetch('http://127.0.0.1:8000/demo/check/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+>>>>>>> parent of 4c75ce0 (Revert "first react")
         })
             .then(response => response.json())
             .then(data => console.log(data))

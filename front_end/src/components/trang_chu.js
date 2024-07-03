@@ -164,7 +164,6 @@ window.onscroll = () => {
 }
 
 
-
 var myHeaders = new Headers();
 myHeaders.append("Authorization", "Bearer mybearertoken"); // Gửi token trong header
 
@@ -216,7 +215,6 @@ fetch('http://127.0.0.1:8000/service/get_banner_qc/', requestOptions)
         console.error('There has been a problem with your fetch operation:', error);
     });
 
-// tạo ra chuỗi video những phim hot
 
 
 //thanh điều kiểu trái phải của show_display
@@ -247,6 +245,7 @@ setInterval(() => {
         int_show++;
     }
 }, 8000)
+
 
 async function get_display_list(url, id_display) {
     await fetch(url, requestOptions)
@@ -282,28 +281,28 @@ for (var i = 0; i < moinhat.length; i++) {
 get_display_list('http://127.0.0.1:8000/service/get_phimtinhcam_10/', 'phim_tinh_cam')
 
 
-async function submitData() {
-    const data = {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-    };
+// async function handleLogin(username, password) {
+//     try {
+//         const response = await fetch('http://127.0.0.1:8000/service/login/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ username, password })
+//         });
 
-    try {
-        const csrftoken = Cookies.get('csrftoken');
-
-        const response = await fetch('http://127.0.0.1:8000/service/submit_data/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken,
-            },
-            body: JSON.stringify(data),
-        });
-
-        const result = await response.json();
-        console.log(result);
-    } catch (error) {
-        console.error('Error submitting data:', error);
-    }
-}
-submitData()
+//         if (response.ok) {
+//             const data = await response.json();
+//             // Lưu token vào localStorage
+//             localStorage.setItem('token', data.access);
+//             // Chuyển hướng đến trang tiếp theo
+//             window.location.href = '/';
+//         } else {
+//             // Xử lý lỗi đăng nhập
+//             console.error('Đăng nhập thất bại!');
+//         }
+//     } catch (error) {
+//         console.error('Error:', error);
+//     }
+// }
+// handleLogin('duyanh', '123456789')
