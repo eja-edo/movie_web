@@ -4,6 +4,12 @@ from django.http import JsonResponse,HttpResponse
 from .models import Users, Movies , Genres
 from datetime import datetime
 from django.views.decorators.csrf import csrf_protect
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status
+from django.contrib.auth import authenticate
+from django.views import View
 
 
 
@@ -130,14 +136,12 @@ def get_phimtinhcam(request):
         })
     return JsonResponse(movies_data, safe=False)
 
-@csrf_protect
-def submit_data(request):
-  if request.method == 'POST':
-    name = request.POST.get('name')
-    email = request.POST.get('email')
 
-    # Xử lý dữ liệu ở đây
-
-    return JsonResponse({'message': 'Data submitted successfully'}, status=200)
-  else:
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+class loginclass(View):
+    def get(self, request):
+        return render(request, 'login/login.html')
+    
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password') 
+        return HttpResponse('bạn vừa ấn vào đăng nhập %s %s' %(username,password))

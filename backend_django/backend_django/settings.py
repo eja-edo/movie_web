@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'service',
     'corsheaders',
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -49,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'backend_django.urls'
@@ -136,3 +138,15 @@ CORS_ORIGIN_WHITELIST = [
       "http://127.0.0.1:5500",  # Thay thế bằng nguồn gốc frontend của bạn
       # ... thêm các nguồn gốc khác nếu cần
   ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:5500',  # Thêm domain của frontend vào đây
+    # Nếu bạn muốn cho phép tất cả các domain (không khuyến nghị):
+    # CORS_ORIGIN_ALLOW_ALL = True
+]
