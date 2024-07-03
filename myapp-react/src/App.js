@@ -1,4 +1,5 @@
 import logo from './logo.svg';
+<<<<<<< HEAD
 import '../styles/App.css';
 
 
@@ -100,8 +101,33 @@ function taoLink(i, img1, video1, content1, name) {
           </div>
         </div>
       </a>
+=======
+import './App.css';
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
+>>>>>>> e7e40bef5cffd1aa559fca40ad65ba0fdc3fb2ee
     </div>
   );
 }
 
+<<<<<<< HEAD
 export default App;
+=======
+export default App;
+>>>>>>> e7e40bef5cffd1aa559fca40ad65ba0fdc3fb2ee
