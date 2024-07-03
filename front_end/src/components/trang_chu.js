@@ -1,3 +1,4 @@
+
 // mở thông tin tạm của phim khi con trỏ đi qua hình ảnh bằng cách thay đổi giá trị chiều cao từ 0 ( trạng thái tát) sang 258px
 function molen(element) {
     var div = element.querySelector('div');
@@ -162,36 +163,61 @@ window.onscroll = () => {
     }
 }
 
+
+
+var myHeaders = new Headers();
+myHeaders.append("Authorization", "Bearer mybearertoken"); // Gửi token trong header
+
+var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+};
+
+fetch('http://127.0.0.1:8000/service/get_banner_qc/', requestOptions)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json(); // Chuyển đổi phản hồi thành JSON
+    })
+    .then(banner_qc => {
+        for (var i = 0; i < 5; i++) {
+            var div = document.createElement('div');
+            div.className = 'if_video';
+
+            var video = document.createElement('video');
+            video.src = banner_qc[i]['trailer_url'];
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            div.appendChild(video);
+
+            var divBackground = document.createElement('div');
+            divBackground.className = 'bottom_backgroud';
+            div.appendChild(divBackground);
+
+            var divInfo = document.createElement('div');
+            divInfo.className = 'info';
+            div.appendChild(divInfo);
+
+            var h1 = document.createElement('h1');
+            h1.textContent = banner_qc[i]['name'];
+            divInfo.appendChild(h1);
+
+            var p = document.createElement('p');
+            p.textContent = banner_qc[i]['description'];
+            divInfo.appendChild(p);
+
+            document.querySelector('div[id=qc_video]').appendChild(div);
+        }
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+
 // tạo ra chuỗi video những phim hot
-for (var i = 0; i < 5; i++) {
-    var div = document.createElement('div');
-    div.className = 'if_video';
 
-    var video = document.createElement('video');
-    video.src = linkList['link_short_video'][i];
-    video.autoplay = true;
-    video.loop = true;
-    video.muted = true;
-    div.appendChild(video);
-
-    var divBackground = document.createElement('div');
-    divBackground.className = 'bottom_backgroud';
-    div.appendChild(divBackground);
-
-    var divInfo = document.createElement('div');
-    divInfo.className = 'info';
-    div.appendChild(divInfo);
-
-    var h1 = document.createElement('h1');
-    h1.textContent = linkList['name'][i];
-    divInfo.appendChild(h1);
-
-    var p = document.createElement('p');
-    p.textContent = linkList['discribe'][i];
-    divInfo.appendChild(p);
-
-    document.querySelector('div[id=qc_video]').appendChild(div);
-}
 
 //thanh điều kiểu trái phải của show_display
 var int_show = 0
@@ -222,31 +248,62 @@ setInterval(() => {
     }
 }, 8000)
 
-
-
-
-
-for (var i = 0; i < thinhhanh.length; i++) {
-    taoLink(thinhhanh[i], linkList['link_img'][thinhhanh[i]], linkList['link_short_video'][thinhhanh[i]], '' + linkList['year'][thinhhanh[i]] + ' | ' + linkList['lim'][thinhhanh[i]] + ' | ' + linkList['country'][thinhhanh[i]] + ' | ' + linkList['time'][thinhhanh[i]] + ' | ' + linkList['difinition'][thinhhanh[i]] + ' ', 'thinh_hanh');
+async function get_display_list(url, id_display) {
+    await fetch(url, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // Chuyển đổi phản hồi thành JSON
+        })
+        .then(data => {
+            console.log(data)
+            for (var i = 0; i < data.length; i++) {
+                taoLink(data[i]['id'], data[i]['poster_url'], data[i]['trailer_url'], '' + data[i]['release_date'] + ' | ' + data[i]['runtime'] + ' | ' + data[i]['rating'] + ' | ' + data[i]['views'] + ' ', id_display);
+            }
+        }).catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
 }
-for (var i = 0; i < moinhat.length; i++) {
-    taoLink(moinhat[i], linkList['link_img'][moinhat[i]], linkList['link_short_video'][moinhat[i]], '' + linkList['year'][moinhat[i]] + ' | ' + linkList['lim'][moinhat[i]] + ' | ' + linkList['country'][moinhat[i]] + ' | ' + linkList['time'][moinhat[i]] + ' | ' + linkList['difinition'][moinhat[i]] + ' ', 'moi_nhat');
-}
-for (var i = 0; i < moinhat.length; i++) {
-    taoLink(moinhat[i], linkList['link_img'][moinhat[i]], linkList['link_short_video'][moinhat[i]], '' + linkList['year'][moinhat[i]] + ' | ' + linkList['lim'][moinhat[i]] + ' | ' + linkList['country'][moinhat[i]] + ' | ' + linkList['time'][moinhat[i]] + ' | ' + linkList['difinition'][moinhat[i]] + ' ', 'phim_hh');
-}
+
+get_display_list('http://127.0.0.1:8000/service/get_thinhhanh/', 'thinh_hanh')
+get_display_list('http://127.0.0.1:8000/service/get_phimhot_10/', 'moi_nhat')
+get_display_list('http://127.0.0.1:8000/service/get_phimhh_10/', 'phim_hh')
+
 for (var i = 0; i < moinhat.length; i++) {
     taoLink(moinhat[i], linkList['link_img'][moinhat[i]], linkList['link_short_video'][moinhat[i]], '' + linkList['year'][moinhat[i]] + ' | ' + linkList['lim'][moinhat[i]] + ' | ' + linkList['country'][moinhat[i]] + ' | ' + linkList['time'][moinhat[i]] + ' | ' + linkList['difinition'][moinhat[i]] + ' ', 'dsct');
 }
-for (var i = 0; i < moinhat.length; i++) {
-    taoLink(moinhat[i], linkList['link_img'][moinhat[i]], linkList['link_short_video'][moinhat[i]], '' + linkList['year'][moinhat[i]] + ' | ' + linkList['lim'][moinhat[i]] + ' | ' + linkList['country'][moinhat[i]] + ' | ' + linkList['time'][moinhat[i]] + ' | ' + linkList['difinition'][moinhat[i]] + ' ', 'phim_dien_anh');
-}
-for (var i = 0; i < moinhat.length; i++) {
-    taoLink(moinhat[i], linkList['link_img'][moinhat[i]], linkList['link_short_video'][moinhat[i]], '' + linkList['year'][moinhat[i]] + ' | ' + linkList['lim'][moinhat[i]] + ' | ' + linkList['country'][moinhat[i]] + ' | ' + linkList['time'][moinhat[i]] + ' | ' + linkList['difinition'][moinhat[i]] + ' ', 'phim_kd');
-}
+get_display_list('http://127.0.0.1:8000/service/get_phimhanhdong_10/', 'phim_hd')
+get_display_list('http://127.0.0.1:8000/service/get_phimkinhdi_10/', 'phim_kd')
+
 for (var i = 0; i < moinhat.length; i++) {
     taoLink(moinhat[i], linkList['link_img'][moinhat[i]], linkList['link_short_video'][moinhat[i]], '' + linkList['year'][moinhat[i]] + ' | ' + linkList['lim'][moinhat[i]] + ' | ' + linkList['country'][moinhat[i]] + ' | ' + linkList['time'][moinhat[i]] + ' | ' + linkList['difinition'][moinhat[i]] + ' ', 'phimle');
 }
-for (var i = 0; i < moinhat.length; i++) {
-    taoLink(moinhat[i], linkList['link_img'][moinhat[i]], linkList['link_short_video'][moinhat[i]], '' + linkList['year'][moinhat[i]] + ' | ' + linkList['lim'][moinhat[i]] + ' | ' + linkList['country'][moinhat[i]] + ' | ' + linkList['time'][moinhat[i]] + ' | ' + linkList['difinition'][moinhat[i]] + ' ', 'phim_hanh_dong');
+get_display_list('http://127.0.0.1:8000/service/get_phimtinhcam_10/', 'phim_tinh_cam')
+
+
+async function submitData() {
+    const data = {
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+    };
+
+    try {
+        const csrftoken = Cookies.get('csrftoken');
+
+        const response = await fetch('http://127.0.0.1:8000/service/submit_data/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        console.log(result);
+    } catch (error) {
+        console.error('Error submitting data:', error);
+    }
 }
+submitData()

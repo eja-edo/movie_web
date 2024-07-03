@@ -6,7 +6,6 @@ body {
     overflow-x: hidden;
     background-color: #111;
     color: #fff;
-
 }
 
 a {
@@ -323,6 +322,7 @@ header ul li {
 }
 
 .display_show {
+    margin-top: 70px;
     position: relative;
     display: flex;
     flex-direction: column;
