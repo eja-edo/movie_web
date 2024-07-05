@@ -12,4 +12,6 @@ urlpatterns =[
     path('get_phimhanhdong_10/', views.get_phimhd, name = 'getphimhd'),
     path('get_phimtinhcam_10/', views.get_phimtinhcam, name = 'getphimtinhcam'),
     path('login/', views.loginclass.as_view(), name = 'login'),
+    path('contact/', views.get_contact, name='contact'),
+    path('contact2/', views.get_contact2, name='contact2'),
 ]

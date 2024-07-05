@@ -283,7 +283,7 @@ get_display_list('http://127.0.0.1:8000/service/get_phimtinhcam_10/', 'phim_tinh
 
 // async function handleLogin(username, password) {
 //     try {
-//         const response = await fetch('http://127.0.0.1:8000/service/login/', {
+//         const response = await fetch('/login/', {
 //             method: 'POST',
 //             headers: {
 //                 'Content-Type': 'application/json',
@@ -306,3 +306,48 @@ get_display_list('http://127.0.0.1:8000/service/get_phimtinhcam_10/', 'phim_tinh
 //     }
 // }
 // handleLogin('duyanh', '123456789')
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+
+fetch('http://127.0.0.1:8000/service/contact/', {
+    method: 'POST',
+    headers: { 'X-CSRFToken': csrftoken },
+    body: JSON.stringify({
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        message: 'Hello world!'
+    })
+})
+    .then(response => localStorage.setItem('name', 'John Doe'))
+    .then(data => console.log(localStorage.getItem('name')));
+
+fetch('http://127.0.0.1:8000/service/contact2/', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'X-CSRFToken': csrftoken },
+    body: JSON.stringify({
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        message: 'Hello world!'
+    })
+})
+    .then(response => response.JSON())
+    .then(data => console.log(localStorage.getItem('name')));
+
