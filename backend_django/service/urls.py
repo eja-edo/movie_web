@@ -1,6 +1,12 @@
 from django.urls import path
 from . import views
-from .views import loginclass
+from .views import  TestAPIview , getFilm
+from django.conf import settings
+from django.conf.urls.static import static
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 
 urlpatterns =[
@@ -11,7 +17,9 @@ urlpatterns =[
     path('get_phimkinhdi_10/', views.get_phimkinhdi, name = 'getphimkinhdi'),
     path('get_phimhanhdong_10/', views.get_phimhd, name = 'getphimhd'),
     path('get_phimtinhcam_10/', views.get_phimtinhcam, name = 'getphimtinhcam'),
-    path('login/', views.loginclass.as_view(), name = 'login'),
-    path('contact/', views.get_contact, name='contact'),
-    path('contact2/', views.get_contact2, name='contact2'),
-]
+    path('login/', views.loginPost, name = 'login'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('test/',TestAPIview.as_view(), name = 'test'),
+    path('film/',getFilm.as_view(),name='getfilm'),
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

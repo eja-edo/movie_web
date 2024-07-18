@@ -1,0 +1,58 @@
+#hh2 {
+    height: 400px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.max_scanner_img {
+    text-decoration: none;
+
+}
+
+.max_scanner_img div {
+    display: flex;
+    position: relative;
+    color: aliceblue;
+    width: 350px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 3px;
+}
+
+.max_scanner_img div img {
+    height: 72px;
+    width: 128px;
+    margin: 3px;
+}
+
+.max_scanner_img div video {
+    height: 72px;
+    width: 128px;
+    margin: 3px;
+    position: absolute;
+    left: 0px;
+    display: none;
+    transform: all 1s ease;
+}
+
+.max_scanner_img:hover div video {
+    display: inline;
+}
+
+.max_scanner_img h4 {
+    margin: 7px;
+    margin-bottom: 18px;
+    font-size: 90%;
+}
+
+.max_scanner_img div div div {
+    all: unset;
+    position: absolute;
+    bottom: 2px;
+    display: block;
+    width: 100%;
+}
+
+.max_scanner_img p {
+    margin: 0px;
+    font-size: 70%;
+}

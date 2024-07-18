@@ -88,15 +88,15 @@ class AuthUserUserPermissions(models.Model):
 
 
 class Comments(models.Model):
-    episode = models.OneToOneField('Episodes', models.DO_NOTHING)  # The composite primary key (episode_id, user_id) found, that is not supported. The first column is selected.
-    user = models.ForeignKey('Users', models.DO_NOTHING)
+    comment_id = models.AutoField(primary_key=True)
+    episode = models.ForeignKey('Episodes', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
     content = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'comments'
-        unique_together = (('episode', 'user'),)
 
 
 class Directors(models.Model):
@@ -161,6 +161,7 @@ class Episodes(models.Model):
     description = models.TextField(blank=True, null=True)
     runtime = models.IntegerField(blank=True, null=True)
     release_date = models.DateTimeField(blank=True, null=True)
+    url_video = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -214,9 +215,22 @@ class Movies(models.Model):
         db_table = 'movies'
 
 
+class ProfileUser(models.Model):
+    id = models.OneToOneField(AuthUser, models.DO_NOTHING, db_column='id', primary_key=True)
+    dateofbirth = models.DateField(db_column='DateOfBirth', blank=True, null=True)  # Field name made lowercase.
+    sex = models.CharField(max_length=10, blank=True, null=True)
+    country = models.CharField(max_length=30, blank=True, null=True)
+    idnumber = models.CharField(db_column='idNumber', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    url_img = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'profile_user'
+
+
 class Reviews(models.Model):
     movie = models.OneToOneField(Movies, models.DO_NOTHING)  # The composite primary key (movie_id, user_id) found, that is not supported. The first column is selected.
-    user = models.ForeignKey('Users', models.DO_NOTHING)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     rating = models.FloatField(blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     create_at = models.DateTimeField(blank=True, null=True)
@@ -227,21 +241,9 @@ class Reviews(models.Model):
         unique_together = (('movie', 'user'),)
 
 
-class Users(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    username = models.CharField(unique=True, max_length=255)
-    password = models.CharField(unique=True, max_length=255)
-    email = models.CharField(max_length=150, blank=True, null=True)
-    phone_number = models.CharField(unique=True, max_length=15, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'users'
-
-
 class Watchlists(models.Model):
     view_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(Users, models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
     movie = models.ForeignKey(Movies, models.DO_NOTHING, blank=True, null=True)
     watch_at = models.DateTimeField(blank=True, null=True)
 

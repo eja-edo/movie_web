@@ -181,6 +181,7 @@ fetch('http://127.0.0.1:8000/service/get_banner_qc/', requestOptions)
         return response.json(); // Chuyển đổi phản hồi thành JSON
     })
     .then(banner_qc => {
+        console.log(banner_qc)
         for (var i = 0; i < 5; i++) {
             var div = document.createElement('div');
             div.className = 'if_video';

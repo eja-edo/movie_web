@@ -1,0 +1,33 @@
+html {
+    width: 100lvw;
+    padding: 0px;
+    margin: 0px;
+    overflow-x: hidden;
+    min-height: 100lvh;
+}
+
+#root {
+    background-color: #111;
+    color: aliceblue;
+    font-family: Arial, Helvetica, sans-serif;
+
+    height: 100%;
+    width: 100%;
+    position: relative;
+    min-height: 100lvh;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    /* Chiều rộng của thanh cuộn */
+}
+
+::-webkit-scrollbar-track {
+    background: black;
+}
+
+/* Tùy chỉnh màu của thanh cuộn */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}

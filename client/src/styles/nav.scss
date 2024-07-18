@@ -1,0 +1,173 @@
+#header {
+    height: 56px;
+    display: flex;
+    background: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.2));
+    width: 100%;
+    position: fixed;
+    align-items: center;
+    border-bottom: 1px solid gray;
+    top: 0;
+    z-index: 1000;
+
+    :root {
+        --next: -150px;
+    }
+
+    img {
+        height: 40px;
+        margin-bottom: 5px;
+        padding: 0px;
+        margin-left: 10px;
+    }
+
+    ul {
+        display: flex;
+        list-style: none;
+        height: 35px;
+        margin-top: 10px;
+        padding: 0px;
+
+        li {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    a {
+        padding-top: 10px;
+        text-decoration: none;
+        color: #fff;
+        margin-right: 20px;
+
+        &#ul_left {
+            position: relative;
+
+            .tick {
+                position: absolute;
+                bottom: -10px;
+                height: 3px;
+                width: 100%;
+                background-color: red;
+                display: none;
+            }
+        }
+    }
+
+
+    #ul_right {
+        position: absolute;
+        right: 0px;
+        margin-right: 10px;
+    }
+
+
+
+    #min_menu {
+        display: none;
+
+        ul {
+            height: 150px;
+            top: 50px;
+            position: absolute;
+            display: block;
+            left: -150px;
+            background-color: gray;
+            transform: translateX(var(--next));
+            transition: all 1s ease;
+            border-radius: 10px;
+
+            li {
+                margin: 5px;
+
+                &#min_menu li {
+                    margin: 0px;
+                    justify-content: left;
+                }
+            }
+        }
+    }
+
+
+
+    #search {
+        position: absolute;
+        border: none;
+        border-radius: 20px;
+        width: 0px;
+        right: 3px;
+        height: 30px;
+        top: 5px;
+        /* transform: translateX(250px); */
+        transition: all 0.5s ease;
+        padding: 0px;
+        outline: 0;
+
+        +#search_list {
+            // Use + for adjacent sibling selector in SCSS
+            position: absolute;
+            height: auto;
+            width: 400px;
+            background-color: #000000;
+            left: -380px;
+            top: 40px;
+            border-radius: 10px;
+            max-height: 300px;
+            overflow: auto;
+            display: none;
+
+            a {
+                all: unset;
+
+                div {
+                    display: flex;
+                    position: relative;
+                    color: aliceblue;
+                    width: 350px;
+                    font-family: Arial, Helvetica, sans-serif;
+                    margin: 3px;
+                    margin-left: 10px;
+
+                    img {
+                        height: 72px;
+                        width: 128px;
+                        margin: 3px;
+                        border-radius: 3px;
+                    }
+
+                    h4 {
+                        margin: 7px;
+                        margin-bottom: 18px;
+                        font-size: 90%;
+                    }
+
+                    div div {
+                        all: unset;
+                        position: absolute;
+                        bottom: 2px;
+                        display: block;
+                        width: 100%;
+
+                        p {
+                            margin: 0px;
+                            padding: 0px;
+                            font-size: 70%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    @media screen and (max-width:900px) {
+        #ul_left {
+            display: none;
+        }
+
+        #min_menu {
+            display: inline;
+        }
+    }
+}
