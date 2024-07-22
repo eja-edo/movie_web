@@ -47,7 +47,7 @@ function Login() {
                 if (result && result.access && result.refresh) {
                     localStorage.setItem('accessToken', result.access);
                     localStorage.setItem('refreshToken', result.refresh);
-                    navigate('/TrangChu')
+                    navigate(-1)
                 }
                 else {
                     console.error("cannot get api")
@@ -56,6 +56,47 @@ function Login() {
             .catch((error) => console.error(error));
         console.log(`${formName} với ${formData.username}`);
     };
+
+
+    const handleFacebookLogin = () => {
+        window.FB.login(
+            (response) => {
+                if (response.authResponse) {
+                    // Đăng nhập thành công
+                    console.log(response)
+                    fetch('http://localhost:8000/service/facebook/login/token/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ accessToken: response.authResponse.accessToken }),
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json()
+                            }
+                            else {
+                                console.error('error!')
+                            }
+                        })
+                        .then(data => {
+                            console.log(data);
+                            // Xử lý response từ backend (lưu token, ...)
+                            localStorage.setItem('accessToken', data.access);
+                            localStorage.setItem('refreshToken', data.refresh);
+                            navigate(-1)
+                        })
+                        .catch(error => console.error('Lỗi:', error));
+                } else {
+                    // Người dùng không cho phép hoặc có lỗi xảy ra
+                    console.log('Đăng nhập thất bại!');
+                }
+            },
+            // { scope: 'email' }
+        );
+    };
+
+
     return (
         <div className="container_login">
             <div id="login-form" style={{ display: activeForm === 'login' ? 'block' : 'none' }}>
@@ -73,8 +114,8 @@ function Login() {
                 <div className="social-account-container">
                     <span className="title">Hoặc đăng nhập bằng</span>
                     <div className="social-accounts">
-                        <a href="https://accounts.google.com/signin" className="social-button google">
-                            <i className="fab fa-google"></i>
+                        <a className="social-button google" onClick={handleFacebookLogin}>
+                            <i className="fab fa-facebook"></i>
                         </a>
                         <a href="https://appleid.apple.com/signin" className="social-button apple">
                             <i className="fab fa-apple"></i>

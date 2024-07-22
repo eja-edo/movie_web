@@ -15,7 +15,6 @@ function Film() {
     const parts = url.split("/");
     const id = parts[parts.length - 1].substring(1);
     console.log(id)
-
     useEffect(() => {
         const fetchFilmData = async () => {
             setIsLoading(true);
@@ -36,8 +35,15 @@ function Film() {
 
                 if (response.ok) {
                     const result = await response.json();
-                    setFilm(result[0]);
-                    console.log(result)
+                    if (result.length === 0) {
+                        setError('Movie has not been updated yet!')
+                        setFilm(null)
+
+                    } else {
+                        setFilm(result[0]);
+                        setError(null);
+                    }
+
                 } else if (response.status === 401) {
                     // Token might be expired, try refreshing
                     const refreshSuccess = await checkRefreshToken(navigate); // Use the utility function
@@ -46,26 +52,26 @@ function Film() {
                         fetchFilmData();
                     }
                 } else {
-                    setError('Failed to fetch film details.');
+                    setError('Movie has not been updated yet!');
                 }
 
             } catch (error) {
                 setError('Network error occurred.');
                 console.error('Error fetching film data:', error);
-            } finally {
-                setIsLoading(false);
+            }
+            finally {
+                setIsLoading(false)
             }
         };
 
         fetchFilmData();
     }, [navigate]); // Fetch data when filmId changes
-
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <div id='container_film'><div>Loading...</div></div>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div id='container_film'><div>Error: {error}</div></div>;
     }
 
     const handleMotaClick = () => {
@@ -83,7 +89,7 @@ function Film() {
         <div id='container_film'>
             <div id="film">
                 <video
-                    src={film.url_video}
+                    src={film['url_video']}
                     controls
                     style={{
                         width: '98%',
@@ -117,8 +123,8 @@ function Film() {
                         </a>
                     ))}
                 </fieldset>
-                <h2>PHIM LIÊN QUAN</h2>
                 <div className='container_display'>
+                    <h2>PHIM LIÊN QUAN</h2>
                     <CreateDisplayList url='http://127.0.0.1:8000/service/get_thinhhanh/' />
                 </div>
 
@@ -126,7 +132,7 @@ function Film() {
                 <div id="binh_luan">
                     <div id="nhap_bl">
                         <i className="fa-solid fa-user"></i>{' '}
-                        <textarea name id placeholder="Thêm bình luận..." />
+                        <textarea placeholder="Thêm bình luận..." />
                     </div>
                 </div>
             </div>

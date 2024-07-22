@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from .models import Movies,Episodes
 
+
+
+
 class MovieSerializer(serializers.ModelSerializer):
     release_date = serializers.SerializerMethodField() # Sử dụng SerializerMethodField
     genre = serializers.CharField(source='genre.name') # Lấy tên thể loại

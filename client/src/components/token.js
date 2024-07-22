@@ -13,7 +13,7 @@ const removeTokens = () => {
     localStorage.removeItem('refreshToken');
 };
 
-const checkRefreshToken = async () => {
+const checkRefreshToken = async (navigate) => {
 
     try {
         const response = await fetch('http://localhost:8000/service/api/token/refresh/', {
@@ -29,7 +29,7 @@ const checkRefreshToken = async () => {
             return true;
         } else {
             removeTokens();
-
+            navigate('/login')
             return false;
         }
     } catch (error) {

@@ -19,6 +19,14 @@ import json
 import requests
 from .serializers import MovieSerializer,filmSerializer,bannerSerializer
 from django.views.decorators.http import require_POST
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from django.conf import settings
+from django.contrib.auth.models import User
+
 
 
 # # Create a class-based view with CORS configuration
@@ -111,19 +119,95 @@ class getFilm(APIView):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            movie_id = int(data.get('movie_id'))
+            movie_id = data.get('movie_id')
             episode_num = data.get('episode_num')
-
-            if episode_num is not None:
-                episode_num = int(episode_num)
+            if movie_id is None:
+                return Response({"error": "Không tìm thấy tập phim"}, status=status.HTTP_404_NOT_FOUND)
             else:
-                episode_num = 1
+                movie_id = int(movie_id)
+                if episode_num is not None:
+                    episode_num = int(episode_num)
+                else:
+                    episode_num = 1
 
-            films = Episodes.objects.filter(movie_id=movie_id, episode_number=episode_num)
-            serializer = filmSerializer(films, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)  # Sử dụng Response của DRF
+                films = Episodes.objects.filter(movie_id=movie_id, episode_number=episode_num)
+                if films.exists():
+                    serializer = filmSerializer(films, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error": "Không tìm thấy tập phim"}, status=status.HTTP_404_NOT_FOUND)
 
         except json.JSONDecodeError:
             return Response({'error': 'Invalid JSON data'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+
+
+
+# class FacebookLogin(SocialLoginView):
+#     adapter_class = FacebookOAuth2Adapter
+#     callback_url = "http://localhost:3000/login"
+#     client_class = OAuth2Client
+
+# @csrf_exempt
+# def FacebookLoginToken(request):
+#     login_view = FacebookLogin.as_view()
+#     response = login_view(request)
+#     user = request.user
+#     print(user)
+#     refresh = RefreshToken.for_user(user)
+#     print(refresh.access_token)
+#     return JsonResponse({
+#         'refresh': str(refresh),
+#         'access': str(refresh.access_token),
+#     })
+@csrf_exempt
+def FacebookLoginToken(request):
+    """
+    Nhận access token từ Facebook JS SDK, xác minh và trả về JWT token.
+    """
+    data = json.loads(request.body)
+    access_token = data.get('accessToken')
+
+    # Xác minh access token với Facebook (Bắt buộc)
+    app_id = settings.SOCIALACCOUNT_PROVIDERS['facebook']['APP']['client_id']
+    app_secret = settings.SOCIALACCOUNT_PROVIDERS['facebook']['APP']['secret']
+    url = f'https://graph.facebook.com/debug_token?input_token={access_token}&access_token={app_id}|{app_secret}'
+    response = requests.get(url)
+    data = response.json()
+
+    if data.get('data') and data['data'].get('is_valid'):
+        user_url = f'https://graph.facebook.com/me?fields=id,name,email&access_token={access_token}'
+        response = requests.get(user_url)
+        user_data = response.json()
+        email = user_data.get('email')
+        if not email:
+            email = f"{user_data.get('id')}@example.com"  # Thay 'example.com' bằng domain của bạn
+        # Tìm hoặc tạo người dùng Django
+        user, created = User.objects.get_or_create(
+            username=user_data.get('id'),
+            defaults={
+                'email': email,
+                'first_name': user_data.get('name'),
+            },
+        )
+
+        # Tạo JWT token
+        refresh = RefreshToken.for_user(user)
+        print(refresh)
+        return JsonResponse({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email
+            }
+        },safe =False)
+    else:
+        return Response({'error': 'Access token không hợp lệ.'}, status=400)

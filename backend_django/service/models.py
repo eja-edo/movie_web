@@ -8,6 +8,29 @@
 from django.db import models
 
 
+class AccountEmailaddress(models.Model):
+    email = models.CharField(max_length=254)
+    verified = models.IntegerField()
+    primary = models.IntegerField()
+    user = models.ForeignKey('AuthUser', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'account_emailaddress'
+        unique_together = (('user', 'email'),)
+
+
+class AccountEmailconfirmation(models.Model):
+    created = models.DateTimeField()
+    sent = models.DateTimeField(blank=True, null=True)
+    key = models.CharField(unique=True, max_length=64)
+    email_address = models.ForeignKey(AccountEmailaddress, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'account_emailconfirmation'
+
+
 class Actors(models.Model):
     actor_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, blank=True, null=True)
@@ -154,6 +177,15 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
+class DjangoSite(models.Model):
+    domain = models.CharField(unique=True, max_length=100)
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        managed = False
+        db_table = 'django_site'
+
+
 class Episodes(models.Model):
     episode_id = models.AutoField(primary_key=True)
     movie = models.ForeignKey('Movies', models.DO_NOTHING, blank=True, null=True)
@@ -178,7 +210,7 @@ class Genres(models.Model):
 
 
 class Movieactors(models.Model):
-    movie = models.OneToOneField('Movies', models.DO_NOTHING)  # The composite primary key (movie_id, actor_id) found, that is not supported. The first column is selected.
+    movie = models.OneToOneField('Movies', models.DO_NOTHING, primary_key=True)  # The composite primary key (movie_id, actor_id) found, that is not supported. The first column is selected.
     actor = models.ForeignKey(Actors, models.DO_NOTHING)
     role = models.CharField(max_length=100, blank=True, null=True)
 
@@ -189,7 +221,7 @@ class Movieactors(models.Model):
 
 
 class Moviedirectors(models.Model):
-    movie = models.OneToOneField('Movies', models.DO_NOTHING)  # The composite primary key (movie_id, director_id) found, that is not supported. The first column is selected.
+    movie = models.OneToOneField('Movies', models.DO_NOTHING, primary_key=True)  # The composite primary key (movie_id, director_id) found, that is not supported. The first column is selected.
     director = models.ForeignKey(Directors, models.DO_NOTHING)
 
     class Meta:
@@ -229,7 +261,7 @@ class ProfileUser(models.Model):
 
 
 class Reviews(models.Model):
-    movie = models.OneToOneField(Movies, models.DO_NOTHING)  # The composite primary key (movie_id, user_id) found, that is not supported. The first column is selected.
+    movie = models.OneToOneField(Movies, models.DO_NOTHING, primary_key=True)  # The composite primary key (movie_id, user_id) found, that is not supported. The first column is selected.
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     rating = models.FloatField(blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
@@ -239,6 +271,58 @@ class Reviews(models.Model):
         managed = False
         db_table = 'reviews'
         unique_together = (('movie', 'user'),)
+
+
+class SocialaccountSocialaccount(models.Model):
+    provider = models.CharField(max_length=200)
+    uid = models.CharField(max_length=191)
+    last_login = models.DateTimeField()
+    date_joined = models.DateTimeField()
+    extra_data = models.JSONField()
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'socialaccount_socialaccount'
+        unique_together = (('provider', 'uid'),)
+
+
+class SocialaccountSocialapp(models.Model):
+    provider = models.CharField(max_length=30)
+    name = models.CharField(max_length=40)
+    client_id = models.CharField(max_length=191)
+    secret = models.CharField(max_length=191)
+    key = models.CharField(max_length=191)
+    provider_id = models.CharField(max_length=200)
+    settings = models.JSONField()
+
+    class Meta:
+        managed = False
+        db_table = 'socialaccount_socialapp'
+
+
+class SocialaccountSocialappSites(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    socialapp = models.ForeignKey(SocialaccountSocialapp, models.DO_NOTHING)
+    site = models.ForeignKey(DjangoSite, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'socialaccount_socialapp_sites'
+        unique_together = (('socialapp', 'site'),)
+
+
+class SocialaccountSocialtoken(models.Model):
+    token = models.TextField()
+    token_secret = models.TextField()
+    expires_at = models.DateTimeField(blank=True, null=True)
+    account = models.ForeignKey(SocialaccountSocialaccount, models.DO_NOTHING)
+    app = models.ForeignKey(SocialaccountSocialapp, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'socialaccount_socialtoken'
+        unique_together = (('app', 'account'),)
 
 
 class Watchlists(models.Model):

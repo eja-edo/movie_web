@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from .views import  TestAPIview , getFilm
 from django.conf import settings
@@ -22,4 +22,7 @@ urlpatterns =[
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('test/',TestAPIview.as_view(), name = 'test'),
     path('film/',getFilm.as_view(),name='getfilm'),
+    path('facebook/login/token/', views.FacebookLoginToken, name='facebook_login_token'),
+    path('dj-rest-auth/', include('dj_rest_auth.urls')),
+    path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
