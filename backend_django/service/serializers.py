@@ -30,9 +30,17 @@ class bannerSerializer(serializers.ModelSerializer):
         ]
 
 class filmSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source = 'movie.title')
     class Meta:
         model = Episodes
         fields =[
-            'movie_id','episode_number','url_video'
+            'title','url_video'
+        ]
+
+class episodesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Episodes
+        fields =[
+            'episode_number'
         ]
     

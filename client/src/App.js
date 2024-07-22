@@ -15,7 +15,7 @@ function App() {
         <Route path="/" element={<TrangChu />} /> {/* Home Page */}
         <Route path="/TrangChu" element={<TrangChu />} /> {/* Home Page */}
         <Route path="/login" element={<Login />} />
-        <Route path="/film/:id" element={<Film />} /> {/* Assumed route for films listing */}
+        <Route path="/film/:id1/:id2" element={<Film />} /> {/* Assumed route for films listing */}
         <Route path="/detailfilms/:id" element={<MovieDetails />} /> {/* Route for individual film details */}
         {/* You can add more routes here for other pages/components */}
       </Routes>

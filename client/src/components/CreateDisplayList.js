@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CreateDisplayList.scss';
-import { useProtectedNavigation } from './useProtectedNavigation'; // Nhập custom hook
+
 
 // --- Hàm tiện ích (Utility Functions) --- 
 
@@ -30,32 +30,10 @@ const next = (button) => {
     }
 };
 
-const molen = (element) => {
-    const div = element.querySelector('div');
-    const video = div.querySelector('video');
-    video.play();
-    const divParent = element.parentNode;
-    const width = document.documentElement.clientWidth;
-    const index = parseInt(divParent.dataset.key, 10) || 0;
-    const trans = parseInt(getComputedStyle(div).getPropertyValue('--trans').replace('px', ''), 10) || 0;
-    if (index * 138 - 123 < -trans) {
-        div.style.transform = `translateX(${(-trans - (index * 138 - 123))}px)`;
-    } else if ((index + 1) * 138 + 123 > -trans + width) {
-        div.style.transform = `translateX(-${((index + 1) * 138 + 153 - (-trans + width))}px)`;
-    }
-};
-
-const tatdi = (element) => {
-    const div = element.querySelector('div');
-    const video = div.querySelector('video');
-    video.pause();
-};
-
 
 const CreateDisplayList = ({ url }) => {
+
     const [filmItems, setFilmItems] = useState([]);
-
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -78,7 +56,7 @@ const CreateDisplayList = ({ url }) => {
         };
 
         fetchData();
-    }, [url]);
+    }, []);
     return (
         <div className="display">
             <button className="back" onClick={(event) => back(event.currentTarget)}>
@@ -103,20 +81,74 @@ const CreateDisplayList = ({ url }) => {
     );
 };
 
-const FilmItem = ({ id, img, video, content }) => { // Nhận onXemNgay từ props
+const FilmItem = ({ id, img, video, content }) => {
+    const [isVideoReady, setIsVideoReady] = useState(false);
+    const videoRef = useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false);
     const navigate = useNavigate(); // Sử dụng useNavigate trong component
+
+    const molen = (element) => {
+        const div = element.querySelector('div');
+        const video = div.querySelector('video');
+        if (isVideoReady === true && isPlaying === false) {
+            video.play();
+            console.log('đã mở')
+            setIsPlaying(true)
+        }
+        if (videoRef.current && videoRef.current.readyState === 4) {
+            setIsVideoReady(true);
+            if (isPlaying === false) {
+                video.play()
+                setIsPlaying(true)
+            }
+        } else {
+            // Nếu chưa tải xong, bắt đầu kiểm tra liên tục
+            const intervalId = setInterval(() => {
+                if (videoRef.current && videoRef.current.readyState === 4) {
+                    setIsVideoReady(true);
+                    if (isPlaying === false) {
+                        video.play()
+                        setIsPlaying(true)
+                    }
+                    clearInterval(intervalId);
+                }
+            }, 500);
+        }
+        const divParent = element.parentNode;
+        const width = document.documentElement.clientWidth;
+        const index = parseInt(divParent.dataset.key, 10) || 0;
+        const trans = parseInt(getComputedStyle(div).getPropertyValue('--trans').replace('px', ''), 10) || 0;
+        if (index * 138 - 123 < -trans) {
+            div.style.transform = `translateX(${(-trans - (index * 138 - 123))}px)`;
+        } else if ((index + 1) * 138 + 123 > -trans + width) {
+            div.style.transform = `translateX(-${((index + 1) * 138 + 153 - (-trans + width))}px)`;
+        }
+    };
+
+    const tatdi = (element) => {
+        const div = element.querySelector('div');
+        const video = div.querySelector('video');
+        if (isVideoReady === true && isPlaying === true) {
+            video.pause();
+            console.log('đã tắt')
+            setIsPlaying(false)
+        }
+
+    };
+
+
     function xem_ngay(button) {
         const div = button.parentElement;
         const currentID = div.previousSibling.textContent;
         alert(currentID);
-        navigate(`/film/:${id}`)
+        navigate(`/film/${id}/1`)
     }
 
     function chi_tiet(button) {
         const div = button.parentElement;
         const id = div.previousSibling.textContent;
         alert(id);
-        navigate(`/detail/:${id}`)
+        navigate(`/detail/${id}`)
     }
     function plus_list(button) {
         // Implement logic for adding to the list here
@@ -126,16 +158,14 @@ const FilmItem = ({ id, img, video, content }) => { // Nhận onXemNgay từ pro
     return (
         <a
             className="img"
-            onMouseOut={(event) => tatdi(event.currentTarget)}
-            onMouseOver={(event) => molen(event.currentTarget)}
+            onMouseLeave={(event) => tatdi(event.currentTarget)}
+            onMouseEnter={(event) => molen(event.currentTarget)}
         >
             <img src={img} alt="" />
 
             <div className="video">
-                <video muted loop>
-                    <source src={video} type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
+                <video src={video} muted loop ref={videoRef} />
+
                 <div className="control">
                     <p style={{ display: 'none' }}>{id}</p>
                     <div>

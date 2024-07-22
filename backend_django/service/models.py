@@ -110,6 +110,16 @@ class AuthUserUserPermissions(models.Model):
         unique_together = (('user', 'permission'),)
 
 
+class AuthtokenToken(models.Model):
+    key = models.CharField(primary_key=True, max_length=40)
+    created = models.DateTimeField()
+    user = models.OneToOneField(AuthUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'authtoken_token'
+
+
 class Comments(models.Model):
     comment_id = models.AutoField(primary_key=True)
     episode = models.ForeignKey('Episodes', models.DO_NOTHING, blank=True, null=True)
@@ -189,7 +199,7 @@ class DjangoSite(models.Model):
 class Episodes(models.Model):
     episode_id = models.AutoField(primary_key=True)
     movie = models.ForeignKey('Movies', models.DO_NOTHING, blank=True, null=True)
-    episode_number = models.IntegerField(blank=True, null=True)
+    episode_number = models.CharField(max_length=15, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     runtime = models.IntegerField(blank=True, null=True)
     release_date = models.DateTimeField(blank=True, null=True)
@@ -198,6 +208,7 @@ class Episodes(models.Model):
     class Meta:
         managed = False
         db_table = 'episodes'
+        unique_together = (('movie', 'episode_number'),)
 
 
 class Genres(models.Model):
@@ -210,7 +221,7 @@ class Genres(models.Model):
 
 
 class Movieactors(models.Model):
-    movie = models.OneToOneField('Movies', models.DO_NOTHING, primary_key=True)  # The composite primary key (movie_id, actor_id) found, that is not supported. The first column is selected.
+    movie = models.OneToOneField('Movies', models.DO_NOTHING)
     actor = models.ForeignKey(Actors, models.DO_NOTHING)
     role = models.CharField(max_length=100, blank=True, null=True)
 
@@ -221,7 +232,7 @@ class Movieactors(models.Model):
 
 
 class Moviedirectors(models.Model):
-    movie = models.OneToOneField('Movies', models.DO_NOTHING, primary_key=True)  # The composite primary key (movie_id, director_id) found, that is not supported. The first column is selected.
+    movie = models.OneToOneField('Movies', models.DO_NOTHING)  
     director = models.ForeignKey(Directors, models.DO_NOTHING)
 
     class Meta:
@@ -261,7 +272,7 @@ class ProfileUser(models.Model):
 
 
 class Reviews(models.Model):
-    movie = models.OneToOneField(Movies, models.DO_NOTHING, primary_key=True)  # The composite primary key (movie_id, user_id) found, that is not supported. The first column is selected.
+    movie = models.OneToOneField(Movies, models.DO_NOTHING)  
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     rating = models.FloatField(blank=True, null=True)
     comment = models.TextField(blank=True, null=True)

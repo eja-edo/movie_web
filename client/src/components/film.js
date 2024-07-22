@@ -8,18 +8,21 @@ import checkRefreshToken from './token.js';
 function Film() {
 
     const navigate = useNavigate();
-    const [film, setFilm] = useState(null);
+    const { id1, id2 } = useParams();
+    const [film, setFilm] = useState({
+        'episode_data': {
+            'title': "",
+            'url_video': "",
+        },
+        'epiosde_number': []
+    });
     const [isLoading, setIsLoading] = useState(true); // Add loading state
     const [error, setError] = useState(null); // Add error state
-    const url = window.location.href; // Hoặc window.location.href
-    const parts = url.split("/");
-    const id = parts[parts.length - 1].substring(1);
-    console.log(id)
+    console.log(id1, id2)
     useEffect(() => {
         const fetchFilmData = async () => {
             setIsLoading(true);
             setError(null);
-
             try {
                 const accessToken = localStorage.getItem('accessToken');
                 const response = await fetch(`http://localhost:8000/service/film/`, { // Use template literal
@@ -29,7 +32,8 @@ function Film() {
                         "Authorization": `Bearer ${accessToken}`,
                     },
                     body: JSON.stringify({
-                        "movie_id": id
+                        "movie_id": id1,
+                        "episode_num": id2
                     })
                 });
 
@@ -37,10 +41,10 @@ function Film() {
                     const result = await response.json();
                     if (result.length === 0) {
                         setError('Movie has not been updated yet!')
-                        setFilm(null)
 
                     } else {
-                        setFilm(result[0]);
+                        console.log(result)
+                        setFilm(result);
                         setError(null);
                     }
 
@@ -89,7 +93,7 @@ function Film() {
         <div id='container_film'>
             <div id="film">
                 <video
-                    src={film['url_video']}
+                    src={film['episode_data']['url_video']}
                     controls
                     style={{
                         width: '98%',
@@ -100,7 +104,7 @@ function Film() {
                     }}
                 />
                 <div id="ten">
-                    <h2>{'film.title'}</h2>
+                    <h2>{film['episode_data']['title']}</h2>
                     <p>{'film.info'}</p>
                 </div>
                 <button onClick={handleMotaClick} id="mota">
