@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db import connection
 from django.http import JsonResponse,HttpResponse
-from .models import AuthUser, Movies , Genres , Episodes
+from .models import AuthUser, Movies , Genres , Episodes, Actors, Directors, Moviedirectors, Movieactors, ProfileUser
 from datetime import datetime
 from django.views.decorators.csrf import csrf_protect
 from rest_framework.views import APIView
@@ -17,16 +17,27 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.middleware.csrf import CsrfViewMiddleware
 import json
 import requests
-from .serializers import MovieSerializer, filmSerializer, bannerSerializer, episodesSerializer
+from .serializers import MovieSerializer, filmSerializer, bannerSerializer, episodesSerializer ,DetailSerializer, UserSerializer
 from django.views.decorators.http import require_POST
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.conf import settings
 from django.contrib.auth.models import User
+import re
 
+
+def normalize_string(s):
+    # Chuyển đổi về chữ thường
+    s = s.lower()
+    # Loại bỏ khoảng trắng ở đầu và cuối chuỗi
+    s = s.strip()
+    # Loại bỏ khoảng trắng thừa giữa các từ
+    s = re.sub(r'\s+', ' ', s)
+    s = s.title()
+    return s
 
 
 # # Create a class-based view with CORS configuration
@@ -65,22 +76,23 @@ def get_banner_qc(request):
     return JsonResponse(serializer.data, safe = False)
     
 def get_phimhh(request):
-    movies = Movies.objects.all().filter(genre__name = 'Phim hoạt hình')[:10]
+    movies = Movies.objects.filter(genre__name = 'Phim hoạt hình')[:10]
     serializer = MovieSerializer(movies , many = True)
     return JsonResponse(serializer.data , safe = False)
 
 def get_phimkinhdi(request):
-    movies = Movies.objects.all().filter(genre__name = 'phim kinh dị')[:10]
+    movies = Movies.objects.filter(genre__name = 'phim kinh dị')[:10]
     serializer = MovieSerializer(movies , many = True)
     return JsonResponse(serializer.data , safe = False)
 
 def get_phimhd(request):
-    movies = Movies.objects.all().filter(genre__name = 'phim hành động ')[:10]
+    movies = Movies.objects.filter(genre__name = 'phim hành động ')[:10]
     serializer = MovieSerializer(movies , many = True)
     return JsonResponse(serializer.data , safe = False)
 
 def get_phimtinhcam(request):
-    movies = Movies.objects.all().filter(genre__name = 'phim tình cảm')[:10]
+    movies = Movies.objects.filter(genre__name = 'phim tình cảm')[:10]
+    
     serializer = MovieSerializer(movies , many = True)
     return JsonResponse(serializer.data , safe = False)
 
@@ -154,8 +166,43 @@ class getFilm(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class GetDetailMovie(APIView):
+    def post(self, request):
+        try:
+            data = request.data
+            movie_id = data.get('movie_id')
+            movie = Movies.objects.get(movie_id=int(movie_id))
+            director_ids = Moviedirectors.objects.filter(movie_id=movie_id).values_list('director_id', flat=True)
+            directors = Directors.objects.filter(director_id__in=director_ids).values_list('name', flat=True)
+            actor_ids = Movieactors.objects.filter(movie_id=movie_id).values_list('actor_id', flat=True)
+            actors = Actors.objects.filter(actor_id__in=actor_ids).values_list('name', flat=True)
+            episodes_num = Episodes.objects.filter(movie_id=movie_id).values_list('episode_number',flat=True)
+            print(1)
+            movie_data = { # Loại bỏ 'movie': movie
+                'movie_id': movie.movie_id,  # Truyền movie_id vào data
+                'title': movie.title, # Truyền các trường dữ liệu từ movie vào movie_data
+                'description': movie.description,
+                'release_date': movie.release_date,
+                'runtime': movie.runtime,
+                'poster_url': movie.poster_url,
+                'rating': movie.rating,
+                'genre': movie.genre.name, 
+                'views': movie.views,
+                'directors': list(directors),
+                'actors': list(actors),
+                'episodes_num':list(episodes_num)
+            }
+            print(movie_data)
+            serializer = DetailSerializer(data=movie_data)
+            if serializer.is_valid():
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors, status=400)
 
-
+        except Movies.DoesNotExist:
+            return Response({"error": "Movie not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
 # class FacebookLogin(SocialLoginView):
 #     adapter_class = FacebookOAuth2Adapter
@@ -195,7 +242,7 @@ def FacebookLoginToken(request):
         user_data = response.json()
         email = user_data.get('email')
         if not email:
-            email = f"{user_data.get('id')}@example.com"  # Thay 'example.com' bằng domain của bạn
+            email = f"face{user_data.get('id')}@example.com"  # Thay 'example.com' bằng domain của bạn
         # Tìm hoặc tạo người dùng Django
         user, created = User.objects.get_or_create(
             username=user_data.get('id'),
@@ -211,11 +258,45 @@ def FacebookLoginToken(request):
         return JsonResponse({
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            'user': {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email
-            }
+
         },safe =False)
     else:
         return Response({'error': 'Access token không hợp lệ.'}, status=400)
+
+class UserDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        user = serializer.data
+        url_avt = ProfileUser.objects.filter(id = user['id']).first()
+        if url_avt is not None:
+            url_avt = url_avt.get('url_img')
+        user['url_avt'] = url_avt
+        user.pop('id')
+        return Response(user)
+
+class logoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        try:
+            refreshToken  = json.loads(request.body).get('refreshToken')
+            token = RefreshToken(refreshToken)
+            token.blacklist()
+            return Response(status=205)
+        except Exception as e:
+            return Response(status=400, data={'detail': str(e)})
+
+@csrf_exempt
+def searchview(request):
+    try:
+        data = json.loads(request.body)
+        keys = data.get('keys')
+        normalized_keys = normalize_string(keys)
+
+        movies = Movies.objects.filter(
+            title__istartswith=normalized_keys
+        ).values_list('title', flat=True)
+        return JsonResponse({'movies': list(movies)}, safe=False)
+    except Exception as e:
+        return Response(status=400, data={'detail': str(e)})

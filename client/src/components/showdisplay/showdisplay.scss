@@ -1,0 +1,43 @@
+$highlight-color: #fff;
+
+@mixin transition-ease {
+    transition: all 1s ease;
+}
+
+// Display show styles
+.display_show {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    &:hover>button {
+        display: flex;
+    }
+
+    button {
+        position: absolute;
+        z-index: 1;
+        font-size: 200%;
+        color: $highlight-color;
+        border: none;
+        border-radius: 3px;
+        background: none;
+        display: none;
+    }
+
+    .next {
+        right: 0;
+    }
+
+    .show_display_list {
+        margin-left: 2vw;
+        display: flex;
+        transform: translate(-0%);
+        @include transition-ease();
+
+        a img {
+            width: 96vw;
+        }
+    }
+}

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/BannerQC.css';
-
+import './BannerQC.scss';
+import { fetchBannerQC } from '../../services/movieAPI';
 // Component BannerQC riêng biệt
 const BannerQC = () => {
     const [bannerQC, setBannerQC] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     var id_video = 0;
     // tạo phương thức duy chuyển sang trái cho phần video quảng cáo phim hot
     function nextVideoQc() {
@@ -21,38 +23,32 @@ const BannerQC = () => {
     }
 
     useEffect(() => {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer mybearertoken"); // Gửi token trong header
-
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
-        fetch('http://127.0.0.1:8000/service/get_banner_qc/', requestOptions)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
+        const getMovies = async () => {
+            try {
+                const data = await fetchBannerQC();
                 setBannerQC(data);
-            })
-            .catch((error) => {
-                console.error('There has been a problem with your fetch operation:', error);
-            });
+            } catch (error) {
+                setError(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        getMovies();
     }, []); // Chỉ chạy fetch một lần khi component mount
 
+    if (loading) { return (<div>is loading...</div>) }
+    if (error) { return (<div>{error}</div>) }
+
     return (
-        <>
+        <div id='bannerQC'>
             <div id="qc">
                 <div id="qc_video">
                     {bannerQC.slice(0, 5).map((item, index) => (
-                        <div key={index} className="if_video" onMouseOver={(event) => { event.currentTarget.querySelector('video').play() }}
-                            onMouseOut={(event) => { event.currentTarget.querySelector('video').pause() }}>
-                            <video src={item.trailer_url} loop muted />
+                        <div key={index} className="if_video"
+                        // onMouseOver={(event) => { event.currentTarget.querySelector('video').play() }}
+                        //     onMouseOut={(event) => { event.currentTarget.querySelector('video').pause() }}
+                        >
+                            <video src={item.trailer_url} autoPlay loop muted />
                             <div className="bottom_backgroud" />
                             <div className="info">
                                 <h1>{item.title}</h1>
@@ -85,7 +81,7 @@ const BannerQC = () => {
                     </a>
                 </div>
             </div>
-        </>
+        </div>
 
     );
 };

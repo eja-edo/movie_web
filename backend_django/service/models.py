@@ -221,24 +221,21 @@ class Genres(models.Model):
 
 
 class Movieactors(models.Model):
-    movie = models.OneToOneField('Movies', models.DO_NOTHING)
-    actor = models.ForeignKey(Actors, models.DO_NOTHING)
+    movie = models.ForeignKey('Movies', models.DO_NOTHING, blank=True, null=True)
+    actor = models.ForeignKey(Actors, models.DO_NOTHING, blank=True, null=True)
     role = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'movieactors'
-        unique_together = (('movie', 'actor'),)
 
 
 class Moviedirectors(models.Model):
-    movie = models.OneToOneField('Movies', models.DO_NOTHING)  
-    director = models.ForeignKey(Directors, models.DO_NOTHING)
-
+    movie = models.ForeignKey('Movies', models.DO_NOTHING, blank=True, null=True)
+    director = models.ForeignKey(Directors, models.DO_NOTHING, blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'moviedirectors'
-        unique_together = (('movie', 'director'),)
 
 
 class Movies(models.Model):
@@ -272,7 +269,7 @@ class ProfileUser(models.Model):
 
 
 class Reviews(models.Model):
-    movie = models.OneToOneField(Movies, models.DO_NOTHING)  
+    movie = models.OneToOneField(Movies, models.DO_NOTHING) 
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     rating = models.FloatField(blank=True, null=True)
     comment = models.TextField(blank=True, null=True)

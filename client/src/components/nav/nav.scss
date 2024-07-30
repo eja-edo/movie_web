@@ -35,30 +35,85 @@
     }
 
     a {
-        padding-top: 10px;
         text-decoration: none;
         color: #fff;
-        margin-right: 20px;
+        padding: 0px;
+        margin: 0px;
+    }
 
-        &#ul_left {
-            position: relative;
+    #ul_left {
+        position: relative;
+
+        li {
+            padding: 10px;
 
             .tick {
                 position: absolute;
-                bottom: -10px;
+                bottom: -7px;
                 height: 3px;
                 width: 100%;
                 background-color: red;
                 display: none;
             }
         }
-    }
 
+
+    }
 
     #ul_right {
         position: absolute;
         right: 0px;
         margin-right: 10px;
+
+        li {
+            display: grid;
+            place-content: center;
+            padding: 10px;
+        }
+
+        #look {
+            z-index: 3;
+        }
+
+        #login {
+            position: relative;
+
+
+            img {
+                height: 32px;
+                border: #fff solid 1px;
+                border-radius: 100%;
+                margin: 0px;
+            }
+
+            ul {
+                display: none;
+                position: absolute;
+                background-color: #000000;
+                width: 180px;
+                right: -10px;
+                border-radius: 5px;
+                flex-direction: column;
+                height: auto;
+                padding: 10px;
+                top: 35px;
+
+                li {
+                    padding: 10px;
+
+
+                    a {
+                        padding: 0px;
+                        margin: 0px;
+                    }
+
+                    &:hover {
+                        background-color: gray;
+                    }
+                }
+            }
+
+        }
     }
 
 
@@ -97,8 +152,7 @@
         width: 0px;
         right: 3px;
         height: 30px;
-        top: 5px;
-        /* transform: translateX(250px); */
+        // transform: translateX(250px);
         transition: all 0.5s ease;
         padding: 0px;
         outline: 0;

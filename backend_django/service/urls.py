@@ -1,6 +1,6 @@
 from django.urls import path, include
 from . import views
-from .views import  TestAPIview , getFilm
+from .views import  TestAPIview , getFilm , GetDetailMovie , UserDetailView , logoutView
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import (
@@ -25,4 +25,8 @@ urlpatterns =[
     path('facebook/login/token/', views.FacebookLoginToken, name='facebook_login_token'),
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
     path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
+    path('detailMovie/', GetDetailMovie.as_view(), name='detail'),
+    path('user/',UserDetailView.as_view(), name='user' ),
+    path('logout/',logoutView.as_view(),name='logout'),
+    path('searchkeys/',views.searchview, name = 'searchkey'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

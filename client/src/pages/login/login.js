@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import '../styles/login.scss'; // Import file CSS của bạn
-import { storeTokens } from './token';
+import React, { useState, useEffect } from 'react';
+import './login.scss'; // Import file CSS của bạn
 import { useNavigate } from 'react-router-dom'
 function Login() {
-
+    const [login, setLogin] = useState(false)
     const navigate = useNavigate()
 
     const [activeForm, setActiveForm] = useState('login');
@@ -12,6 +11,7 @@ function Login() {
         username: '',
         email: '',
     });
+
 
     const handleChange = (event) => {
         setFormData({
@@ -47,7 +47,7 @@ function Login() {
                 if (result && result.access && result.refresh) {
                     localStorage.setItem('accessToken', result.access);
                     localStorage.setItem('refreshToken', result.refresh);
-                    navigate(-1)
+                    setLogin(true)
                 }
                 else {
                     console.error("cannot get api")
@@ -84,7 +84,7 @@ function Login() {
                             // Xử lý response từ backend (lưu token, ...)
                             localStorage.setItem('accessToken', data.access);
                             localStorage.setItem('refreshToken', data.refresh);
-                            navigate(-1)
+                            setLogin(true)
                         })
                         .catch(error => console.error('Lỗi:', error));
                 } else {
@@ -96,6 +96,48 @@ function Login() {
         );
     };
 
+    useEffect(() => {
+        if (login) {
+            const fetchinfouser = async () => {
+                try {
+                    const accessToken = localStorage.getItem('accessToken');
+                    const response = await fetch(`http://localhost:8000/service/user/`, { // Use template literal
+                        method: 'GET', // Use GET request to fetch film details
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`,
+                        },
+                        redirect: "follow"
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        const safeUserData = {
+                            userId: result.id,
+                            username: result.username,
+                            email: result.email,
+                            url_avt: result.url_avt,
+                            login: true
+                        };
+                        localStorage.setItem('user', JSON.stringify(safeUserData))
+                        navigate(-1)
+
+
+                    } else if (response.status === 401) {
+                        console.error('error');
+                    }
+
+                } catch (error) {
+
+                    console.error('Error fetching :', error);
+                }
+            };
+            fetchinfouser();
+
+
+        }
+
+
+    }, [login])
 
     return (
         <div className="container_login">

@@ -1,82 +1,62 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../styles/film.scss';
-import CreateDisplayList from './CreateDisplayList';
-import FilmList from './FilmList';
-import checkRefreshToken from './token.js';
+import './film.scss';
+import CreateDisplayList from '../../components/CreateDisplayList/CreateDisplayList.js';
+import FilmList from '../../components/FilmList/FilmList.js';
+import { fetchVideoData, fetchDisplayList } from '../../services/movieAPI.js';
 function Film() {
 
     const navigate = useNavigate();
     const { id1, id2 } = useParams();
+    const [isLoading, setIsLoading] = useState(true); // Add loading state
+    const [error, setError] = useState(null); // Add error state
     const [film, setFilm] = useState({
         'episode_data': {
             'title': "",
             'url_video': "",
         },
-        'epiosde_number': []
+        'episodes_number': []
     });
-    const [isLoading, setIsLoading] = useState(true); // Add loading state
-    const [error, setError] = useState(null); // Add error state
+
     console.log(id1, id2)
     useEffect(() => {
-        const fetchFilmData = async () => {
-            setIsLoading(true);
-            setError(null);
+        const getfetchMovie = async () => {
             try {
-                const accessToken = localStorage.getItem('accessToken');
-                const response = await fetch(`http://localhost:8000/service/film/`, { // Use template literal
-                    method: 'POST', // Use GET request to fetch film details
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${accessToken}`,
-                    },
-                    body: JSON.stringify({
-                        "movie_id": id1,
-                        "episode_num": id2
-                    })
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.length === 0) {
-                        setError('Movie has not been updated yet!')
-
-                    } else {
-                        console.log(result)
-                        setFilm(result);
-                        setError(null);
-                    }
-
-                } else if (response.status === 401) {
-                    // Token might be expired, try refreshing
-                    const refreshSuccess = await checkRefreshToken(navigate); // Use the utility function
-                    if (refreshSuccess) {
-                        // If refresh is successful, retry fetching film data
-                        fetchFilmData();
-                    }
+                const response = await fetchVideoData(id1, id2, navigate)
+                if (response) {
+                    setFilm(response)
                 } else {
-                    setError('Movie has not been updated yet!');
+                    setError('Movie has not been updated yet!')
                 }
 
+                console.log(response)
             } catch (error) {
-                setError('Network error occurred.');
-                console.error('Error fetching film data:', error);
+                setError(error);
+            } finally {
+                setIsLoading(false);
             }
-            finally {
-                setIsLoading(false)
+        }
+        getfetchMovie()
+    }, [navigate]); // Fetch data when filmId changes
+
+    const [films, setfilms] = useState(null)
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/')
+                setfilms(response);
+            } catch (error) {
+                console.error(error);
             }
         };
 
-        fetchFilmData();
-    }, [navigate]); // Fetch data when filmId changes
-    if (isLoading) {
-        return <div id='container_film'><div>Loading...</div></div>;
-    }
+        fetchData();
+    }, [navigate]);
 
-    if (error) {
-        return <div id='container_film'><div>Error: {error}</div></div>;
-    }
+    if (isLoading) { return (<div style={{ paddingTop: '100px' }}>is loading...</div>) }
+    if (error) { return (<div style={{ paddingTop: '100px' }}>{error}</div>) }
+
 
     const handleMotaClick = () => {
         // Thực hiện logic "Xem thêm thông tin" ở đây
@@ -86,9 +66,11 @@ function Film() {
 
     const handleTapClick = (episodeNumber) => {
         // Thực hiện logic khi click vào số tập
-        console.log('Chọn tập:', episodeNumber);
-    };
+        if (!(episodeNumber == id2)) {
+            navigate(`/film/${id1}/${episodeNumber}`)
+        }
 
+    };
     return (
         <div id='container_film'>
             <div id="film">
@@ -121,15 +103,13 @@ function Film() {
                     <legend>
                         <h3>Tập phim</h3>
                     </legend>
-                    {Array.from({ length: 'film.episodes' }).map((_, index) => (
-                        <a key={index} href="#" onClick={() => handleTapClick(index + 1)}>
-                            <div>{index + 1}</div>
-                        </a>
+                    {film['episodes_number']?.map((item) => (
+                        <button onClick={() => { handleTapClick(item) }}>tập {item}</button>
                     ))}
                 </fieldset>
                 <div className='container_display'>
                     <h2>PHIM LIÊN QUAN</h2>
-                    <CreateDisplayList url='http://127.0.0.1:8000/service/get_thinhhanh/' />
+                    {films ? <CreateDisplayList films={films} /> : <></>}
                 </div>
 
                 <p>Bình luận</p>
@@ -140,7 +120,7 @@ function Film() {
                     </div>
                 </div>
             </div>
-            <div className='height_list'> <FilmList url='http://127.0.0.1:8000/service/get_thinhhanh/' /></div>
+            <div className='height_list'> {films ? <FilmList films={films} /> : <></>}</div>
 
         </div>
         // ... Phần footer và import data

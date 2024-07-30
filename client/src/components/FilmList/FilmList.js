@@ -1,26 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/FilmList.css';
+import './FilmList.css';
 
-const FilmList = ({ url }) => {
-    const [films, setFilms] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(url);
-                const result = await response.json();
-                setFilms(result);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchData();
-    }, [url]);
-
+const FilmList = (films) => {
+    films = Object.values(films)[0];
+    console.log(films)
     return (
+
         <div id="hh2">
-            {films.map((item, index) => (
+            {Array.isArray(films) ? films.map((item, index) => (
                 <a href="mtphim.html" className="max_scanner_img" key={index}>
                     <div>
                         <img src={item.poster_url} alt={item.title} />
@@ -39,7 +26,7 @@ const FilmList = ({ url }) => {
                         </div>
                     </div>
                 </a>
-            ))}
+            )) : <></>}
         </div>
     );
 };

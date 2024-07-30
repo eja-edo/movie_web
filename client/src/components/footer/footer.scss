@@ -1,0 +1,34 @@
+$highlight-color: #fff;
+
+footer {
+    background-color: #000;
+
+    .footer {
+
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+
+
+        .contact-info {
+            color: #777;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            margin-right: 50px;
+
+            .nav-link {
+                margin-bottom: 10px;
+                color: $highlight-color;
+                text-decoration: none;
+            }
+        }
+
+    }
+
+    .qr-code {
+        margin-top: 20px;
+    }
+}

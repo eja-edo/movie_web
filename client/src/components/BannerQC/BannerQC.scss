@@ -1,0 +1,86 @@
+#bannerQC {
+    #qc {
+        overflow: hidden;
+        display: flex;
+
+        #qc_video {
+            display: flex;
+            transform: translateX(0);
+            transition: all 1s ease-out;
+        }
+    }
+
+    .if_video {
+        position: relative;
+        transform: translateX(0);
+        width: 100vw;
+
+        video {
+            width: 100vw;
+        }
+    }
+
+    .bottom_backgroud {
+        position: absolute;
+        bottom: 0;
+        background-image: linear-gradient(0deg, #111 0, rgba(17, 17, 17, 0) 82%);
+        height: 200px;
+        width: 100vw;
+    }
+
+    .info {
+        position: absolute;
+        bottom: 0;
+        color: #fff;
+        width: 80%;
+    }
+
+    #control {
+        background-color: rgba(17, 17, 17, 0.99); // Corrected value
+        color: #fff;
+        position: relative;
+        width: 100vw;
+        height: 50px;
+
+        #control_div {
+            position: absolute;
+            right: 20px;
+            bottom: 10px;
+            display: flex;
+
+            a {
+                color: #fff;
+            }
+
+            i {
+                width: 35px;
+                height: 35px;
+                border: 1px solid #fff;
+                display: grid;
+                place-items: center;
+                border-radius: 100%;
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .control_movie {
+        display: flex;
+
+        a {
+            text-decoration: none;
+        }
+
+        div {
+            text-decoration: none;
+            border: 1px solid #fff;
+            border-radius: 3px;
+            padding: 10px;
+            color: #fff;
+            background: none;
+            text-align: center;
+            margin: 5px;
+            width: 100px;
+        }
+    }
+}
