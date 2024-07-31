@@ -40,11 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'service',
+    'apps.service',
+    'apps.users',
+  
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_jwt.authentication',
+    
 
     'django.contrib.sites',
     'allauth',
@@ -193,7 +196,7 @@ STATIC_URL = 'static/'
 
 
 STATICFILES_DIRS = [
-    BASE_DIR / "service/static",
+    BASE_DIR / "static",
 
 ]
 # Default primary key field type

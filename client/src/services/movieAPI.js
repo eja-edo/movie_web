@@ -1,4 +1,4 @@
-import checkRefreshToken from "../components/token";
+import checkRefreshToken from "./token";
 
 
 export const fetchBannerQC = async () => {
@@ -39,11 +39,14 @@ export const fetchDisplayList = async (url) => { // sau sẽ thay url thành th�
     }
 };
 
-export const fetchFilmData = async (id, navigate) => {
+
+export const fetchFilmData = async (id, navigate, retry = false) => {
     try {
         const accessToken = localStorage.getItem('accessToken');
+        console.log('Fetching data for movie ID:', id);
+
         const response = await fetch(`http://localhost:8000/service/detailMovie/`, {
-            method: 'POST', // Use GET request to fetch film details
+            method: 'POST', // Sử dụng phương thức POST theo yêu cầu của API
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`,
@@ -52,32 +55,38 @@ export const fetchFilmData = async (id, navigate) => {
                 "movie_id": id
             })
         });
-
+        console.log('Response status:', response.status);
         if (response.ok) {
             const result = await response.json();
             if (result.length === 0) {
-                return
+                console.log('No result found for movie ID:', id);
+                return;
             } else {
-                console.log(result)
-                result.release_date = new Date(result.release_date)
+                result.release_date = new Date(result.release_date);
                 result.release_date = `${result.release_date.getDate()}/${result.release_date.getMonth() + 1}/${result.release_date.getFullYear()}`;
+                console.log('Movie data:', result);
                 return result;
             }
-
-        } else if (response.status === 401) {
-            // Token might be expired, try refreshing
-            const refreshSuccess = await checkRefreshToken(navigate); // Use the utility function
+        } else if (response.status === 401 && !retry) {
+            console.log('Unauthorized access, attempting to refresh token...');
+            // Token có thể đã hết hạn, thử làm mới token
+            const refreshSuccess = await checkRefreshToken(navigate);
             if (refreshSuccess) {
-                // If refresh is successful, retry fetching film data
-                fetchFilmData();
+                console.log('Token refreshed successfully, retrying fetch...');
+                return fetchFilmData(id, navigate, true);
+            } else {
+                console.error('Failed to refresh token');
             }
+        } else {
+            console.error('Failed to fetch film data, status code:', response.status);
         }
     } catch (error) {
         console.error('Error fetching film data:', error);
     }
 };
 
-export const fetchVideoData = async (id1, id2, navigate) => {
+
+export const fetchVideoData = async (id1, id2, navigate, retry = false) => {
     try {
         const accessToken = localStorage.getItem('accessToken');
         const response = await fetch(`http://localhost:8000/service/film/`, { // Use template literal
@@ -103,11 +112,11 @@ export const fetchVideoData = async (id1, id2, navigate) => {
 
             }
 
-        } else if (response.status === 401) {
+        } else if (response.status === 401 && !retry) {
             // Token might be expired, try refreshing
             const refreshSuccess = await checkRefreshToken(navigate); // Use the utility function
             if (refreshSuccess) {
-                fetchFilmData();
+                return await fetchVideoData(id1, id2, navigate, true);
             }
         } else {
             console.error('Movie has not been updated yet!');
@@ -138,7 +147,7 @@ export const fetchSearch = async (value) => {
         const response = await fetch("http://localhost:8000/service/searchkeys/", requestOptions)
         if (response.ok) {
             const result = await response.json();
-            return result
+            return result['movies']
         } else {
             return
         }

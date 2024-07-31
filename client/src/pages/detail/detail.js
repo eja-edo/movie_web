@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './details.scss';
 import CreateDisplayList from '../../components/CreateDisplayList/CreateDisplayList';
-import checkRefreshToken from '../../components/token';
 import FilmList from '../../components/FilmList/FilmList';
 import { fetchDisplayList, fetchFilmData } from '../../services/movieAPI';
 
@@ -19,6 +18,7 @@ const MovieDetails = () => {
             try {
                 const response = await fetchFilmData(id, navigate)
                 setMovie(response)
+                console.log(response)
             } catch (error) {
                 setError(error);
             } finally {

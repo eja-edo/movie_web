@@ -112,13 +112,6 @@ function Film() {
                     {films ? <CreateDisplayList films={films} /> : <></>}
                 </div>
 
-                <p>Bình luận</p>
-                <div id="binh_luan">
-                    <div id="nhap_bl">
-                        <i className="fa-solid fa-user"></i>{' '}
-                        <textarea placeholder="Thêm bình luận..." />
-                    </div>
-                </div>
             </div>
             <div className='height_list'> {films ? <FilmList films={films} /> : <></>}</div>
 

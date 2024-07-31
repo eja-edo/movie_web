@@ -17,7 +17,7 @@ def delete_migration_files(app_name):
                 print(f"Failed to delete {filename}. Reason: {e}")
 
 # Danh sách các ứng dụng cần xóa migration files
-apps = ['service']
+apps = ['apps.service']
 
 for app in apps:
     delete_migration_files(app)

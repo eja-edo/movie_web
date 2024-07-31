@@ -40,7 +40,7 @@ function Login() {
             redirect: "follow"
         };
 
-        fetch("http://localhost:8000/service/login/", requestOptions)
+        fetch("http://localhost:8000/user/login/", requestOptions)
             .then((response) => response.json())
             .then((result) => {
                 console.log(result)
@@ -64,7 +64,7 @@ function Login() {
                 if (response.authResponse) {
                     // Đăng nhập thành công
                     console.log(response)
-                    fetch('http://localhost:8000/service/facebook/login/token/', {
+                    fetch('http://localhost:8000/user/facebook/login/token/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ function Login() {
             const fetchinfouser = async () => {
                 try {
                     const accessToken = localStorage.getItem('accessToken');
-                    const response = await fetch(`http://localhost:8000/service/user/`, { // Use template literal
+                    const response = await fetch(`http://localhost:8000/user/getDetail/`, { // Use template literal
                         method: 'GET', // Use GET request to fetch film details
                         headers: {
                             "Authorization": `Bearer ${accessToken}`,
@@ -132,11 +132,7 @@ function Login() {
                 }
             };
             fetchinfouser();
-
-
         }
-
-
     }, [login])
 
     return (

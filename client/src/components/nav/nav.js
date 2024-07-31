@@ -26,11 +26,12 @@ function Nav() {
 
     const handleSearchkey = (event) => {
         const value = event.target.value
-        console.log(value)
+
         const getsuggest = async () => {
             try {
                 const result = await fetchSearch(value)
                 setSuggest(result)
+                console.log(value)
                 console.log(result)
 
             } catch (error) {
@@ -45,15 +46,23 @@ function Nav() {
         //         getsuggest()
         //     }
         // }
-        getsuggest()
+        if (value) {
+            getsuggest()
+        }
+
     };
 
-    const handleSearchBlur = () => {
-        // Logic for hiding search suggestions
+    const handleSearchBlur = (input) => {
+        input.style.width = '0px';
+        input.style.padding = '0px';
+        document.getElementById('suggestSearch').style.display = 'none'
+        document.getElementById('look').style.color = '#fff'
     };
 
 
     const handleLogout = () => {
+
+
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken')
         const myHeaders = new Headers();
@@ -79,6 +88,7 @@ function Nav() {
                 localStorage.setItem('refreshToken', null)
                 localStorage.setItem('user', JSON.stringify({ login: false }))
                 setLogin(false)
+                navigate('/')
             })
             .catch((error) => console.error(error));
 
@@ -90,6 +100,7 @@ function Nav() {
         input.style.padding = '3px'
         a.style.color = '#000000'
         input.focus()
+        document.getElementById('suggestSearch').style.display = 'flex'
     }
     const [clickUser, setClickUser] = useState(false)
     return (
@@ -168,9 +179,13 @@ function Nav() {
                         value={searchValue}
                         onChange={handleSearchChange}
                         onKeyUp={handleSearchkey}
-                        onBlur={handleSearchBlur}
+                        onBlur={(event) => { handleSearchBlur(event.currentTarget) }}
                     />
-                    <div id='suggestSearch'></div>
+                    <div id='suggestSearch'>
+                        {suggestSearch ? suggestSearch.map((item, index) => (
+                            <span><i className="fa-solid fa-magnifying-glass"></i>{' ' + item}</span>
+                        )) : <></>}
+                    </div>
                 </li>
                 <li>
                     <a >
@@ -187,7 +202,7 @@ function Nav() {
                         <ul style={{ display: clickUser ? 'flex' : 'none' }}>
                             <li style={{ borderBottom: 'gray solid 1px' }}><a >Chỉnh sửa thông tin</a></li>
                             <li><a>Tài khoản và cài đặt</a></li>
-                            <li><a onClick={() => { handleLogout() }}>Đăng xuất</a></li>
+                            <li onClick={() => { handleLogout() }}><a>Đăng xuất</a></li>
                         </ul>
                     </div>}
                 </li>

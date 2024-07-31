@@ -114,6 +114,43 @@
             }
 
         }
+
+        #search {
+            position: absolute;
+            border: none;
+            border-radius: 20px;
+            width: 0px;
+            right: 3px;
+            height: 30px;
+            // transform: translateX(250px);
+            transition: all 0.5s ease;
+            padding: 0px;
+            outline: 0;
+        }
+
+        #suggestSearch {
+            position: absolute;
+            background-color: #fff;
+            color: #000;
+            top: 40px;
+            right: 0px;
+            border-radius: 5px;
+            width: 250px;
+            display: none;
+            flex-direction: column;
+
+
+            span {
+                padding-top: 5px;
+                border-bottom: rgb(214, 212, 212) solid 1px;
+                margin-bottom: 5px;
+
+                i {
+                    margin-right: 3px;
+                    color: gray;
+                }
+            }
+        }
     }
 
 
@@ -145,73 +182,7 @@
 
 
 
-    #search {
-        position: absolute;
-        border: none;
-        border-radius: 20px;
-        width: 0px;
-        right: 3px;
-        height: 30px;
-        // transform: translateX(250px);
-        transition: all 0.5s ease;
-        padding: 0px;
-        outline: 0;
 
-        +#search_list {
-            // Use + for adjacent sibling selector in SCSS
-            position: absolute;
-            height: auto;
-            width: 400px;
-            background-color: #000000;
-            left: -380px;
-            top: 40px;
-            border-radius: 10px;
-            max-height: 300px;
-            overflow: auto;
-            display: none;
-
-            a {
-                all: unset;
-
-                div {
-                    display: flex;
-                    position: relative;
-                    color: aliceblue;
-                    width: 350px;
-                    font-family: Arial, Helvetica, sans-serif;
-                    margin: 3px;
-                    margin-left: 10px;
-
-                    img {
-                        height: 72px;
-                        width: 128px;
-                        margin: 3px;
-                        border-radius: 3px;
-                    }
-
-                    h4 {
-                        margin: 7px;
-                        margin-bottom: 18px;
-                        font-size: 90%;
-                    }
-
-                    div div {
-                        all: unset;
-                        position: absolute;
-                        bottom: 2px;
-                        display: block;
-                        width: 100%;
-
-                        p {
-                            margin: 0px;
-                            padding: 0px;
-                            font-size: 70%;
-                        }
-                    }
-                }
-            }
-        }
-    }
 
 
 
