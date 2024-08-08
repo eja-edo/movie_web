@@ -71,26 +71,39 @@ def get_banner_qc(request):
     serializer = bannerSerializer(movies, many = True)
     return JsonResponse(serializer.data, safe = False)
     
-def get_phimhh(request):
-    movies = Movies.objects.filter(genre__name = 'Phim hoạt hình')[:10]
-    serializer = MovieSerializer(movies , many = True)
-    return JsonResponse(serializer.data , safe = False)
+# def get_phimhh(request):
+#     movies = Movies.objects.filter(genre__name = 'Phim hoạt hình')[:10]
+#     serializer = MovieSerializer(movies , many = True)
+#     return JsonResponse(serializer.data , safe = False)
 
-def get_phimkinhdi(request):
-    movies = Movies.objects.filter(genre__name = 'phim kinh dị')[:10]
-    serializer = MovieSerializer(movies , many = True)
-    return JsonResponse(serializer.data , safe = False)
+# def get_phimkinhdi(request):
+#     movies = Movies.objects.filter(genre__name = 'phim kinh dị')[:10]
+#     serializer = MovieSerializer(movies , many = True)
+#     return JsonResponse(serializer.data , safe = False)
 
-def get_phimhd(request):
-    movies = Movies.objects.filter(genre__name = 'phim hành động ')[:10]
-    serializer = MovieSerializer(movies , many = True)
-    return JsonResponse(serializer.data , safe = False)
+# def get_phimhd(request):
+#     movies = Movies.objects.filter(genre__name = 'phim hành động ')[:10]
+#     serializer = MovieSerializer(movies , many = True)
+#     return JsonResponse(serializer.data , safe = False)
 
-def get_phimtinhcam(request):
-    movies = Movies.objects.filter(genre__name = 'phim tình cảm')[:10]
+# def get_phimtinhcam(request):
+#     movies = Movies.objects.filter(genre__name = 'phim tình cảm')[:10]
     
-    serializer = MovieSerializer(movies , many = True)
-    return JsonResponse(serializer.data , safe = False)
+#     serializer = MovieSerializer(movies , many = True)
+#     return JsonResponse(serializer.data , safe = False)
+
+
+@csrf_exempt
+def get_films_by_genre10(request):
+    data = json.loads(request.body)
+    genre = data.get('genre')
+    movies = Movies.objects.filter(genre__name = genre)[:10]
+
+    if movies:  # Kiểm tra xem danh sách phim có rỗng hay không
+        serializer = MovieSerializer(movies, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        return JsonResponse({"message": "Không tìm thấy phim với thể loại này"}, status=404)
 
 
 class TestAPIview(APIView):

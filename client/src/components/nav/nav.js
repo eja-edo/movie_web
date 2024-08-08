@@ -6,7 +6,7 @@ import { fetchSearch } from '../../services/movieAPI';
 function Nav() {
     const navigate = useNavigate()
     const [showMenu, setShowMenu] = useState(false);
-    const [searchValue, setSearchValue] = useState(null);
+    const [searchValue, setSearchValue] = useState('');
     const [avt, setImg] = useState(null)
     const [login, setLogin] = useState(false)
     const [suggestSearch, setSuggest] = useState(null);
@@ -80,7 +80,7 @@ function Nav() {
             redirect: "follow"
         };
 
-        fetch("http://localhost:8000/service/logout/", requestOptions)
+        fetch("http://localhost:8000/user/logout/", requestOptions)
             .then((response) => response.text())
             .then(() => {
                 console.log('đã logout')

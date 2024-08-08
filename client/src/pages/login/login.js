@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router-dom'
 function Login() {
     const [login, setLogin] = useState(false)
     const navigate = useNavigate()
-
     const [activeForm, setActiveForm] = useState('login');
-
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -135,6 +133,46 @@ function Login() {
         }
     }, [login])
 
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password1, setPassword1] = useState('');
+    const [password2, setPassword2] = useState('');
+    const [message, setMessage] = useState('');
+
+    const handleSubmitSignUp = async (e) => {
+        e.preventDefault();
+        const requestData = {
+            username,
+            email,
+            password1,
+            password2,
+        };
+
+        try {
+            const response = await fetch('http://localhost:8000/user/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Có lỗi xảy ra.');
+            }
+
+            const data = await response.json();
+            console.log(data)
+            const { access, refresh } = data;
+            localStorage.setItem('access_token', access);
+            localStorage.setItem('refresh_token', refresh);
+            setMessage('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.');
+        } catch (error) {
+            setMessage('Có lỗi xảy ra. Vui lòng thử lại.');
+        }
+    };
+
+
     return (
         <div className="container_login">
             <div id="login-form" style={{ display: activeForm === 'login' ? 'block' : 'none' }}>
@@ -174,7 +212,37 @@ function Login() {
             {/* Signup Form */}
             <div id="signup-form" style={{ display: activeForm === 'signup' ? 'block' : 'none' }}>
                 <h2 className="heading">Đăng ký tài khoản</h2>
-                {/* ... Form content */}
+                <form onSubmit={handleSubmitSignUp}>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder="Mật khẩu"
+                        value={password1}
+                        onChange={(e) => setPassword1(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder="Nhập lại mật khẩu"
+                        value={password2}
+                        onChange={(e) => setPassword2(e.target.value)}
+                        required
+                    />
+                    <button type="submit">Đăng ký</button>
+                </form>
                 <button type="button" onClick={() => handleFormSwitch('login')}>Đăng nhập</button>
                 {/* ... Other content */}
             </div>

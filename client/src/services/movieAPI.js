@@ -40,6 +40,28 @@ export const fetchDisplayList = async (url) => { // sau sẽ thay url thành th�
 };
 
 
+export const fetchDisplayListByGenre10 = async (genre) => { // sau sẽ thay url thành thể loại ...
+    try {
+        const response = await fetch('http://127.0.0.1:8000/service/get_films_by_genre10/', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "genre": genre,
+            })
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+};
+
+
 export const fetchFilmData = async (id, navigate, retry = false) => {
     try {
         const accessToken = localStorage.getItem('accessToken');

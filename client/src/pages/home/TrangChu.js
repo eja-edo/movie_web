@@ -4,7 +4,7 @@ import './trang_chu.scss';
 import BannerQC from '../../components/BannerQC/BannerQC';
 import CreateDisplayList from '../../components/CreateDisplayList/CreateDisplayList';
 import LazyLoad from 'react-lazyload';
-import { fetchDisplayList } from '../../services/movieAPI';
+import { fetchDisplayList, fetchDisplayListByGenre10 } from '../../services/movieAPI';
 import ShowDisplay from '../../components/showdisplay/showdisplay';
 function TrangChu() {
     const [crHeaderVisible, setCrHeaderVisible] = useState(false);
@@ -23,12 +23,12 @@ function TrangChu() {
                 const [thinhHanhData, filmHotData, filmHoatHinhData, myListData, filmTinhCamData, filmKinhDiData, filmLeData, filmHanhDongData] = await Promise.all([
                     fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/'),
                     fetchDisplayList('http://127.0.0.1:8000/service/get_phimhot_10/'),
-                    fetchDisplayList('http://127.0.0.1:8000/service/get_phimhh_10/'),
+                    fetchDisplayListByGenre10('phim hoạt hình'),
                     fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/'),
-                    fetchDisplayList('http://127.0.0.1:8000/service/get_phimtinhcam_10/'),
-                    fetchDisplayList('http://127.0.0.1:8000/service/get_phimkinhdi_10/'),
+                    fetchDisplayListByGenre10('phim tình cảm'),
+                    fetchDisplayListByGenre10('phim kinh dị'),
                     fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/'),
-                    fetchDisplayList('http://127.0.0.1:8000/service/get_phimhanhdong_10/'),
+                    fetchDisplayListByGenre10('phim hành động'),
                 ]);
                 setFilmth(thinhHanhData);
                 setFilmhot(filmHotData);

@@ -20,4 +20,7 @@ urlpatterns =[
     path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
     
     path('logout/',logoutView.as_view(),name='logout'),
+
+    path('register/', views.register, name='register'),
+    path('activate/<uidb64>/<token>/', views.activate, name='activate'),
 ]

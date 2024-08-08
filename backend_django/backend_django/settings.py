@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-
+from decouple import config
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -73,6 +73,24 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 
+#cấu hình để xác thực email
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+# ACCOUNT_EMAIL_SUBJECT_PREFIX = 'Xác nhận email của bạn'
+# ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 180
+
+
+# sau cần đưa vào môi trường ảo
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'  # Thay bằng máy chủ SMTP của nhà cung cấp dịch vụ email của bạn
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = ''  # Địa chỉ email của bạn
+# EMAIL_HOST_PASSWORD = ''  # Mật khẩu email của bạn
+# DEFAULT_FROM_EMAIL = 'your_email@example.com'
+
 
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_EMAIL_REQUIRED = True
@@ -99,8 +117,8 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 SOCIALACCOUNT_PROVIDERS['facebook']['APP'] = {
-    'client_id': '370600639113748',
-    'secret': 'e0c36d96ddea1fd0eb6169d6decf5f23',
+    'client_id': config('CLIENT_ID_FACEBOOK'),
+    'secret': config('SECRET_FACEBOOK'),
     'key': ''
 }
 
@@ -145,11 +163,11 @@ WSGI_APPLICATION = 'backend_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'movie_web',  # Tên cơ sở dữ liệu MySQL
-        'USER': 'root',        # Tên người dùng MySQL
-        'PASSWORD': '12345678',    # Mật khẩu MySQL
-        'HOST': 'localhost',            # Địa chỉ máy chủ MySQL (thường là 'localhost')
-        'PORT': 3306,                  # Cổng của máy chủ MySQL (thường là 3306)
+        'NAME': config('DATABASE_NAME'),  # Tên cơ sở dữ liệu MySQL
+        'USER': config('DATABASE_USER'),        # Tên người dùng MySQL
+        'PASSWORD': config('DATABASE_PASS'),    # Mật khẩu MySQL
+        'HOST': config('DATABASE_HOST'),            # Địa chỉ máy chủ MySQL (thường là 'localhost')
+        'PORT': config('DATABASE_PORT'),                  # Cổng của máy chủ MySQL (thường là 3306)
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
@@ -262,6 +280,8 @@ CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:5500','http://127.0.0.1:3001','http://
 
 CORS_ALLOW_CREDENTIALS = True
 
+
+#cấu hình cho token
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
