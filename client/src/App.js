@@ -7,6 +7,8 @@ import Film from './pages/film/film.js';
 import MovieDetails from './pages/detail/detail.js'
 import Nav from './components/nav/nav.js'
 import FooterComponents from './components/footer/footer.js'
+import Filter from './pages/filter/filter.js';
+
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/film/:id1/:id2" element={<Film />} /> Assumed route for films listing
         <Route path="/detail/:id" element={<MovieDetails />} /> {/* Route for individual film details */}
+        <Route path='/r/:listFilm' element={<Filter />} />
         {/* You can add more routes here for other pages/components */}
       </Routes>
       <FooterComponents />

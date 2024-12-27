@@ -24,5 +24,6 @@ urlpatterns = [
     path('service/', include('apps.service.urls')),
     path('user/',include('apps.users.urls')),
     path('accounts/', include('allauth.urls')),
+    path('watchlist/', include('apps.watchlist.urls')),
     
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

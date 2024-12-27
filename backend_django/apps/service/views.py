@@ -21,7 +21,8 @@ from django.views.decorators.http import require_POST
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
-
+from django.http import StreamingHttpResponse
+import os
 import re
 
 
@@ -115,6 +116,46 @@ class TestAPIview(APIView):
         return HttpResponse('oke')  # Trả về giá trị của __id
 
  
+# class getFilm(APIView):
+#     def post(self, request):
+#         try:
+#             data = json.loads(request.body)
+#             movie_id = data.get('movie_id')
+#             episode_num = data.get('episode_num')         
+
+#             if movie_id is None:
+#                 return Response({"error": "Thiếu movie_id"}, status=status.HTTP_400_BAD_REQUEST)
+
+#             movie_id = int(movie_id)
+
+#             # Lấy tất cả tập phim thuộc movie_id
+#             episodes = Episodes.objects.filter(movie_id=movie_id)
+#             # Nếu người dùng cung cấp episode_num
+#             if episode_num is not None:
+#                 film = episodes.filter(episode_number=episode_num)
+#                 if not film.exists():
+#                     return Response({"error": "Không tìm thấy tập phim"}, status=status.HTTP_404_NOT_FOUND)
+#             else:
+#                 # Nếu không cung cấp episode_num, mặc định lấy tập đầu tiên
+#                 film = episodes[:1]
+#                 if not film.exists():
+#                     return Response({"error": "Không tìm thấy tập phim"}, status=status.HTTP_404_NOT_FOUND)
+
+            
+#             film_serializer = filmSerializer(film.first())
+#             print(film)
+#             # Lấy danh sách số tập
+#             episodes_number = episodes.values_list('episode_number', flat=True)
+
+#             return Response({'episode_data': film_serializer.data, 'episodes_number': list(episodes_number)}, status=status.HTTP_200_OK)
+
+#         except json.JSONDecodeError:
+#             return Response({'error': 'Invalid JSON data'}, status=status.HTTP_400_BAD_REQUEST)
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+from pathlib import Path
+from django.conf import settings
 class getFilm(APIView):
     def post(self, request):
         try:
@@ -124,7 +165,6 @@ class getFilm(APIView):
 
             if movie_id is None:
                 return Response({"error": "Thiếu movie_id"}, status=status.HTTP_400_BAD_REQUEST)
-
             movie_id = int(movie_id)
 
             # Lấy tất cả tập phim thuộc movie_id
@@ -140,19 +180,36 @@ class getFilm(APIView):
                 if not film.exists():
                     return Response({"error": "Không tìm thấy tập phim"}, status=status.HTTP_404_NOT_FOUND)
 
-            
             film_serializer = filmSerializer(film.first())
-            print(film)
-            # Lấy danh sách số tập
-            episodes_number = episodes.values_list('episode_number', flat=True)
+            relative_path = film_serializer.data['url_video']
+            # Chuyển đổi đường dẫn tương đối thành đường dẫn tuyệt đối
+            file_path = os.path.join(settings.STATIC_ROOT, relative_path)
+            file_path = file_path.replace('\\','/')
 
-            return Response({'episode_data': film_serializer.data, 'episodes_number': list(episodes_number)}, status=status.HTTP_200_OK)
+            if not os.path.exists(file_path):
+                return Response({"error": "File video không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+            # Stream video theo từng phần
+            def video_stream_generator(file_path):
+                with open(file_path, 'rb') as video_file:
+                    while chunk := video_file.read(4069):
+                        yield chunk
+
+            response = StreamingHttpResponse(
+                video_stream_generator(file_path),
+                content_type='video/mp4'
+            )
+            print(response)
+            response['Content-Disposition'] = f'inline; filename="{os.path.basename(file_path)}"'
+
+            return response
 
         except json.JSONDecodeError:
             return Response({'error': 'Invalid JSON data'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class GetDetailMovie(APIView):
     def post(self, request):

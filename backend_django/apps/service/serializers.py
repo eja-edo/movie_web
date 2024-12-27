@@ -48,11 +48,10 @@ class DetailSerializer(serializers.ModelSerializer):
 
 
 class filmSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(source = 'movie.title')
     class Meta:
         model = Episodes
         fields =[
-            'title','url_video'
+            'url_video'
         ]
 
 class episodesSerializer(serializers.ModelSerializer):

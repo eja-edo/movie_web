@@ -1,10 +1,16 @@
 html {
     width: 100lvw;
-    padding: 0px;
-    margin: 0px;
+
     overflow-x: hidden;
     min-height: 100lvh;
 }
+
+* {
+    padding: 0px;
+    margin: 0px;
+
+}
+
 
 #root {
     background-color: #111;

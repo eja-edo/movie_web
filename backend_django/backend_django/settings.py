@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.service',
     'apps.users',
+    'apps.watchlist',
   
     'corsheaders',
     'rest_framework',
@@ -69,7 +70,6 @@ AUTHENTICATION_BACKENDS = [
 
     # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
-
 
 ]
 
@@ -215,8 +215,13 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-
 ]
+
+
+# Thư mục để collectstatic sao chép các tệp tĩnh vào
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

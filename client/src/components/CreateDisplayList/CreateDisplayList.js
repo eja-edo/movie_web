@@ -13,6 +13,8 @@ const CreateDisplayList = memo((films) => {
     const divVideoRef = useRef(null);
     const [infoFilm, setInfoFilm] = useState({ 'index': '', 'id': '', 'title': '', 'video': '', 'content': '' });
     const [ishoverVideo, setHoverVideo] = useState(false)
+
+
     const back = (button) => {
         const div = button.parentElement.querySelector('div.display_list');
         let trans = parseInt(getComputedStyle(div).getPropertyValue('--trans').replace('px', ''), 10) || 0; // Đảm bảo trans là số
@@ -31,10 +33,11 @@ const CreateDisplayList = memo((films) => {
     const next = (button) => {
         const div = button.parentElement.querySelector('div[class = display_list]');
         let trans = parseInt(getComputedStyle(div).getPropertyValue('--trans').replace('px', ''), 10) || 0;
-        const width = document.documentElement.clientWidth;
-        trans = (Math.floor((trans - width) / 138) + 2) * 138;
-        if (trans > -1656) {
-            div.style.setProperty('--trans', `${trans}px`);
+        const width = document.documentElement.getBoundingClientRect().width;
+        const divWidth = div.getBoundingClientRect().width;
+        console.log(divWidth)
+        if (divWidth - trans > width) {
+            div.style.setProperty('--trans', `${-80}lvw`);
         }
     };
     // const [filmItems, setFilmItems] = useState([]);
@@ -65,32 +68,33 @@ const CreateDisplayList = memo((films) => {
     var timeOut
     const molen = (element) => {
         var div = divVideoRef.current
+        const width = document.documentElement.clientWidth;
         const divParent = element.parentNode;
         const index = parseInt(divParent.dataset.key, 10) || 0;
-        div.style.left = `${index * 138 - 128}px`;
-        timeOut = setTimeout(() => {
+        const trans = parseInt(getComputedStyle(divParent).getPropertyValue('--trans').replace('lvw', ''), 10) || 0;
+        div.style.left = `${(+ index * 16) + trans - 15}lvw`;
 
+
+        timeOut = setTimeout(() => {
             const id = filmItems[index]['movie_id']
             const url = filmItems[index]['trailer_url']
             const title = filmItems[index]['title']
             const content = `${filmItems[index]['release_date']}|${filmItems[index]['runtime']}|${filmItems[index]['rating']}|${filmItems[index]['views']}`
             setInfoFilm({ 'index': index, 'id': id, 'title': title, 'video': url, 'content': content })
-            div.style.height = '230px';
-            // div.style.width = " 384px";
+            div.style.height = '27vw';
+            // div.style.width = "45lvw";
             div.style.transition = 'all 0.3s ease'
-            const width = document.documentElement.clientWidth;
-            const divParent = div.parentNode
-            const trans = parseInt(getComputedStyle(divParent).getPropertyValue('--trans').replace('px', ''), 10) || 0;
-            if (index * 138 - 123 < -trans) {
-                div.style.transform = `translateX(${(-trans - (index * 138 - 123))}px)`;
-            } else if ((index + 1) * 138 + 123 > -trans + width) {
-                div.style.transform = `translateX(-${((index + 1) * 138 + 153 - (-trans + width))}px)`;
+            if (index * 16 - 15 < -trans) {
+                div.style.transform = `translateX(${(-trans - (index * 16 - 7.5 * 2))}lvw)`;
+
+            } else if (index * 16 + 30 > -trans + 100) {
+                div.style.transform = `translateX(-${(index * 16 + 30 - (-trans + 100))}lvw)`;
             }
 
             const handleMouseEnter = () => {
                 clearTimeout(timeoutId);
-
             };
+
             let timeoutId = setTimeout(() => {
                 setInfoFilm({ 'index': '', 'id': '', 'title': '', 'video': '', 'content': '' });
                 div.style.height = '0px';
@@ -102,7 +106,6 @@ const CreateDisplayList = memo((films) => {
             // Giả sử div là phần tử bạn muốn theo dõi
             if (div) {
                 div.addEventListener('mouseenter', handleMouseEnter);
-
                 return () => {
                     div.removeEventListener('mouseenter', handleMouseEnter);
                     clearTimeout(timeoutId);
@@ -157,35 +160,36 @@ const CreateDisplayList = memo((films) => {
             <button className="next" onClick={(event) => next(event.currentTarget)}>
                 <i className="fa-solid fa-arrow-right"></i>
             </button>
-            <div className="display_list">
-                <div className="video" ref={divVideoRef} >
-                    <video src={infoFilm.video} muted loop autoPlay ref={videoRef} />
+            <div className="video" ref={divVideoRef} >
+                <video src={infoFilm.video} muted loop autoPlay ref={videoRef} />
 
-                    <div className="control">
-                        <h2>{infoFilm.title}</h2>
-                        <div>
-                            <button onClick={(event) => xem_ngay(event.currentTarget)}>
-                                <div>
-                                    <i className="fa-solid fa-play"></i>
-                                    Xem ngay
-                                </div>
-                            </button>
-                            <button onClick={(event) => plus_list(event.currentTarget)}>
-                                <div>
-                                    <i className="fa-solid fa-plus"></i>
-                                    Danh sách
-                                </div>
-                            </button>
-                            <button onClick={(event) => chi_tiet(event.currentTarget)}>
-                                <div>
-                                    <i className="fa-regular fa-lightbulb"></i>
-                                    Chi tiết
-                                </div>
-                            </button>
-                        </div>
-                        <p>{infoFilm.content}</p>
+                <div className="control">
+                    <h2>{infoFilm.title}</h2>
+                    <div>
+                        <button onClick={(event) => xem_ngay(event.currentTarget)}>
+                            <div>
+                                <i className="fa-solid fa-play"></i>
+                                Xem ngay
+                            </div>
+                        </button>
+                        <button onClick={(event) => plus_list(event.currentTarget)}>
+                            <div>
+                                <i className="fa-solid fa-plus"></i>
+                                Danh sách
+                            </div>
+                        </button>
+                        <button onClick={(event) => chi_tiet(event.currentTarget)}>
+                            <div>
+                                <i className="fa-regular fa-lightbulb"></i>
+                                Chi tiết
+                            </div>
+                        </button>
                     </div>
+                    <p>{infoFilm.content}</p>
                 </div>
+            </div>
+            <div className="display_list">
+
                 {filmItems.map((item, index) => (
                     <div key={index} data-key={index} className="film-container">
                         <a className="img" onMouseLeave={(event) => tatdi(event.currentTarget)}

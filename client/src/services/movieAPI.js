@@ -124,15 +124,8 @@ export const fetchVideoData = async (id1, id2, navigate, retry = false) => {
         });
 
         if (response.ok) {
-            const result = await response.json();
-            if (result.length === 0) {
-                console.error('Movie has not been updated yet!')
-
-            } else {
-
-                return (result);
-
-            }
+            console.log(response.body.getReader)
+            return URL.createObjectURL(response.body); // Tạo URL tạm thời
 
         } else if (response.status === 401 && !retry) {
             // Token might be expired, try refreshing

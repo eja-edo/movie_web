@@ -164,16 +164,12 @@ function TrangChu() {
                             trước khi quỷ dữ lấy mạng anh
                         </p>
                         <div className="control_movie">
-                            <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('/film.html'); }}>
-                                <div style={{ color: 'black', backgroundColor: '#fff' }}>
-                                    <i className="fa-solid fa-play"></i>Xem Ngay
-                                </div>
-                            </a>
-                            <a href="#" onClick={(e) => { e.preventDefault(); handleNavigation('/mtphim.html'); }}>
-                                <div>
-                                    <i className="fa-regular fa-lightbulb"></i>Chi tiết
-                                </div>
-                            </a>
+                            <button onClick={(e) => { e.preventDefault(); handleNavigation('/film.html'); }} style={{ color: 'black', backgroundColor: '#fff' }}>
+                                <i className="fa-solid fa-play"></i>Xem Ngay
+                            </button>
+                            <button onClick={(e) => { e.preventDefault(); handleNavigation('/mtphim.html'); }}>
+                                <i className="fa-regular fa-lightbulb"></i>Chi tiết
+                            </button>
                         </div>
                     </div>
                 </div>

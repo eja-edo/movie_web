@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { fetchSearch } from '../../services/movieAPI';
 
 function Nav() {
+
+
     const navigate = useNavigate()
     const [showMenu, setShowMenu] = useState(false);
     const [searchValue, setSearchValue] = useState('');
