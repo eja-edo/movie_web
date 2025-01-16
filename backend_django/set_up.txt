@@ -1,0 +1,18 @@
+-Cài đặt môi trường lập trình python
+
+-Thêm file .env
+
+-Tải các thư viện cần thiết bằng cách sử dụng lệnh: pip install -r requirements.txt
+hoặc tải từng thư viện một bên trong file requirements.txt
+
+-Kiểm tra lại cú pháp của các file gốc
+
+-Tạo database tên movie_web
+
+-Chạy lệnh để tạo migration mới: python manage.py makemigrations
+
+-Áp dụng migration để tạo các bảng trên PostgreSQL: python manage.py migrate
+
+-Chạy file QueryDatabase.sql trong hệ quản trị cơ sở dữ liệu PostgreSQL 
+
+-Chạy server: python manage.py runserver

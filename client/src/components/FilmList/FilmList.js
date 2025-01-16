@@ -3,15 +3,36 @@ import './FilmList.css';
 
 const FilmList = (films) => {
     films = Object.values(films)[0];
-    console.log(films)
-    return (
 
+    const [hoveredIndex, setHoveredIndex] = useState(null);
+
+    const handleMouseEnter = (index) => {
+        setHoveredIndex(index);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredIndex(null);
+    };
+
+    return (
         <div id="hh2">
             {Array.isArray(films) ? films.map((item, index) => (
-                <a href="mtphim.html" className="max_scanner_img" key={index}>
+                <a
+                    href="mtphim.html"
+                    className="max_scanner_img"
+                    key={index}
+                    onMouseEnter={() => handleMouseEnter(index)}
+                    onMouseLeave={handleMouseLeave}
+                >
                     <div>
                         <img src={item.poster_url} alt={item.title} />
-                        <video src={item.trailer_url} loop autoPlay muted />
+                        <video
+                            loop
+                            autoPlay
+                            muted
+                            style={{ display: hoveredIndex === index ? 'block' : 'none' }}
+                            src={hoveredIndex === index ? item.trailer_url : null} // Chỉ đặt src khi hover
+                        />
                         <div>
                             <h4>{item.title}</h4>
                             <div>

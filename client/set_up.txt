@@ -1,0 +1,3 @@
+- Tải môi trường node.js
+
+- Tải các thư viện cần thiết: npm install

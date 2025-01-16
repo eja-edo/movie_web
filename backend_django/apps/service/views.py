@@ -21,10 +21,12 @@ from django.views.decorators.http import require_POST
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
-from django.http import StreamingHttpResponse
 import os
 import re
 
+from pathlib import Path
+from django.conf import settings
+from django.http import StreamingHttpResponse, HttpResponse
 
 def normalize_string(s):
     # Chuyển đổi về chữ thường
@@ -154,8 +156,61 @@ class TestAPIview(APIView):
 #         except Exception as e:
 #             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-from pathlib import Path
-from django.conf import settings
+
+def stream_video_view(request):
+    video_path = request.GET.get('path')  # Đường dẫn tương đối của video
+    if not video_path:
+        return HttpResponse("Missing 'path' parameter", status=400)
+
+    file_path = os.path.join(settings.STATIC_ROOT, video_path).replace('\\', '/')
+    if not os.path.exists(file_path):
+        return HttpResponse("Video file not found", status=404)
+
+    # Lấy Range header từ request
+    range_header = request.headers.get('Range', None)
+    file_size = os.path.getsize(file_path)
+
+    if range_header:
+        range_match = re.match(r"bytes=(\d+)-(\d*)", range_header)
+        if not range_match:
+            return HttpResponse(status=416)  # Requested Range Not Satisfiable
+
+        start = int(range_match.group(1))
+        end = int(range_match.group(2)) if range_match.group(2) else file_size - 1
+        if start >= file_size:
+            return HttpResponse(status=416)
+
+        chunk_size = end - start + 1
+        response = StreamingHttpResponse(
+            stream_file(file_path, start, chunk_size),
+            status=206,
+            content_type="video/mp4",
+        )
+        response['Content-Range'] = f"bytes {start}-{end}/{file_size}"
+        response['Accept-Ranges'] = 'bytes'
+        response['Content-Length'] = str(chunk_size)
+    else:
+        response = StreamingHttpResponse(
+            stream_file(file_path, 0, file_size),
+            content_type="video/mp4",
+        )
+        response['Content-Length'] = str(file_size)
+
+    response['Content-Disposition'] = f'inline; filename="{os.path.basename(file_path)}"'
+    return response
+
+def stream_file(file_path, start, length):
+    """Generator để đọc từng phần tệp video."""
+    with open(file_path, 'rb') as file:
+        file.seek(start)
+        while length > 0:
+            chunk_size = min(8192, length)
+            data = file.read(chunk_size)
+            if not data:
+                break
+            yield data
+            length -= chunk_size
+
 class getFilm(APIView):
     def post(self, request):
         try:
@@ -169,47 +224,73 @@ class getFilm(APIView):
 
             # Lấy tất cả tập phim thuộc movie_id
             episodes = Episodes.objects.filter(movie_id=movie_id)
-            # Nếu người dùng cung cấp episode_num
             if episode_num is not None:
                 film = episodes.filter(episode_number=episode_num)
                 if not film.exists():
                     return Response({"error": "Không tìm thấy tập phim"}, status=status.HTTP_404_NOT_FOUND)
             else:
-                # Nếu không cung cấp episode_num, mặc định lấy tập đầu tiên
                 film = episodes[:1]
                 if not film.exists():
                     return Response({"error": "Không tìm thấy tập phim"}, status=status.HTTP_404_NOT_FOUND)
 
             film_serializer = filmSerializer(film.first())
             relative_path = film_serializer.data['url_video']
-            # Chuyển đổi đường dẫn tương đối thành đường dẫn tuyệt đối
-            file_path = os.path.join(settings.STATIC_ROOT, relative_path)
-            file_path = file_path.replace('\\','/')
+            file_path = os.path.join(settings.STATIC_ROOT, relative_path).replace('\\', '/')
 
             if not os.path.exists(file_path):
                 return Response({"error": "File video không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
 
+            # Lấy thông tin từ Range header
+            range_header = request.headers.get('Range', None)
+            file_size = os.path.getsize(file_path)
 
+            if range_header:
+                # Parse Range header
+                range_match = re.match(r"bytes=(\d+)-(\d*)", range_header)
+                if not range_match:
+                    return HttpResponse(status=416)  # Requested Range Not Satisfiable
 
-            # Stream video theo từng phần
-            def video_stream_generator(file_path):
-                with open(file_path, 'rb') as video_file:
-                    while chunk := video_file.read(4069):
-                        yield chunk
+                start = int(range_match.group(1))
+                end = int(range_match.group(2)) if range_match.group(2) else file_size - 1
+                if start >= file_size:
+                    return HttpResponse(status=416)
 
-            response = StreamingHttpResponse(
-                video_stream_generator(file_path),
-                content_type='video/mp4'
-            )
-            print(response)
+                chunk_size = end - start + 1
+                response = StreamingHttpResponse(
+                    self.stream_video(file_path, start, chunk_size),
+                    status=206,
+                    content_type="video/mp4"
+                )
+                response['Content-Range'] = f"bytes {start}-{end}/{file_size}"
+                response['Accept-Ranges'] = 'bytes'
+                response['Content-Length'] = str(chunk_size)
+            else:
+                # Trả về toàn bộ file nếu không có Range header
+                response = StreamingHttpResponse(
+                    self.stream_video(file_path, 0, file_size),
+                    content_type="video/mp4"
+                )
+                response['Content-Length'] = str(file_size)
+
             response['Content-Disposition'] = f'inline; filename="{os.path.basename(file_path)}"'
-
             return response
 
         except json.JSONDecodeError:
             return Response({'error': 'Invalid JSON data'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def stream_video(self, file_path, start, length):
+        """Generator to yield chunks of the file."""
+        with open(file_path, 'rb') as video_file:
+            video_file.seek(start)
+            while length > 0:
+                chunk_size = min(8192, length)
+                data = video_file.read(chunk_size)
+                if not data:
+                    break
+                yield data
+                length -= chunk_size
 
 class GetDetailMovie(APIView):
     def post(self, request):

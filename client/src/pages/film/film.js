@@ -6,7 +6,51 @@ import CreateDisplayList from '../../components/CreateDisplayList/CreateDisplayL
 import FilmList from '../../components/FilmList/FilmList.js';
 import checkRefreshToken from '../../services/token.js';
 import VideoPlayer from '../../components/VideoPlayer.js';
-// import { fetchVideoData, fetchDisplayList } from '../../services/movieAPI.js';
+import { fetchVideoData, fetchDisplayList } from '../../services/movieAPI.js';
+
+// const Film = ({ movieId, episodeNum }) => {
+//     // const videoUrl = `http://localhost:8000/service/film/`; // Endpoint của API Django
+
+//     // const getVideoUrl = async () => {
+//     //     try {
+//     //         const response = await fetch(videoUrl, {
+//     //             method: "POST",
+//     //             headers: {
+//     //                 "Content-Type": "application/json",
+//     //                 "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2MDU1ODAxLCJpYXQiOjE3MzYwNTIyMDEsImp0aSI6IjBkODE4ZTEwOTA4ODRlMzVhODU3NWM2MWM4ODhjOTIwIiwidXNlcl9pZCI6MX0.NfJzK7fvtJBj0b5vDFXsGyZpK6CxF53ONCNRJkOqu80",
+//     //             },
+//     //             body: JSON.stringify({ movie_id: 1, episode_num: 1 }),
+//     //         });
+
+//     //         if (!response.ok) {
+//     //             throw new Error("Không thể tải video");
+//     //         }
+
+//     //         const videoBlob = await response.blob();
+//     //         return URL.createObjectURL(videoBlob); // Tạo URL tạm từ blob
+//     //     } catch (error) {
+//     //         console.error("Lỗi khi tải video:", error);
+//     //     }
+//     // };
+
+//     // React.useEffect(() => {
+//     //     getVideoUrl().then((url) => {
+//     //         const videoElement = document.getElementById("videoPlayer");
+//     //         videoElement.src = url;
+//     //     });
+//     // }, [movieId, episodeNum]);
+
+//     return <video
+//         id="videoPlayer"
+//         controls
+//         style={{ width: "100%" }}
+//         src="http://127.0.0.1:8000/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4"
+//     />;
+// };
+// export default Film;
+
+
+
 function Film() {
 
     const navigate = useNavigate();
@@ -18,8 +62,69 @@ function Film() {
             'url_video': "",
         },
     });
-    const videoRef = useRef(null);
+    //    const videoRef = useRef(null);
     console.log(id1, id2)
+
+    // const VideoPlayer = ({ movieId, episodeNum }) => {
+    //     const videoRef = useRef(null);
+    //     const [isLoading, setIsLoading] = useState(true);
+    //     const [error, setError] = useState(null);
+
+    //     useEffect(() => {
+    //         const fetchVideo = async () => {
+    //             try {
+    //                 setIsLoading(true);
+
+    //                 const response = await fetch("/api/getFilm/", {
+    //                     method: "POST",
+    //                     headers: {
+    //                         "Content-Type": "application/json",
+    //                     },
+    //                     body: JSON.stringify({
+    //                         movie_id: movieId,
+    //                         episode_num: episodeNum,
+    //                     }),
+    //                 });
+
+    //                 if (!response.ok) {
+    //                     const errorData = await response.json();
+    //                     throw new Error(errorData.error || "Lỗi không xác định");
+    //                 }
+
+    //                 // MediaSource API setup
+    //                 const video = videoRef.current;
+    //                 const mediaSource = new MediaSource();
+
+    //                 video.src = URL.createObjectURL(mediaSource);
+
+    //                 mediaSource.addEventListener("sourceopen", () => {
+    //                     const sourceBuffer = mediaSource.addSourceBuffer(
+    //                         'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+    //                     );
+
+    //                     // Stream dữ liệu
+    //                     const reader = response.body.getReader();
+    //                     const streamData = async () => {
+    //                         const { done, value } = await reader.read();
+    //                         if (done) {
+    //                             mediaSource.endOfStream();
+    //                             setIsLoading(false);
+    //                             return;
+    //                         }
+    //                         sourceBuffer.appendBuffer(value);
+    //                         sourceBuffer.addEventListener("updateend", streamData, { once: true });
+    //                     };
+
+    //                     streamData();
+    //                 });
+    //             } catch (err) {
+    //                 setError(err.message);
+    //                 setIsLoading(false);
+    //             }
+    //         };
+
+    //         fetchVideo();
+    //     }, [movieId, episodeNum]);
     // useEffect(() => {
     //     // const fetchVideoData = async (id1, id2, navigate, retry = false) => {
     //     //     try {
@@ -137,93 +242,20 @@ function Film() {
 
     //     // const video = videoRef.current;
 
-    //     // if ('MediaSource' in window && MediaSource.isTypeSupported('video/webm; codecs="vp8, vorbis"')) {
-    //     //     const mediaSource = new MediaSource();
-    //     //     video.src = URL.createObjectURL(mediaSource);
-
-    //     //     mediaSource.addEventListener('sourceopen', () => {
-    //     //         const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8, vorbis"');
-
-    //     //         // Create a small example ArrayBuffer containing WebM data
-    //     //         const videoData = new Uint8Array([
-    //     //             0x1A, 0x45, 0xDF, 0xA3, 0x93, 0x42, 0x82, 0x88, 0x6D, 0x61, 0x74, 0x72, 0x6F, 0x73, 0x6B, 0x61,
-    //     //             0x1F, 0x43, 0xB6, 0x75, 0x0B, 0x6B, 0x74, 0x61, 0x65, 0x72, 0x70, 0x0A, 0x70, 0x00, 0x00, 0x3C,
-    //     //             0x00, 0x00, 0x05, 0x00, 0x50, 0x00, 0x60, 0x00, 0x00, 0x00, 0x20, 0x00, 0x40, 0x00, 0x01, 0x00,
-    //     //             0x00, 0x00, 0x30, 0x00, 0xE1, 0x43, 0xB6, 0x75, 0x5B, 0x50, 0x00, 0x70, 0x00, 0x00, 0x00, 0x50,
-    //     //             0x00, 0x70, 0x00, 0x00, 0x20, 0x00, 0x00, 0x70, 0x00, 0x70, 0x00, 0x01, 0x00, 0x00, 0x00, 0x50,
-    //     //             0x00, 0x70, 0x00, 0x00, 0x00, 0x50, 0x00, 0x00, 0x10, 0x40, 0x00, 0x70, 0x00, 0x00, 0x00, 0x20,
-    //     //             0x00, 0x70, 0x00, 0x00, 0x00, 0x50, 0x00, 0x70, 0x00, 0x00, 0x00, 0x10, 0x00, 0x70, 0x00, 0x70,
-    //     //             0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x50, 0x00, 0x00, 0x00, 0x30, 0x00, 0x70, 0x00, 0x00,
-    //     //             0x00, 0x10, 0x00, 0x50, 0x00, 0x70, 0x00, 0x00, 0x00, 0x50, 0x00, 0x70, 0x00, 0x00, 0x00, 0x10,
-    //     //             0x00, 0x70, 0x00, 0x70, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x50, 0x00, 0x00, 0x00, 0x30
-    //     //         ]);
-    //     //         console.log(videoData)
-    //     //         sourceBuffer.appendBuffer(videoData);
-    //     //         console.log(sourceBuffer)
-    //     //         sourceBuffer.addEventListener('updateend', () => {
-    //     //             if (mediaSource.readyState === 'open') {
-    //     //                 mediaSource.endOfStream();
-
-    //     //             } console.log(mediaSource.readyState); // should be 'ended'
-
-    //     //         });
-    //     //     });
-    //     // } else {
-    //     //     console.error('Unsupported MIME type or codec: video/webm; codecs="vp8, vorbis"');
-    //     // }
-
-
-    //     const fetchVideoData = async (id1, id2, navigate, retry = false) => {
-    //         try {
-    //             const accessToken = localStorage.getItem('accessToken');
-    //             const response = await fetch(`http://localhost:8000/service/film/`, {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     "Content-Type": "application/json",
-    //                     "Authorization": `Bearer ${accessToken}`,
-    //                 },
-    //                 body: JSON.stringify({
-    //                     "movie_id": id1,
-    //                     "episode_num": id2
-    //                 })
-    //             });
-
-    //             if (response.ok) {
-    //                 console.log(response)
-    //                 const video = videoRef.current;
-    //                 video.src = response
-    //             } else if (response.status === 401 && !retry) {
-    //                 const refreshSuccess = await checkRefreshToken(navigate);
-    //                 if (refreshSuccess) {
-    //                     fetchVideoData(id1, id2, navigate, true);
-    //                 }
-    //             } else {
-    //                 console.error('Movie has not been updated yet!');
-    //             }
-
-    //         } catch (error) {
-    //             console.error('Network error occurred.');
-    //             console.error('Error fetching film data:', error);
-    //         }
-    //     }
-
-    //     fetchVideoData(id1, id2, navigate);
-
-
     // }, [navigate, id1, id2]);
     const [films, setfilms] = useState(null)
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const response = await fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/')
-    //             setfilms(response);
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/')
+                setfilms(response);
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
-    //     fetchData();
-    // }, [navigate]);
+        fetchData();
+    }, [navigate]);
 
     // if (isLoading) { return (<div style={{ paddingTop: '100px' }}>is loading...</div>) }
     // if (error) { return (<div style={{ paddingTop: '100px' }}>{error}</div>) }
@@ -246,12 +278,11 @@ function Film() {
         <div id='container_film'>
             <div id="film">
                 <video
-                    src='http://127.0.0.1:8000/static/assets/short-video/Teaser_dark_gathering (11).mp4'
+                    src='http://127.0.0.1:8000/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4'
                     // src={film}
                     controls
                     style={{
                         width: '98%',
-                        border: 'gray 3px solid',
                         boxSizing: 'border-box',
                         borderRadius: '5px',
                         margin: 'auto',
@@ -282,11 +313,11 @@ function Film() {
                 </fieldset>
                 <div className='container_display'>
                     <h2>PHIM LIÊN QUAN</h2>
-                    {/* {films ? <CreateDisplayList films={films} /> : <></>} */}
+                    {films ? <CreateDisplayList films={films} /> : <></>}
                 </div>
 
             </div>
-            {/* <div className='height_list'> {films ? <FilmList films={films} /> : <></>}</div> */}
+            <div className='height_list'> {films ? <FilmList films={films} /> : <></>}</div>
 
         </div>
         // ... Phần footer và import data

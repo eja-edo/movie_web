@@ -6,3 +6,4 @@ django-allauth==0.63.6
 mysqlclient==2.2.4
 requests==2.31.0
 django-cors-headers==4.3.1
+djangorestframework-jwt==1.11.0

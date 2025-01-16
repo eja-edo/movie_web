@@ -160,20 +160,30 @@ WSGI_APPLICATION = 'backend_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': config('MY_DATABASE_NAME'),  # Tên cơ sở dữ liệu MySQL
+#         'USER': config('MY_DATABASE_USER'),        # Tên người dùng MySQL
+#         'PASSWORD': config('MY_DATABASE_PASS'),    # Mật khẩu MySQL
+#         'HOST': config('MY_DATABASE_HOST'),            # Địa chỉ máy chủ MySQL (thường là 'localhost')
+#         'PORT': config('MY_DATABASE_PORT'),                  # Cổng của máy chủ MySQL (thường là 3306)
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         }
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DATABASE_NAME'),  # Tên cơ sở dữ liệu MySQL
-        'USER': config('DATABASE_USER'),        # Tên người dùng MySQL
-        'PASSWORD': config('DATABASE_PASS'),    # Mật khẩu MySQL
-        'HOST': config('DATABASE_HOST'),            # Địa chỉ máy chủ MySQL (thường là 'localhost')
-        'PORT': config('DATABASE_PORT'),                  # Cổng của máy chủ MySQL (thường là 3306)
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('MY_DATABASE_NAME'),         # Tên cơ sở dữ liệu
+        'USER': config('MY_DATABASE_USER'),         # Tài khoản PostgreSQL
+        'PASSWORD': config('MY_DATABASE_PASS'),     # Mật khẩu PostgreSQL
+        'HOST': config('MY_DATABASE_HOST'),         # Địa chỉ host
+        'PORT': config('MY_DATABASE_PORT'),         # Cổng PostgreSQL
     }
 }
-
 
 
 # Password validation

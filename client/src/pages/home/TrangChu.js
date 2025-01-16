@@ -70,6 +70,12 @@ function TrangChu() {
     };
     // }, []);
 
+    const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+
+    const handleVideoLoad = () => {
+        setIsVideoLoaded(true); // Đặt trạng thái video đã tải xong
+    };
+
     return (
         <div id="TrangChu" onScroll={(event) => { handleScroll(event.currentTarget) }}>
             <header>
@@ -139,10 +145,18 @@ function TrangChu() {
                 <LazyLoad height={200} offset={100}>{filmTinhCam ? <CreateDisplayList films={filmTinhCam} /> : <></>}</LazyLoad>
                 <div
                     className="phimqc"
-                    onMouseOver={(event) => { event.currentTarget.querySelector('video').play() }}
-                    onMouseOut={(event) => { event.currentTarget.querySelector('video').pause() }}
+                    onMouseOver={(event) => {
+                        if (isVideoLoaded) {
+                            event.currentTarget.querySelector('video').play();
+                        }
+                    }}
+                    onMouseOut={(event) => {
+                        if (isVideoLoaded) {
+                            event.currentTarget.querySelector('video').pause();
+                        }
+                    }}
                 >
-                    <video src="http://127.0.0.1:8000/static/assets/short-video/Teaser_NgoiDenKyQuai3.mp4" muted loop />
+                    <video src="http://127.0.0.1:8000/static/assets/short-video/Teaser_NgoiDenKyQuai3.mp4" muted loop onCanPlay={handleVideoLoad} />
                     <div
                         style={{
                             width: 'auto',
