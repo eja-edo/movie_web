@@ -26,7 +26,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
-
+from django.http import JsonResponse
 
 
 @csrf_exempt
@@ -95,14 +95,10 @@ def loginPost(request):
 
 
 
-from allauth.socialaccount.models import SocialToken, SocialAccount, SocialApp
-from django.conf import settings
-from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework_simplejwt.tokens import RefreshToken
-import json
-import requests
+
+
+
+
 
 @csrf_exempt
 def FacebookLoginToken(request):
@@ -110,8 +106,9 @@ def FacebookLoginToken(request):
     access_token = data.get('accessToken')
 
     # Xác minh access token với Facebook
-    app_id = settings.SOCIALACCOUNT_PROVIDERS['facebook']['APP']['client_id']
-    app_secret = settings.SOCIALACCOUNT_PROVIDERS['facebook']['APP']['secret']
+    app = SocialApp.objects.get(provider='facebook')
+    app_id = app.client_id
+    app_secret = app.secret
     url = f'https://graph.facebook.com/debug_token?input_token={access_token}&access_token={app_id}|{app_secret}'
     response = requests.get(url)
     data = response.json()
@@ -133,9 +130,6 @@ def FacebookLoginToken(request):
             },
         )
 
-        # Tạo hoặc lấy SocialApp
-        app = SocialApp.objects.get(provider='facebook')
-
         # Tạo hoặc lấy SocialAccount
         social_account, created = SocialAccount.objects.get_or_create(
             user=user,
@@ -148,8 +142,8 @@ def FacebookLoginToken(request):
 
         # Tạo hoặc lấy SocialToken
         token, token_created = SocialToken.objects.get_or_create(
-            app=app,
-            account=social_account,  # Cập nhật account ngay khi tạo SocialToken
+            app_id=app.id,
+            account=social_account,
             defaults={'token': access_token}
         )
 
@@ -166,7 +160,6 @@ def FacebookLoginToken(request):
         }, safe=False)
     else:
         return JsonResponse({'error': 'Access token không hợp lệ.'}, status=400)
-
 
 class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]

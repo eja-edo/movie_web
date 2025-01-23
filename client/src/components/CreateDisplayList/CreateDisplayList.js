@@ -78,9 +78,10 @@ const CreateDisplayList = memo((films) => {
         timeOut = setTimeout(() => {
             const id = filmItems[index]['movie_id']
             const url = filmItems[index]['trailer_url']
+            const poster = filmItems[index]['poster_url']
             const title = filmItems[index]['title']
             const content = `${filmItems[index]['release_date']}|${filmItems[index]['runtime']}|${filmItems[index]['rating']}|${filmItems[index]['views']}`
-            setInfoFilm({ 'index': index, 'id': id, 'title': title, 'video': url, 'content': content })
+            setInfoFilm({ 'index': index, 'id': id, 'title': title, 'video': url, 'poster': poster, 'content': content })
             div.style.height = '27vw';
             // div.style.width = "45lvw";
             div.style.transition = 'all 0.3s ease'
@@ -96,7 +97,7 @@ const CreateDisplayList = memo((films) => {
             };
 
             let timeoutId = setTimeout(() => {
-                setInfoFilm({ 'index': '', 'id': '', 'title': '', 'video': '', 'content': '' });
+                setInfoFilm({ 'index': '', 'id': '', 'title': '', 'video': '', 'poster': '', 'content': '' });
                 div.style.height = '0px';
                 // div.style.width = " 0px";
                 div.style.transition = 'none';
@@ -122,7 +123,7 @@ const CreateDisplayList = memo((films) => {
 
         if (div) {
             div.addEventListener("mouseleave", (event) => {
-                setInfoFilm({ 'index': '', 'id': '', 'title': '', 'video': '', 'content': '' })
+                setInfoFilm({ 'index': '', 'id': '', 'title': '', 'video': '', 'poster': '', 'content': '' })
                 // setHoverVideo(false)
                 div.style.height = '0px';
                 // div.style.width = " 0px";
@@ -161,7 +162,7 @@ const CreateDisplayList = memo((films) => {
                 <i className="fa-solid fa-arrow-right"></i>
             </button>
             <div className="video" ref={divVideoRef} >
-                <video src={infoFilm.video} muted loop autoPlay ref={videoRef} />
+                <video src={infoFilm.video} muted loop autoPlay poster={infoFilm.poster} ref={videoRef} />
 
                 <div className="control">
                     <h2>{infoFilm.title}</h2>

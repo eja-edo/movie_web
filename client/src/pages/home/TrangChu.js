@@ -23,12 +23,12 @@ function TrangChu() {
                 const [thinhHanhData, filmHotData, filmHoatHinhData, myListData, filmTinhCamData, filmKinhDiData, filmLeData, filmHanhDongData] = await Promise.all([
                     fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/'),
                     fetchDisplayList('http://127.0.0.1:8000/service/get_phimhot_10/'),
-                    fetchDisplayListByGenre10('phim hoạt hình'),
+                    fetchDisplayListByGenre10('Phim hoạt hình'),
                     fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/'),
-                    fetchDisplayListByGenre10('phim tình cảm'),
-                    fetchDisplayListByGenre10('phim kinh dị'),
+                    fetchDisplayListByGenre10('Phim tình cảm'),
+                    fetchDisplayListByGenre10('Phim kinh dị'),
                     fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/'),
-                    fetchDisplayListByGenre10('phim hành động'),
+                    fetchDisplayListByGenre10('Phim hành động'),
                 ]);
                 setFilmth(thinhHanhData);
                 setFilmhot(filmHotData);

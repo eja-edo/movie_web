@@ -7,8 +7,7 @@ hoặc tải từng thư viện một bên trong file requirements.txt
 
 -Kiểm tra lại cú pháp của các file gốc
 
--Tạo database tên movie_web
-
+-Tạo database tên movie_web trong trong hệ quản trị cơ sở dữ liệu PostgreSQ
 -Chạy lệnh để tạo migration mới: python manage.py makemigrations
 
 -Áp dụng migration để tạo các bảng trên PostgreSQL: python manage.py migrate

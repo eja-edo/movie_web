@@ -177,11 +177,11 @@ WSGI_APPLICATION = 'backend_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('MY_DATABASE_NAME'),         # Tên cơ sở dữ liệu
-        'USER': config('MY_DATABASE_USER'),         # Tài khoản PostgreSQL
-        'PASSWORD': config('MY_DATABASE_PASS'),     # Mật khẩu PostgreSQL
-        'HOST': config('MY_DATABASE_HOST'),         # Địa chỉ host
-        'PORT': config('MY_DATABASE_PORT'),         # Cổng PostgreSQL
+        'NAME': config('PG_DATABASE_NAME'),         # Tên cơ sở dữ liệu
+        'USER': config('PG_DATABASE_USER'),         # Tài khoản PostgreSQL
+        'PASSWORD': config('PG_DATABASE_PASS'),     # Mật khẩu PostgreSQL
+        'HOST': config('PG_DATABASE_HOST'),         # Địa chỉ host
+        'PORT': config('PG_DATABASE_PORT'),         # Cổng PostgreSQL
     }
 }
 
