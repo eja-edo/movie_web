@@ -3,6 +3,7 @@
         overflow: hidden;
         display: flex;
 
+
         #qc_video {
             display: flex;
             transform: translateX(0);
@@ -15,8 +16,11 @@
         transform: translateX(0);
         width: 100vw;
 
+
         video {
             width: 100vw;
+            border-radius: 12px;
+            position: sticky;
         }
     }
 
@@ -39,7 +43,7 @@
         background-color: rgba(17, 17, 17, 0.99); // Corrected value
         color: #fff;
         position: relative;
-        width: 100vw;
+        width: 100%;
         height: 50px;
 
         #control_div {
