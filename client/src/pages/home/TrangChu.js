@@ -78,44 +78,10 @@ function TrangChu() {
 
     return (
         <div id="TrangChu" onScroll={(event) => { handleScroll(event.currentTarget) }}>
-            <header>
-                <ul>
-                    <li onClick={() => setCrHeaderVisible(!crHeaderVisible)}>
-                        <a href="#">Bộ lọc</a>
-                    </li>
-                    |
-                    <li onClick={() => setCrHeaderVisible(!crHeaderVisible)}>
-                        <a href="#">Năm phát hành</a>
-                    </li>
-                    |
-                    <li onClick={() => setCrHeaderVisible(!crHeaderVisible)}>
-                        <a href="#">Tin tức</a>
-                    </li>
-                    |
-                    <li onClick={() => setCrHeaderVisible(!crHeaderVisible)}>
-                        <a href="#">Giới thiệu</a>
-                    </li>
-                    |
-                    <li>
-                        <a href="#" style={{ color: '#fff', textDecoration: 'none' }}>
-                            Halls Choice
-                        </a>
-                    </li>
-                </ul>
+            <BannerQC />
 
-                {crHeaderVisible && (
-                    <div className="cr">
-                        {/* ... Nội dung cr ... */}
-                    </div>
-                )}
-                {crHeaderVisible && (
-                    <div className="cr1">
-                        {/* ... Nội dung cr1 ... */}
-                    </div>
-                )}
-            </header>
-            <div id="trangchu" >
-                <BannerQC />
+            <div class="trangchu" >
+
 
                 <a href="#" className="xemthem" onClick={(e) => { e.preventDefault(); handleNavigation('/theloai_timphim.html'); }}>
                     <h2>THỊNH HÀNH</h2>
@@ -127,7 +93,9 @@ function TrangChu() {
                     <div className="xemtatca" onClick={() => handleNavigation('/theloai_timphim.html')}>Xem tất cả<i className="fa-solid fa-chevron-right"></i></div>
                 </a>
                 <LazyLoad height={200} offset={100}>{filmHot ? <CreateDisplayList films={filmHot} /> : <></>}</LazyLoad>
-                <ShowDisplay />
+            </div>
+            <ShowDisplay />
+            <div class="trangchu" >
                 <a href="#" className="xemthem" onClick={(e) => { e.preventDefault(); handleNavigation('/tesst_film.html'); }}>
                     <h2>PHIM HOẠT HINH</h2>
                     <div className="xemtatca" onClick={() => handleNavigation('/tesst_film.html')}>Xem tất cả<i className="fa-solid fa-chevron-right"></i></div>
