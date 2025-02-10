@@ -50,7 +50,7 @@
         position: absolute;
         z-index: 3;
         height: 0px;
-        width: 45lvw;
+        width: 37.5lvw;
         background-color: #151515;
         box-sizing: border-box;
         overflow: hidden;
@@ -61,14 +61,19 @@
         video {
             // height: 216px;
             width: 100%;
+            position: absolute;
+            top: 0;
         }
 
         .control {
             position: absolute;
+            padding-bottom: 5px;
             bottom: 0;
             width: 100%;
             color: #fff;
             display: grid;
+            background: linear-gradient(0deg, rgb(0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%);
+            gap: 5px;
 
             div {
                 display: flex;
@@ -80,52 +85,85 @@
                 display: flex;
                 background: none;
                 width: 30%;
+                border: none;
+
+                .xem_ngay {
+                    background-color: #fff;
+                    color: #000;
+
+                }
 
 
                 div {
                     width: 100%;
-                    padding: 5px;
+                    padding: 7px;
                     // height: 36px;
-                    margin-left: 3px;
+                    margin: 0 auto;
                     color: #fff;
                     border: 1px solid #fff;
                     border-radius: 2px;
                     background: none;
                     display: flex;
-                    flex-direction: column;
-                    justify-content: center;
+                    text-align: center;
+                    /* Căn giữa nội dung */
                     align-items: center;
+                    /* Căn dọc */
+                    justify-content: center;
+                    /* Căn ngang */
+                    gap: 5px;
+
+                    * {
+                        display: inline-block;
+                        /* Cho phép nằm ngang */
+                        text-align: center;
+                    }
                 }
+
+                div:hover {
+                    color: #cda208;
+                    border: 1px solid #cda208;
+                }
+
             }
         }
     }
 
-    .display_list {
-        position: relative;
-        display: flex;
-        transform: translateX(var(--trans));
-        transition: all 1s ease;
-        align-items: center;
-        right: -2lvw;
+    .frame {
+
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
 
 
-        .film-container {
-            display: grid;
-            place-content: center;
+
+        .display_list {
+            position: relative;
+            display: flex;
+            transform: translateX(var(--trans));
+            transition: all 1s ease;
+            align-items: center;
+            right: -2lvw;
 
 
-            .img {
-                img {
-                    width: 15lvw;
-                    height: 8.4375lvw;
-                    margin-right: 1lvw;
+            .film-container {
+                display: grid;
+                place-content: center;
+
+
+                .img {
+                    img {
+                        width: 15lvw;
+                        /*tỉ lệ 16:9*/
+                        margin-right: 1lvw;
+                    }
+
                 }
+
+
 
             }
 
-
-
         }
-
     }
+
 }

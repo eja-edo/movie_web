@@ -6,6 +6,11 @@ import './CreateDisplayList.scss';
 
 
 const CreateDisplayList = memo((films) => {
+    const componentRef = useRef(null);
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+
+
     const filmItems = Object.values(films)[0];
     console.log(filmItems)
     const navigate = useNavigate(); // Sử dụng useNavigate trong component
@@ -32,10 +37,11 @@ const CreateDisplayList = memo((films) => {
 
     const next = (button) => {
         const div = button.parentElement.querySelector('div[class = display_list]');
+
         let trans = parseInt(getComputedStyle(div).getPropertyValue('--trans').replace('px', ''), 10) || 0;
         const width = document.documentElement.getBoundingClientRect().width;
-        const divWidth = div.getBoundingClientRect().width;
-        console.log(divWidth)
+        const divWidth = div.scrollWidth;
+        console.log(width, divWidth);
         if (divWidth - trans > width) {
             div.style.setProperty('--trans', `${-80}lvw`);
         }
@@ -67,12 +73,23 @@ const CreateDisplayList = memo((films) => {
 
     var timeOut
     const molen = (element) => {
+        // if (componentRef.current) {
+        //     const { width, height } = componentRef.current.getBoundingClientRect();
+        //     console.log(width, height)
+        //     setDimensions({ width, height });
+        // }
+
         var div = divVideoRef.current
         const width = document.documentElement.clientWidth;
+        const displayWidth = componentRef.current.clientWidth;
+        const thickness = (width - displayWidth) / 2;
+        const thicknessInLvw = (thickness / width) * 100;
+
+
         const divParent = element.parentNode;
         const index = parseInt(divParent.dataset.key, 10) || 0;
         const trans = parseInt(getComputedStyle(divParent).getPropertyValue('--trans').replace('lvw', ''), 10) || 0;
-        div.style.left = `${(+ index * 16) + trans - 15}lvw`;
+        div.style.left = `${(+ index * 16) + trans - 11.25}lvw`;
 
 
         timeOut = setTimeout(() => {
@@ -82,16 +99,16 @@ const CreateDisplayList = memo((films) => {
             const title = filmItems[index]['title']
             const content = `${filmItems[index]['release_date']}|${filmItems[index]['runtime']}|${filmItems[index]['rating']}|${filmItems[index]['views']}`
             setInfoFilm({ 'index': index, 'id': id, 'title': title, 'video': url, 'poster': poster, 'content': content })
-            div.style.height = '27vw';
+            div.style.height = '23lvw';
             // div.style.width = "45lvw";
-            div.style.transition = 'all 0.3s ease'
-            if (index * 16 - 15 < -trans) {
-                div.style.transform = `translateX(${(-trans - (index * 16 - 7.5 * 2))}lvw)`;
+            div.style.transition = 'all 300ms ease';
+            console.log(index * 16 - 11.25 + trans + thickness);
+            if (index * 16 - 11.25 < -trans - thicknessInLvw) {
+                div.style.transform = `translateX(${trans - (index * 16 - 11.25) - thicknessInLvw + 2}lvw)`;
 
-            } else if (index * 16 + 30 > -trans + 100) {
-                div.style.transform = `translateX(-${(index * 16 + 30 - (-trans + 100))}lvw)`;
+            } else if (index * 16 + 26.25 > -trans + 100) {
+                div.style.transform = `translateX(-${index * 16 + 26.25 - (-trans + 100) + thicknessInLvw + 2}lvw)`;
             }
-
             const handleMouseEnter = () => {
                 clearTimeout(timeoutId);
             };
@@ -154,7 +171,7 @@ const CreateDisplayList = memo((films) => {
     // }, [infoFilm['index']])
 
     return (
-        <div className="display">
+        <div className="display" ref={componentRef}>
             <button className="back" onClick={(event) => back(event.currentTarget)}>
                 <i className="fa-solid fa-arrow-left"></i>
             </button>
@@ -168,7 +185,7 @@ const CreateDisplayList = memo((films) => {
                     <h2>{infoFilm.title}</h2>
                     <div>
                         <button onClick={(event) => xem_ngay(event.currentTarget)}>
-                            <div>
+                            <div className='xem_ngay'>
                                 <i className="fa-solid fa-play"></i>
                                 Xem ngay
                             </div>
@@ -189,19 +206,20 @@ const CreateDisplayList = memo((films) => {
                     <p>{infoFilm.content}</p>
                 </div>
             </div>
-            <div className="display_list">
+            <div className='frame'>
+                <div className="display_list">
 
-                {filmItems.map((item, index) => (
-                    <div key={index} data-key={index} className="film-container">
-                        <a className="img" onMouseLeave={(event) => tatdi(event.currentTarget)}
-                            onMouseEnter={(event) => molen(event.currentTarget)} onClick={(event) => handleClickImg(event.currentTarget)} >
-                            <img src={item.poster_url} alt=""
-                            />
-                        </a>
+                    {filmItems.map((item, index) => (
+                        <div key={index} data-key={index} className="film-container">
+                            <a className="img" onMouseLeave={(event) => tatdi(event.currentTarget)}
+                                onMouseEnter={(event) => molen(event.currentTarget)} onClick={(event) => handleClickImg(event.currentTarget)} >
+                                <img src={item.poster_url} alt={item.title}
+                                />
+                            </a>
 
-                    </div>
-                ))}
-
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
