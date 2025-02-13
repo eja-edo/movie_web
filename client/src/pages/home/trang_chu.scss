@@ -8,127 +8,139 @@ $highlight-color: #fff;
 }
 
 #TrangChu {
+  width: 100lvw;
 
-  // Base styles
-  a {
-    color: $highlight-color;
-    text-decoration: none;
-  }
-
-  // Header styles
-  header {
-    height: 100px;
-    width: 100%;
-    position: fixed;
+  .trangchu {
+    width: 94%;
+    position: relative;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.2);
-    z-index: 100;
+    flex-direction: column;
+    margin: 0 auto;
 
-    ul {
-      list-style: none;
-      color: gray;
+
+    // Base styles
+    a {
+      color: $highlight-color;
+      text-decoration: none;
+    }
+
+    // Header styles
+    header {
+      height: 100px;
+      width: 100%;
+      position: fixed;
       display: flex;
-      margin-top: 70px;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.2);
+      z-index: 100;
 
-      li {
-        margin: 0 10px;
-        padding: 0;
-        color: $highlight-color;
-        position: relative;
+      ul {
+        list-style: none;
+        color: gray;
+        display: flex;
+        margin-top: 70px;
+
+        li {
+          margin: 0 10px;
+          padding: 0;
+          color: $highlight-color;
+          position: relative;
+        }
       }
     }
-  }
 
-  // Cr styles
-  .cr {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: none;
-    z-index: 101;
-  }
-
-  .cr1 {
-    position: absolute;
-    top: 20px;
-    width: 200px;
-    height: 300px;
-    background-color: #808080;
-    overflow: visible;
-    display: none;
-    z-index: 102;
-  }
-
-  // Xemthem styles
-  .xemthem {
-    width: 400px;
-    display: flex;
-    color: $highlight-color;
-    text-decoration: none;
-
-    .xemtatca {
-      margin: auto 0 0 10px;
-      transform: translateX(-500px);
-      @include transition-ease();
+    // Cr styles
+    .cr {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none;
+      z-index: 101;
     }
 
-    &:hover .xemtatca {
-      transform: translateX(0);
-    }
-  }
-
-  // Phimqc styles
-  .phimqc {
-    width: 100%;
-    display: flex;
-
-    video {
-      width: 60%;
+    .cr1 {
+      position: absolute;
+      top: 20px;
+      width: 200px;
+      height: 300px;
+      background-color: #808080;
+      overflow: visible;
+      display: none;
+      z-index: 102;
     }
 
-    @media screen and (max-width: 900px) {
-      display: block;
+    // Xemthem styles
+    .xemthem {
+      width: 400px;
+      display: flex;
+      color: $highlight-color;
+      text-decoration: none;
+
+      .xemtatca {
+        margin: auto 0 0 10px;
+        transform: translateX(-500px);
+        @include transition-ease();
+      }
+
+      &:hover .xemtatca {
+        transform: translateX(0);
+      }
+    }
+
+    // Phimqc styles
+    .phimqc {
+      width: 100%;
+      display: flex;
 
       video {
-        width: 100%;
+        width: 60%;
+      }
+
+      @media screen and (max-width: 900px) {
+        display: block;
+
+        video {
+          width: 100%;
+        }
+      }
+      margin-bottom: 20px;
+    }
+
+    .control_movie {
+      button {
+        color: #fff;
+        border: 1px solid #fff;
+        border-radius: 3px;
+        padding: 10px;
+        background: none;
+        font-size: 110%;
+        margin: 5px;
       }
     }
-  }
-
-  .control_movie {
-    button {
-      color: #fff;
-      border: 1px solid #fff;
-      border-radius: 3px;
-      padding: 10px;
-      background: none;
-      font-size: 110%;
-      margin: 5px;
-    }
-  }
 
 
 
-  // Footer styles
-  footer {
-    .container {
-      width: 100%;
-      padding: 20px;
-      margin: 0 auto;
-      background-color: black;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+    // Footer styles
+    footer {
+      .container {
+        width: 100%;
+        padding: 20px;
+        margin: 0 auto;
+        background-color: black;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-    .logo {
-      margin: 0;
-      font-weight: bold;
-      color: $main-color;
+      .logo {
+        margin: 0;
+        font-weight: bold;
+        color: $main-color;
+      }
+
     }
 
   }

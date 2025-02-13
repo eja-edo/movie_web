@@ -1,88 +1,123 @@
-import React, { useState, useEffect } from 'react';
-import './BannerQC.scss';
-import { fetchBannerQC } from '../../services/movieAPI';
-// Component BannerQC riêng biệt
+import React, { useState, useEffect, useRef } from "react";
+import "./BannerQC.scss";
+import { fetchBannerQC } from "../../services/movieAPI";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
 const BannerQC = () => {
-    const [bannerQC, setBannerQC] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    var id_video = 0;
-    // tạo phương thức duy chuyển sang trái cho phần video quảng cáo phim hot
-    function nextVideoQc() {
-        if (id_video < 4) {
-            id_video++;
-            document.getElementById('qc_video').style.transform = 'translateX(' + (id_video * -100) + 'vw)';
-        }
+  const [bannerQC, setBannerQC] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [idVideo, setIdVideo] = useState(0); // Dùng useState để lưu trạng thái vị trí video
+  const qcVideoRef = useRef(null); // Tham chiếu đến phần tử video
+
+  // Chuyển video QC sang trái
+  const nextVideoQc = () => {
+    if (idVideo < 4) {
+      setIdVideo((prev) => prev + 1);
     }
-    // tạo phương thức duy chuyển sang phải cho phần video quảng cáo phim hot
-    function backVideoQc() {
-        if (id_video > 0) {
-            id_video--;
-            document.getElementById('qc_video').style.transform = 'translateX(' + (id_video * -100) + 'vw)';
-        }
+  };
+
+  // Chuyển video QC sang phải
+  const backVideoQc = () => {
+    if (idVideo > 0) {
+      setIdVideo((prev) => prev - 1);
     }
+  };
 
-    useEffect(() => {
-        const getMovies = async () => {
-            try {
-                const data = await fetchBannerQC();
-                setBannerQC(data);
-            } catch (error) {
-                setError(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        getMovies();
-    }, []); // Chỉ chạy fetch một lần khi component mount
+  // Cập nhật vị trí video khi idVideo thay đổi
+  useEffect(() => {
+    if (qcVideoRef.current) {
+      qcVideoRef.current.style.transform = `translateX(${idVideo * -100}vw)`;
+    }
+  }, [idVideo]);
 
-    if (loading) { return (<div>is loading...</div>) }
-    if (error) { return (<div>{error}</div>) }
+  useEffect(() => {
+    const getMovies = async () => {
+      try {
+        const data = await fetchBannerQC();
+        setBannerQC(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getMovies();
+  }, []);
 
-    return (
-        <div id='bannerQC'>
-            <div id="qc">
-                <div id="qc_video">
-                    {bannerQC.slice(0, 5).map((item, index) => (
-                        <div key={index} className="if_video"
-                        // onMouseOver={(event) => { event.currentTarget.querySelector('video').play() }}
-                        //     onMouseOut={(event) => { event.currentTarget.querySelector('video').pause() }}
-                        >
-                            <video src={item.trailer_url} autoPlay loop muted />
-                            <div className="bottom_backgroud" />
-                            <div className="info">
-                                <h1>{item.title}</h1>
-                                <p>{item.description}</p>
-                            </div>
-                        </div>
-                    ))}
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div id="bannerQC">
+      <div id="qc">
+        <div id="qc_video" ref={qcVideoRef}>
+          {bannerQC.slice(0, 5).map((item, index) => (
+            <div key={index} className="if_video">
+              <video src={item.trailer_url} autoPlay loop muted />
+              <div className="bottom_backgroud" />
+              <div className="info">
+                <h1
+                  className="banner_name"
+                  style={{ textAlign: "center", marginBottom: "10px" }}
+                >
+                  {item.title}
+                </h1>
+                <p
+                  className="banner_info"
+                  style={{ textAlign: "center", margin: "0 10% 20px" }}
+                >
+                  {item.description}
+                </p>
+
+                {/* Nút chuyển video */}
+                <div className="banner-container">
+                  <div
+                    id="back_video_qc"
+                    onClick={backVideoQc}
+                    className="control-button left"
+                  >
+                    <FaChevronLeft size={50} />
+                  </div>
+
+                  <div
+                    id="next_video_qc"
+                    onClick={nextVideoQc}
+                    className="control-button right"
+                  >
+                    <FaChevronRight size={50} />
+                  </div>
                 </div>
 
+                <div
+                  className="control_movie"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <a href="film.html">
+                    <div
+                      className="btn-watch"
+                      style={{ background: "red", border: "2px solid red" }}
+                    >
+                      <i className="fa-solid fa-play"></i> Xem Ngay
+                    </div>
+                  </a>
+                  <a href="mtphim.html">
+                    <div>
+                      <i className="fa-regular fa-lightbulb"></i> Chi tiết
+                    </div>
+                  </a>
+                </div>
+              </div>
             </div>
-            <div id="control">
-                <div className="control_movie" style={{ marginLeft: '20px' }}>
-                    <a href="film.html">
-                        <div style={{ color: 'black', backgroundColor: '#fff' }}>
-                            <i className="fa-solid fa-play"></i>Xem Ngay
-                        </div>
-                    </a>
-                    <a href="mtphim.html">
-                        <div>
-                            <i className="fa-regular fa-lightbulb"></i>Chi tiết
-                        </div>
-                    </a>
-                </div>
-                <div id="control_div">
-                    <a id="back_video_qc" onClick={() => backVideoQc()}>
-                        <i className="fa-solid fa-chevron-left"></i>
-                    </a>
-                    <a id="next_video_qc" onClick={() => nextVideoQc()}>
-                        <i className="fa-solid fa-chevron-right"></i>
-                    </a>
-                </div>
-            </div>
+          ))}
         </div>
-
-    );
+      </div>
+    </div>
+  );
 };
+
 export default BannerQC;

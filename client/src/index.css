@@ -21,6 +21,10 @@ html {
     width: 100%;
     position: relative;
     min-height: 100lvh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 ::-webkit-scrollbar {

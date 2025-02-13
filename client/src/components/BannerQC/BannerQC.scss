@@ -3,6 +3,7 @@
         overflow: hidden;
         display: flex;
 
+
         #qc_video {
             display: flex;
             transform: translateX(0);
@@ -15,12 +16,17 @@
         transform: translateX(0);
         width: 100vw;
 
+
         video {
             width: 100vw;
+            height:100%;
+            border-radius: 12px;
+            position: sticky;
         }
     }
 
     .bottom_backgroud {
+    
         position: absolute;
         bottom: 0;
         background-image: linear-gradient(0deg, #111 0, rgba(17, 17, 17, 0) 82%);
@@ -32,14 +38,15 @@
         position: absolute;
         bottom: 0;
         color: #fff;
-        width: 80%;
+        width: 100%;
+        margin-bottom: 10%;
     }
 
     #control {
         background-color: rgba(17, 17, 17, 0.99); // Corrected value
         color: #fff;
         position: relative;
-        width: 100vw;
+        width: 100%;
         height: 50px;
 
         #control_div {
@@ -84,3 +91,24 @@
         }
     }
 }
+
+.banner-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .control-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .left {
+    left: 10px;
+  }
+  
+  .right {
+    right: 10px;
+  }
+  
