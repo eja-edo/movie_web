@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import './FilmList.css';
+import React, {useState, useEffect} from "react";
+import "./FilmList.css";
 
 const FilmList = (films) => {
     films = Object.values(films)[0];
@@ -16,38 +16,36 @@ const FilmList = (films) => {
 
     return (
         <div id="hh2">
-            {Array.isArray(films) ? films.map((item, index) => (
-                <a
-                    href="mtphim.html"
-                    className="max_scanner_img"
-                    key={index}
-                    onMouseEnter={() => handleMouseEnter(index)}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <div>
-                        <img src={item.poster_url} alt={item.title} />
-                        <video
-                            loop
-                            autoPlay
-                            muted
-                            style={{ display: hoveredIndex === index ? 'block' : 'none' }}
-                            src={hoveredIndex === index ? item.trailer_url : null} // Chỉ đặt src khi hover
-                        />
+            {Array.isArray(films) ? (
+                films.map((item, index) => (
+                    <a href="mtphim.html" className="max_scanner_img" key={index} onMouseEnter={() => handleMouseEnter(index)} onMouseLeave={handleMouseLeave}>
                         <div>
-                            <h4>{item.title}</h4>
+                            <img src={item.poster_url} alt={item.title} />
+                            <video
+                                loop
+                                autoPlay
+                                muted
+                                style={{display: hoveredIndex === index ? "block" : "none"}}
+                                src={hoveredIndex === index ? item.trailer_url : null} // Chỉ đặt src khi hover
+                            />
                             <div>
-                                <p style={{ display: 'none' }}>{item.id}</p>
-                                <p>
-                                    {item.rating} {item.views}
-                                </p>
-                                <p>
-                                    {item.release_date} | {item.runtime}
-                                </p>
+                                <h4>{item.title}</h4>
+                                <div>
+                                    <p style={{display: "none"}}>{item.id}</p>
+                                    <p>
+                                        {item.rating} {item.views}
+                                    </p>
+                                    <p>
+                                        {item.release_date} | {item.runtime}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </a>
-            )) : <></>}
+                    </a>
+                ))
+            ) : (
+                <></>
+            )}
         </div>
     );
 };
