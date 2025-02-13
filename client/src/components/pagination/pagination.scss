@@ -1,0 +1,40 @@
+// components/Pagination/pagination.scss
+.pagination {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+    padding: 10px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+
+    button {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 12px 18px;
+        margin: 0 2px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &.active {
+            background-color: #e91e63;
+            color: #fff;
+        }
+
+        &:hover:not(.active) {
+            background-color: #444;
+        }
+
+        &:disabled {
+            cursor: default;
+            background-color: transparent;
+        }
+    }
+
+    span {
+        color: #fff;
+        padding: 5px 10px;
+    }
+}
