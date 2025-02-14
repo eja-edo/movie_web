@@ -4,20 +4,33 @@ import "./intro.scss";
 function Intro() {
   return (
     <div className="intro-container">
-      <h1>duong</h1>
       <div>
         <img
-          src="https://example.com/image1.jpg"
+          src="http://127.0.0.1:8000/static/assets/img/img_duong/intro2.png"
+          id="introimg1"
           alt="Phim25 logo with cartoon characters"
         />
         <p>
-          Phim25 là một trong những trang web xem phim trực tuyến hàng đầu tại
-          Việt Nam, được nhiều người yêu thích bởi kho phim phong phú và tiện
-          ích vượt trội. Với mục tiêu mang đến những phút giây giải trí tuyệt
-          vời, Phim25 ngày càng khẳng định vị thế của mình trong cộng đồng yêu
-          phim.
+          Phim25 là một trong những trang web xem phim trực tuyến được xây dựng
+          bởi nhóm sinh viên Nguyễn Hải Dương, Vũ Nguyễn Duy Anh, Phạm Ngọc
+          Khánh Duy. Với mục tiêu mang đến những phút giây giải trí tuyệt vời,
+          Phim25 đảm bảo sẽ là một nơi giải trí hoàn hảo cho mọi người có nhu
+          cầu giải trí.
         </p>
-        <img src="https://example.com/image2.jpg" alt="Detective Conan image" />
+        <div id="intro_three">
+          <img
+            src="http://127.0.0.1:8000/static/assets/img/img_duong/intro3.png"
+            id="introimg2"
+          />
+          <img
+            src="http://127.0.0.1:8000/static/assets/img/img_duong/intro4.png"
+            id="introimg3"
+          />
+          <img
+            src="http://127.0.0.1:8000/static/assets/img/img_duong/intro5.png"
+            id="introimg4"
+          />
+        </div>
         <p>
           Phim25 sở hữu một thư viện phim khổng lồ với đa dạng thể loại, từ hành
           động, khoa học viễn tưởng, kinh dị, tình cảm cho đến hoạt hình. Đặc
@@ -41,9 +54,9 @@ function Intro() {
         <p>
           Phim25 là lựa chọn lý tưởng cho những ai muốn tận hưởng không gian
           giải trí tại nhà mà không tốn kém. Với kho phim đồ sộ, chất lượng cao
-          và trải nghiệm người dùng mượt mà, trang web này hứa hẹn mang đến
-          những phút giây thư giãn tuyệt vời cho mọi đối tượng khán giả. Nếu bạn
-          là một người yêu phim, đừng bỏ lỡ cơ hội khám phá Phim25!
+          và trải nghiệm người dùng mượt mà, trang web này hứa hẹn mang đến cho
+          người xem những phút giây thư giãn tuyệt vời cho mọi đối tượng khán
+          giả. Nếu bạn là một người yêu phim, đừng bỏ lỡ cơ hội khám phá Phim25!
         </p>
       </div>
     </div>
