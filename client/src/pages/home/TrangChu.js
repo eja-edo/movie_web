@@ -42,6 +42,7 @@ function TrangChu() {
           fetchDisplayList("http://127.0.0.1:8000/service/get_thinhhanh/"),
           fetchDisplayListByGenre10("Phim hành động"),
         ]);
+        // cập nhật state
         setFilmth(thinhHanhData);
         setFilmhot(filmHotData);
         setFilmHH(filmHoatHinhData);
@@ -220,7 +221,7 @@ function TrangChu() {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              marginBottom: "100px",
+              
             }}
           >
             <img
