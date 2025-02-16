@@ -1,0 +1,33 @@
+.sort {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; // Đẩy dropdown sang phải
+    gap: 10px;
+    font-size: 16px;
+    color: white;
+
+    &__label {
+        font-weight: bold;
+    }
+
+    &__select {
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: 1px solid #555;
+        background-color: #222;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background-color: #333;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: #ff3377; // Viền màu hồng nhạt khi focus
+            box-shadow: 0 0 5px rgba(255, 33, 107, 0.75); // Hiệu ứng phát sáng nhẹ
+        }
+    }
+}
