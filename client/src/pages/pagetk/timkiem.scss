@@ -1,0 +1,22 @@
+.show-display-container {
+    position: relative; /* Đặt ShowDisplay là relative */
+    z-index: 1; /* Giữ nó phía trước */
+  }
+  
+  .no-results {
+    width: 80%;
+    position: relative; /* Không còn absolute */
+    color: white;
+    margin-left: 5%;
+    padding: 20px;
+    margin-top: 5%; /* Tạo khoảng cách với ShowDisplay */
+    line-height:1.5;
+  }
+  #tk1{
+    color:gray;
+  line-height:1.5;
+  margin-left: 5%;
+  }
+#timkiempage{
+    width: 100%;
+  }

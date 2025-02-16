@@ -55,65 +55,74 @@ const BannerQC = () => {
           {bannerQC.slice(0, 5).map((item, index) => (
             <div key={index} className="if_video">
               <video src={item.trailer_url} autoPlay loop muted />
-              <div className="bottom_backgroud" />
-              <div className="info">
-                <h1
-                  className="banner_name"
-                  style={{ textAlign: "center", marginBottom: "10px" }}
-                >
-                  {item.title}
-                </h1>
-                <p
-                  className="banner_info"
-                  style={{ textAlign: "center", margin: "0 10% 20px" }}
-                >
-                  {item.description}
-                </p>
-
-                {/* Nút chuyển video */}
-                <div className="banner-container">
-                  <div
-                    id="back_video_qc"
-                    onClick={backVideoQc}
-                    className="control-button left"
-                  >
-                    <FaChevronLeft size={50} />
-                  </div>
-
-                  <div
-                    id="next_video_qc"
-                    onClick={nextVideoQc}
-                    className="control-button right"
-                  >
-                    <FaChevronRight size={50} />
-                  </div>
-                </div>
-
-                <div
-                  className="control_movie"
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    gap: "10px",
-                  }}
-                >
-                  <a href="film.html">
-                    <div
-                      className="btn-watch"
-                      style={{ background: "red", border: "2px solid red" }}
-                    >
-                      <i className="fa-solid fa-play"></i> Xem Ngay
-                    </div>
-                  </a>
-                  <a href="mtphim.html">
-                    <div>
-                      <i className="fa-regular fa-lightbulb"></i> Chi tiết
-                    </div>
-                  </a>
-                </div>
-              </div>
             </div>
           ))}
+        </div>
+        <div className="bottom_backgroud" />
+        <div className="info">
+          <h1
+            className="banner_name"
+            style={{
+              textAlign: "center",
+              marginBottom: "10px",
+              fontSize: "2.6rem",
+            }}
+          >
+            {bannerQC[idVideo].title}
+          </h1>
+          <p
+            className="banner_info"
+            style={{
+              width: "80%",
+              textAlign: "center",
+              margin: "0 10% 30px",
+              fontSize: "1.3rem",
+            }}
+          >
+            {bannerQC[idVideo].description}
+          </p>
+
+          {/* Nút chuyển video */}
+
+          <div
+            className="control_movie"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "10px",
+            }}
+          >
+            <a href="film.html">
+              <div
+                className="btn-watch"
+                style={{ background: "red", border: "2px solid red" }}
+              >
+                <i className="fa-solid fa-play"></i> Xem Ngay
+              </div>
+            </a>
+            <a href="mtphim.html">
+              <div>
+                <i className="fa-regular fa-lightbulb"></i> Chi tiết
+              </div>
+            </a>
+          </div>
+          <div className="banner-container">
+            <div
+              id="back_video_qc"
+              onClick={backVideoQc}
+              className="control-button left"
+            >
+              <FaChevronLeft size={50} />
+            </div>
+
+            <div
+              id="next_video_qc"
+              onClick={nextVideoQc}
+              className="control-button right"
+            >
+              <FaChevronRight size={50} />
+            </div>
+          </div>
         </div>
       </div>
     </div>

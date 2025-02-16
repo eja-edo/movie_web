@@ -1,34 +1,94 @@
-$highlight-color: #fff;
-
-footer {
+.footer-container {
     background-color: #000;
+    color: #fff;
+    padding: 20px;
+    width: 100%;
 
-    .footer {
 
+    .footer-content {
         display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
+       margin-left: 4%;
+       margin-right:4%;
+        .footer-nav {
+            display:contents;
+            flex-wrap:wrap;
+            margin: auto;
+            line-height: 1.5;
+            
+            .nav-column {
+                flex: 1;
+                margin: 1%;
 
+                h4 {
+                    margin-bottom: 10px;
+                }
+                
 
-        .contact-info {
-            color: #777;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-direction: column;
-            margin-right: 50px;
-
-            .nav-link {
-                margin-bottom: 10px;
-                color: $highlight-color;
-                text-decoration: none;
+                ul {
+                    list-style-type: none;
+                    padding: 0;
+                
+                    li {
+                        margin: 5px 0;
+                        transition: color 0.3s ease-in-out; // Hiệu ứng màu mượt hơn
+                        color: gray;
+                        &:hover {
+                            color: white; // Chỉ thay đổi màu của li đang được hover
+                        }
+                    }
+                }
+                
             }
         }
-
     }
+    .ft-cuoi {
+        
+        width: 100%;
+        position: relative;
+        color: gray;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        font-size: 0.7rem;
+    }
+    
+    .footer-bottom {
+        margin-left: 5%;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .footer-links {
+        margin-right: 5%;
+        display: flex;
+        gap: 20px;
+    }
+    
+    .footer-links a {
+        color: gray;
+        text-decoration: none;
+    }
+    
+    .footer-links a:hover {
+        text-decoration: underline;
+    }
+    
+}
+.social-links {
+    display: flex;
+    justify-content: left;
+    margin-bottom: 20px;
 
-    .qr-code {
-        margin-top: 20px;
+    a {
+      margin: 0 10px;
+      color: white;
+      font-size: 30px;
+      transition: color 0.3s;
+      
+      &:hover {
+        color: #89caff;
+      }
     }
 }
