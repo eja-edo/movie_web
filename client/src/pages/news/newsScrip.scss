@@ -1,0 +1,46 @@
+#newsScrip {
+    position: relative;
+    padding-top: 60px;
+    width: 85%;
+    height: 100%;
+    padding-bottom: 120px;
+    background-color: #000;
+
+    #topNews {
+        display: grid;
+        /* Sử dụng Grid */
+        grid-template-columns: 60% 40%;
+        /* Chia thành 2 cột với tỷ lệ 80% và 20% */
+        width: 100%;
+        background-color: #fff;
+        color: #000;
+        font-size: medium;
+
+        #content {
+            padding: 10px;
+            margin: auto;
+        }
+
+
+
+    }
+
+    #ListNews {
+
+        display: grid;
+        grid-gap: 10px;
+
+        .itemNews {
+            display: grid;
+            /* Sử dụng Grid */
+            grid-template-columns: 20% 80%;
+            /* Chia thành 2 cột với tỷ lệ 80% và 20% */
+            width: 100%;
+
+            font-size: small;
+        }
+    }
+
+
+
+}
