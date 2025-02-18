@@ -359,3 +359,15 @@ def searchview(request):
         return JsonResponse({'movies': list(movies)}, safe=False)
     except Exception as e:
         return Response(status=400, data={'detail': str(e)})
+    
+def serve_html(request):
+    # Đường dẫn đến file HTML cần gửi
+    file_path = os.path.join('static', 'assets', 'docx', 'flow.html')
+
+    # Đọc nội dung file HTML
+    if os.path.exists(file_path):
+        with open(file_path, 'r', encoding='utf-8') as file:
+            html_content = file.read()
+        return HttpResponse(html_content, content_type="text/html")
+    else:
+        return HttpResponse("File not found", status=404)
