@@ -125,13 +125,13 @@ SOCIALACCOUNT_PROVIDERS['facebook']['APP'] = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+  
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+   'corsheaders.middleware.CorsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
     
 ]
@@ -225,6 +225,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
+     os.path.join(BASE_DIR, 'static'),
 ]
 
 

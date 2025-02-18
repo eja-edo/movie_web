@@ -305,6 +305,7 @@ function Film() {
         <div className="cmt">
           <h2>Bình Luận</h2>
         </div>
+
         <div className="container_display">
           <h2>Phim đề cử</h2>
           {films ? <CreateDisplayList films={films} /> : <></>}
