@@ -181,7 +181,7 @@ function Nav() {
         <img
           src="http://127.0.0.1:8000/static/assets//img/img_duong/logoweb.png"
           alt=""
-          style={{ width: "9%", height: "auto", cursor: "pointer" }}
+          style={{ width: "6%", height: "auto", cursor: "pointer" }}
           onClick={() => {
             navigate("/TrangChu");
           }}
