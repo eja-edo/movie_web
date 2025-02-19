@@ -1,5 +1,6 @@
 from django.urls import path, include
 from . import views
+
 from .views import  TestAPIview , getFilm , GetDetailMovie, stream_video_view
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -23,4 +24,5 @@ urlpatterns =[
     path('api/video/', stream_video_view, name='stream_video'),
     path('detailMovie/', GetDetailMovie.as_view(), name='detail'),
     path('searchkeys/',views.searchview, name = 'searchkey'),
+     path('api/get-html/', views.serve_html, name='serve_html'),
 ]

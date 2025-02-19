@@ -13,6 +13,7 @@ import Filter from "./pages/filter/filter.js";
 import Page404 from "./pages/page404/page404.js";
 import Timkiem from "./pages/pagetk/timkiem.js";
 import Intro from "./pages/intro/intro.js";
+
 import CategoryPage from "./pages/CategoryPage/CategortPage.js";
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
             <FooterComponents />
         </BrowserRouter>
     );
+
 }
 
 export default App;
