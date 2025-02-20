@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db import connection
 from django.http import JsonResponse,HttpResponse
-from .models import Movies , Genres , Episodes, Actors, Directors, Moviedirectors, Movieactors, ProfileUser
+from .models import Movies , Genres , Episodes, Actors, Directors, Moviedirectors, Movieactors 
 from datetime import datetime
 from django.views.decorators.csrf import csrf_protect
 from rest_framework.views import APIView
@@ -100,7 +100,8 @@ def get_banner_qc(request):
 def get_films_by_genre10(request):
     data = json.loads(request.body)
     genre = data.get('genre')
-    movies = Movies.objects.filter(genre__name = genre)[:10]
+    movies = Movies.objects.filter(moviegenres__genre_id=1)[:10]
+
 
     if movies:  # Kiểm tra xem danh sách phim có rỗng hay không
         serializer = MovieSerializer(movies, many=True)

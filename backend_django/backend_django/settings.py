@@ -221,16 +221,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 import os
 STATIC_URL = 'static/'
-
-
 STATICFILES_DIRS = [
     BASE_DIR / "static",
      os.path.join(BASE_DIR, 'static'),
 ]
-
-
 # Thư mục để collectstatic sao chép các tệp tĩnh vào
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# URL để truy cập media
+MEDIA_URL = '/media/'
+
+# Đường dẫn thư mục lưu trữ file media trên server
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type
