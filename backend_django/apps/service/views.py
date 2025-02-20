@@ -360,14 +360,33 @@ def searchview(request):
     except Exception as e:
         return Response(status=400, data={'detail': str(e)})
     
-def serve_html(request):
-    # Đường dẫn đến file HTML cần gửi
-    file_path = os.path.join('static', 'assets', 'docx', 'flow.html')
 
-    # Đọc nội dung file HTML
+def serve_html(request):
+    # if not file_name.endswith('.html'):
+    #     return HttpResponse("Invalid file type", status=400)
+    
+    file_path = os.path.join(settings.BASE_DIR,"static/assets/docx/melo2/melo2.html")
+   # sử dụng đường dẫn thay thế cho path join 
+
+    # In ra để kiểm tra
+    print(f"📌 Checking file path: {file_path}")
+
     if os.path.exists(file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             html_content = file.read()
         return HttpResponse(html_content, content_type="text/html")
     else:
-        return HttpResponse("File not found", status=404)
+        return HttpResponse(f"🚨 File not found: {file_path}", status=404)
+    
+
+# def serve_html(request):
+#     # Đường dẫn đến file HTML cần gửi
+#     file_path = os.path.join('static', 'assets', 'docx', 'flow.html')
+
+#     # Đọc nội dung file HTML
+#     if os.path.exists(file_path):
+#         with open(file_path, 'r', encoding='utf-8') as file:
+#             html_content = file.read()
+#         return HttpResponse(html_content, content_type="text/html")
+#     else:
+#         return HttpResponse("File not found", status=404)
