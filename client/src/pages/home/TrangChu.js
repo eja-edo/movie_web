@@ -33,13 +33,13 @@ function TrangChu() {
           filmLeData,
           filmHanhDongData,
         ] = await Promise.all([
-          fetchDisplayList("http://127.0.0.1:8000/service/get_thinhhanh/"),
-          fetchDisplayList("http://127.0.0.1:8000/service/get_phimhot_10/"),
+          fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
+          fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_phimhot_10/`),
           fetchDisplayListByGenre10("Phim hoạt hình"),
-          fetchDisplayList("http://127.0.0.1:8000/service/get_thinhhanh/"),
+          fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
           fetchDisplayListByGenre10("Phim tình cảm"),
           fetchDisplayListByGenre10("Phim kinh dị"),
-          fetchDisplayList("http://127.0.0.1:8000/service/get_thinhhanh/"),
+          fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
           fetchDisplayListByGenre10("Phim hành động"),
         ]);
         // cập nhật state
@@ -221,7 +221,7 @@ function TrangChu() {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              
+
             }}
           >
             <img

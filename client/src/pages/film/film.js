@@ -63,6 +63,7 @@ function Film() {
         },
     });
     //    const videoRef = useRef(null);
+
     console.log(id1, id2)
 
     // const VideoPlayer = ({ movieId, episodeNum }) => {
@@ -247,7 +248,7 @@ function Film() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/')
+                const response = await fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`)
                 setfilms(response);
             } catch (error) {
                 console.error(error);

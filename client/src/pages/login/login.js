@@ -99,7 +99,7 @@ function Login() {
             const fetchinfouser = async () => {
                 try {
                     const accessToken = localStorage.getItem('accessToken');
-                    const response = await fetch(`http://localhost:8000/user/getDetail/`, { // Use template literal
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/user/getDetail/`, { // Use template literal
                         method: 'GET', // Use GET request to fetch film details
                         headers: {
                             "Authorization": `Bearer ${accessToken}`,

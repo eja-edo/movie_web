@@ -11,7 +11,7 @@ export const fetchBannerQC = async () => {
             headers: myHeaders,
             redirect: 'follow'
         };
-        const response = await fetch('http://127.0.0.1:8000/service/get_banner_qc/', requestOptions)
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/service/get_banner_qc/`, requestOptions)
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -42,7 +42,7 @@ export const fetchDisplayList = async (url) => { // sau sẽ thay url thành th�
 
 export const fetchDisplayListByGenre10 = async (genre) => { // sau sẽ thay url thành thể loại ...
     try {
-        const response = await fetch('http://127.0.0.1:8000/service/get_films_by_genre10/', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/service/get_films_by_genre10/`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -67,7 +67,7 @@ export const fetchFilmData = async (id, navigate, retry = false) => {
         const accessToken = localStorage.getItem('accessToken');
         console.log('Fetching data for movie ID:', id);
 
-        const response = await fetch(`http://localhost:8000/service/detailMovie/`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/service/detailMovie/`, {
             method: 'POST', // Sử dụng phương thức POST theo yêu cầu của API
             headers: {
                 "Content-Type": "application/json",
@@ -111,7 +111,7 @@ export const fetchFilmData = async (id, navigate, retry = false) => {
 export const fetchVideoData = async (id1, id2, navigate, retry = false) => {
     try {
         const accessToken = localStorage.getItem('accessToken');
-        const response = await fetch(`http://localhost:8000/service/film/`, { // Use template literal
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/service/film/`, { // Use template literal
             method: 'POST', // Use GET request to fetch film details
             headers: {
                 "Content-Type": "application/json",
