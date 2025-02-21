@@ -24,6 +24,8 @@ urlpatterns =[
     path('api/video/', stream_video_view, name='stream_video'),
     path('detailMovie/', GetDetailMovie.as_view(), name='detail'),
     path('searchkeys/',views.searchview, name = 'searchkey'),
-    path('get-html/', serve_html),
+    path('get-html/<int:id>/', serve_html, name='serve_html'),  # Nhận id từ URL
 ]
+
+
 

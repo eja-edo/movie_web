@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // Nếu bạn dùng react-router
 import "./contintuc.scss";
 
 const TTcon = () => {
-  const { folder, file } = useParams(); // Lấy folder và file từ URL
   const [htmlContent, setHtmlContent] = useState("");
+  const id = 12; // Gán cố định ID = 1
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/service/get-html/")
+    fetch(`http://127.0.0.1:8000/service/get-html/${id}/`) // Đúng đường dẫn Django mong đợi
       .then((response) => response.text())
       .then((data) => setHtmlContent(data))
       .catch((error) => console.error("Error fetching HTML:", error));
-  }, [folder, file]);
+  }, []);
 
   return (
     <div className="ttcon">
