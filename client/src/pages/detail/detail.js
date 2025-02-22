@@ -31,7 +31,7 @@ const MovieDetails = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`)
+                const response = await movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`)
                 setFilms(response);
             } catch (error) {
                 console.error(error);

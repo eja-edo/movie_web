@@ -8,7 +8,7 @@ import VideoPlayer from "../../components/VideoPlayer.js";
 import movieAPI from "../../services/movieAPI.js";
 
 // const Film = ({ movieId, episodeNum }) => {
-//     // const videoUrl = `http://localhost:8000/service/film/`; // Endpoint của API Django
+//     // const videoUrl = `http://localhost:8000/movies/film/`; // Endpoint của API Django
 
 //     // const getVideoUrl = async () => {
 //     //     try {
@@ -43,7 +43,7 @@ import movieAPI from "../../services/movieAPI.js";
 //         id="videoPlayer"
 //         controls
 //         style={{ width: "100%" }}
-//         src={`${process.env.REACT_APP_API_URL}/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4`}
+//         src={`${process.env.REACT_APP_API_URL}/movies/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4`}
 //     />;
 // };
 // export default Film;
@@ -125,7 +125,7 @@ function Film() {
   //     // const fetchVideoData = async (id1, id2, navigate, retry = false) => {
   //     //     try {
   //     //         const accessToken = localStorage.getItem('accessToken');
-  //     //         const response = await fetch(`http://localhost:8000/service/film/`, {
+  //     //         const response = await fetch(`http://localhost:8000/movies/film/`, {
   //     //             method: 'POST',
   //     //             headers: {
   //     //                 "Content-Type": "application/json",
@@ -241,7 +241,7 @@ function Film() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`)
+        const response = await movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`)
         setfilms(response);
       } catch (error) {
         console.error(error);
@@ -270,7 +270,7 @@ function Film() {
     <div id="container_film">
       <div id="film">
         <video
-          src={`${process.env.REACT_APP_API_URL}/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4`}
+          src={`${process.env.REACT_APP_API_URL}/movies/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4`}
           // src={film}
           controls
           style={{

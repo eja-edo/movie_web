@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from apps.movies.models import Movies, Episodes
 
 # Create your models here.
 class ProfileUser(models.Model):
@@ -14,3 +14,38 @@ class ProfileUser(models.Model):
     class Meta:
         managed = False
         db_table = 'profile_user'
+
+class Reviews(models.Model):
+    movie = models.ForeignKey('movies.Movies', models.DO_NOTHING)  # The composite primary key (movie_id, user_id) found, that is not supported. The first column is selected.
+    user = models.ForeignKey(ProfileUser, models.DO_NOTHING)
+    rating = models.FloatField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
+    create_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'reviews'
+        unique_together = (('movie', 'user'),)
+
+class Watchlists(models.Model):
+    view_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(ProfileUser, models.DO_NOTHING, blank=True, null=True)
+    movie = models.ForeignKey('movies.Movies', models.DO_NOTHING, blank=True, null=True)
+    watch_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'watchlists'
+
+class Comments(models.Model):
+    comment_id = models.AutoField(primary_key=True)
+    episode = models.ForeignKey('movies.Episodes', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey('ProfileUser', models.DO_NOTHING, blank=True, null=True)
+    content = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'comments'
+
+

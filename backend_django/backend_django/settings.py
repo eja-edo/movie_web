@@ -39,10 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Các ứng dụng của dự án
+    'apps.movies',
+    'apps.news',
+    'apps.core',
+    'apps.piomotions',
+    'apps.people',
     'apps.service',
     'apps.users',
-    'apps.watchlist',
   
+    # Các ứng dụng bên ngoài
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',

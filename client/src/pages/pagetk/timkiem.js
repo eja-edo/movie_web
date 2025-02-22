@@ -11,7 +11,7 @@ function Timkiem() {
     const fetchData = async () => {
       try {
         const [myListData] = await Promise.all([
-          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`),
         ]);
         setMylist(myListData);
       } catch (error) {

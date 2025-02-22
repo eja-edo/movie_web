@@ -13,7 +13,7 @@ const movieAPI = {
                 headers: myHeaders,
                 redirect: 'follow'
             };
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/service/get_banner_qc/`, requestOptions)
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/movies/get_banner_qc/`, requestOptions)
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -28,7 +28,7 @@ const movieAPI = {
 
     getTopGenres: async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/service/get_top_genres/`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/movies/get_top_genres/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -64,7 +64,7 @@ const movieAPI = {
     },
     getDisplayListByGenre10: async (genre_id) => { // sau sẽ thay url thành thể loại ...
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/service/get_films_by_genre10/`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/movies/get_films_by_genre10/`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const movieAPI = {
             const accessToken = localStorage.getItem('accessToken');
             console.log('Fetching data for movie ID:', id);
 
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/service/detailMovie/`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/movies/detailMovie/`, {
                 method: 'POST', // Sử dụng phương thức POST theo yêu cầu của API
                 headers: {
                     "Content-Type": "application/json",
@@ -129,7 +129,7 @@ const movieAPI = {
     getVideoData: async (id1, id2, navigate, retry = false) => {
         try {
             const accessToken = localStorage.getItem('accessToken');
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/service/film/`, { // Use template literal
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/movies/film/`, { // Use template literal
                 method: 'POST', // Use GET request to fetch film details
                 headers: {
                     "Content-Type": "application/json",
@@ -176,7 +176,7 @@ const movieAPI = {
                 redirect: "follow"
             };
 
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/service/searchkeys/`, requestOptions)
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/movies/searchkeys/`, requestOptions)
             if (response.ok) {
                 const result = await response.json();
                 return result['movies']

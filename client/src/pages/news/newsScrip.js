@@ -7,7 +7,7 @@ function NewsScrip() {
   const [newsList, setNewsList] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/service/get-news/")
+    fetch("http://127.0.0.1:8000/news/get-news/")
       .then((response) => response.json())
       .then((data) => {
         console.log("📌 News fetched:", data);

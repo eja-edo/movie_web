@@ -222,5 +222,3 @@ CREATE TABLE news (
 --     CONSTRAINT check_title_length CHECK (length(title) > 0)  -- Ràng buộc tiêu đề không trống
 -- );
 
-
-
