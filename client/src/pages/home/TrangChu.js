@@ -49,13 +49,13 @@ function TrangChu() {
           filmLeData,
           filmHanhDongData,
         ] = await Promise.all([
-          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
-          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_phimhot_10/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_phimhot_10/`),
           movieAPI.getDisplayListByGenre10(TopGenres[0]?.genre_id || ""), // Kiểm tra dữ liệu trước khi truy cập
-          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`),
           movieAPI.getDisplayListByGenre10(TopGenres[1]?.genre_id || ""),
           movieAPI.getDisplayListByGenre10(TopGenres[2]?.genre_id || ""),
-          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`),
           movieAPI.getDisplayListByGenre10(TopGenres[3]?.genre_id || ""),
         ]);
 

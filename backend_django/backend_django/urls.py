@@ -24,7 +24,11 @@ urlpatterns = [
     path('service/', include('apps.service.urls')),
     path('user/',include('apps.users.urls')),
     path('accounts/', include('allauth.urls')),
-    path('watchlist/', include('apps.watchlist.urls')),
-   
+    path('movies/', include('apps.movies.urls')),
+    path('news/', include('apps.news.urls')),
+    path('people/', include('apps.people.urls')),
+    path('piomotions/', include('apps.piomotions.urls')),
+    path('core/', include('apps.core.urls')),
+
     
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

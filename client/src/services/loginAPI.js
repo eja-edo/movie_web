@@ -1,6 +1,6 @@
 export const API_GENRES_HOT = async () => {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/service/get_genres_hot/`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/movies/get_genres_hot/`, {
             method: 'GET',
             redirect: 'follow',
         });
