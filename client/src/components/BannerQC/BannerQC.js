@@ -79,7 +79,9 @@ const BannerQC = () => {
               fontSize: "1.3rem",
             }}
           >
-            {bannerQC[idVideo].description}
+            {bannerQC[idVideo].description.length > 300
+              ? bannerQC[idVideo].description.slice(0, 300) + "..."
+              : bannerQC[idVideo].description}
           </p>
 
           {/* Nút chuyển video */}

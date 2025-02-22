@@ -1,12 +1,11 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import './film.scss';
-import CreateDisplayList from '../../components/CreateDisplayList/CreateDisplayList.js';
-import FilmList from '../../components/FilmList/FilmList.js';
-import checkRefreshToken from '../../services/token.js';
-import VideoPlayer from '../../components/VideoPlayer.js';
-import { fetchVideoData, fetchDisplayList } from '../../services/movieAPI.js';
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import "./film.scss";
+import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayList.js";
+import FilmList from "../../components/FilmList/FilmList.js";
+import checkRefreshToken from "../../services/token.js";
+import VideoPlayer from "../../components/VideoPlayer.js";
+import { fetchVideoData, fetchDisplayList } from "../../services/movieAPI.js";
 
 // const Film = ({ movieId, episodeNum }) => {
 //     // const videoUrl = `http://localhost:8000/service/film/`; // Endpoint của API Django
@@ -49,294 +48,279 @@ import { fetchVideoData, fetchDisplayList } from '../../services/movieAPI.js';
 // };
 // export default Film;
 
-
-
 function Film() {
+  const navigate = useNavigate();
+  const { id1, id2 } = useParams();
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [error, setError] = useState(null); // Add error state
+  const [film, setFilm] = useState({
+    episode_data: {
+      url_video: "",
+    },
+  });
+  //    const videoRef = useRef(null);
+  console.log(id1, id2);
 
-    const navigate = useNavigate();
-    const { id1, id2 } = useParams();
-    const [isLoading, setIsLoading] = useState(true); // Add loading state
-    const [error, setError] = useState(null); // Add error state
-    const [film, setFilm] = useState({
-        'episode_data': {
-            'url_video': "",
-        },
-    });
-    //    const videoRef = useRef(null);
-    console.log(id1, id2)
+  // const VideoPlayer = ({ movieId, episodeNum }) => {
+  //     const videoRef = useRef(null);
+  //     const [isLoading, setIsLoading] = useState(true);
+  //     const [error, setError] = useState(null);
 
-    // const VideoPlayer = ({ movieId, episodeNum }) => {
-    //     const videoRef = useRef(null);
-    //     const [isLoading, setIsLoading] = useState(true);
-    //     const [error, setError] = useState(null);
+  //     useEffect(() => {
+  //         const fetchVideo = async () => {
+  //             try {
+  //                 setIsLoading(true);
 
-    //     useEffect(() => {
-    //         const fetchVideo = async () => {
-    //             try {
-    //                 setIsLoading(true);
+  //                 const response = await fetch("/api/getFilm/", {
+  //                     method: "POST",
+  //                     headers: {
+  //                         "Content-Type": "application/json",
+  //                     },
+  //                     body: JSON.stringify({
+  //                         movie_id: movieId,
+  //                         episode_num: episodeNum,
+  //                     }),
+  //                 });
 
-    //                 const response = await fetch("/api/getFilm/", {
-    //                     method: "POST",
-    //                     headers: {
-    //                         "Content-Type": "application/json",
-    //                     },
-    //                     body: JSON.stringify({
-    //                         movie_id: movieId,
-    //                         episode_num: episodeNum,
-    //                     }),
-    //                 });
+  //                 if (!response.ok) {
+  //                     const errorData = await response.json();
+  //                     throw new Error(errorData.error || "Lỗi không xác định");
+  //                 }
 
-    //                 if (!response.ok) {
-    //                     const errorData = await response.json();
-    //                     throw new Error(errorData.error || "Lỗi không xác định");
-    //                 }
+  //                 // MediaSource API setup
+  //                 const video = videoRef.current;
+  //                 const mediaSource = new MediaSource();
 
-    //                 // MediaSource API setup
-    //                 const video = videoRef.current;
-    //                 const mediaSource = new MediaSource();
+  //                 video.src = URL.createObjectURL(mediaSource);
 
-    //                 video.src = URL.createObjectURL(mediaSource);
+  //                 mediaSource.addEventListener("sourceopen", () => {
+  //                     const sourceBuffer = mediaSource.addSourceBuffer(
+  //                         'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+  //                     );
 
-    //                 mediaSource.addEventListener("sourceopen", () => {
-    //                     const sourceBuffer = mediaSource.addSourceBuffer(
-    //                         'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
-    //                     );
+  //                     // Stream dữ liệu
+  //                     const reader = response.body.getReader();
+  //                     const streamData = async () => {
+  //                         const { done, value } = await reader.read();
+  //                         if (done) {
+  //                             mediaSource.endOfStream();
+  //                             setIsLoading(false);
+  //                             return;
+  //                         }
+  //                         sourceBuffer.appendBuffer(value);
+  //                         sourceBuffer.addEventListener("updateend", streamData, { once: true });
+  //                     };
 
-    //                     // Stream dữ liệu
-    //                     const reader = response.body.getReader();
-    //                     const streamData = async () => {
-    //                         const { done, value } = await reader.read();
-    //                         if (done) {
-    //                             mediaSource.endOfStream();
-    //                             setIsLoading(false);
-    //                             return;
-    //                         }
-    //                         sourceBuffer.appendBuffer(value);
-    //                         sourceBuffer.addEventListener("updateend", streamData, { once: true });
-    //                     };
+  //                     streamData();
+  //                 });
+  //             } catch (err) {
+  //                 setError(err.message);
+  //                 setIsLoading(false);
+  //             }
+  //         };
 
-    //                     streamData();
-    //                 });
-    //             } catch (err) {
-    //                 setError(err.message);
-    //                 setIsLoading(false);
-    //             }
-    //         };
+  //         fetchVideo();
+  //     }, [movieId, episodeNum]);
+  // useEffect(() => {
+  //     // const fetchVideoData = async (id1, id2, navigate, retry = false) => {
+  //     //     try {
+  //     //         const accessToken = localStorage.getItem('accessToken');
+  //     //         const response = await fetch(`http://localhost:8000/service/film/`, {
+  //     //             method: 'POST',
+  //     //             headers: {
+  //     //                 "Content-Type": "application/json",
+  //     //                 "Authorization": `Bearer ${accessToken}`,
+  //     //             },
+  //     //             body: JSON.stringify({
+  //     //                 "movie_id": id1,
+  //     //                 "episode_num": id2
+  //     //             })
+  //     //         });
 
-    //         fetchVideo();
-    //     }, [movieId, episodeNum]);
-    // useEffect(() => {
-    //     // const fetchVideoData = async (id1, id2, navigate, retry = false) => {
-    //     //     try {
-    //     //         const accessToken = localStorage.getItem('accessToken');
-    //     //         const response = await fetch(`http://localhost:8000/service/film/`, {
-    //     //             method: 'POST',
-    //     //             headers: {
-    //     //                 "Content-Type": "application/json",
-    //     //                 "Authorization": `Bearer ${accessToken}`,
-    //     //             },
-    //     //             body: JSON.stringify({
-    //     //                 "movie_id": id1,
-    //     //                 "episode_num": id2
-    //     //             })
-    //     //         });
+  //     //         if (response.ok) {
+  //     //             const mediaSource = new MediaSource();
+  //     //             const video = videoRef.current;
 
-    //     //         if (response.ok) {
-    //     //             const mediaSource = new MediaSource();
-    //     //             const video = videoRef.current;
+  //     //             // Đảm bảo `MediaSource` có sẵn sàng không
+  //     //             if (!('MediaSource' in window)) {
+  //     //                 console.error('MediaSource không được hỗ trợ trong trình duyệt này.');
+  //     //                 return;
+  //     //             }
 
-    //     //             // Đảm bảo `MediaSource` có sẵn sàng không
-    //     //             if (!('MediaSource' in window)) {
-    //     //                 console.error('MediaSource không được hỗ trợ trong trình duyệt này.');
-    //     //                 return;
-    //     //             }
+  //     //             // Kiểm tra codec
+  //     //             const mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+  //     //             if (!MediaSource.isTypeSupported(mimeType)) {
+  //     //                 console.error(`Codec ${mimeType} không được hỗ trợ.`);
+  //     //                 return;
+  //     //             }
 
-    //     //             // Kiểm tra codec
-    //     //             const mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
-    //     //             if (!MediaSource.isTypeSupported(mimeType)) {
-    //     //                 console.error(`Codec ${mimeType} không được hỗ trợ.`);
-    //     //                 return;
-    //     //             }
+  //     //             video.src = URL.createObjectURL(mediaSource);
 
-    //     //             video.src = URL.createObjectURL(mediaSource);
+  //     //             mediaSource.addEventListener('sourceopen', () => {
+  //     //                 console.log('MediaSource is open');
 
-    //     //             mediaSource.addEventListener('sourceopen', () => {
-    //     //                 console.log('MediaSource is open');
+  //     //                 let sourceBuffer;
+  //     //                 try {
+  //     //                     sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+  //     //                     console.log('SourceBuffer đã được thêm.');
+  //     //                 } catch (e) {
+  //     //                     console.error('Failed to add SourceBuffer:', e);
+  //     //                     return;
+  //     //                 }
 
-    //     //                 let sourceBuffer;
-    //     //                 try {
-    //     //                     sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-    //     //                     console.log('SourceBuffer đã được thêm.');
-    //     //                 } catch (e) {
-    //     //                     console.error('Failed to add SourceBuffer:', e);
-    //     //                     return;
-    //     //                 }
+  //     //                 const reader = response.body.getReader();
 
-    //     //                 const reader = response.body.getReader();
+  //     //                 function push() {
+  //     //                     reader.read().then(({ done, value }) => {
+  //     //                         if (done) {
+  //     //                             if (mediaSource.readyState === 'open') {
+  //     //                                 mediaSource.endOfStream();
+  //     //                                 console.log('End of stream');
+  //     //                             }
+  //     //                             return;
+  //     //                         }
 
-    //     //                 function push() {
-    //     //                     reader.read().then(({ done, value }) => {
-    //     //                         if (done) {
-    //     //                             if (mediaSource.readyState === 'open') {
-    //     //                                 mediaSource.endOfStream();
-    //     //                                 console.log('End of stream');
-    //     //                             }
-    //     //                             return;
-    //     //                         }
+  //     //                         sourceBuffer.addEventListener('updateend', () => {
+  //     //                             const buffered = sourceBuffer.buffered;
+  //     //                             let totalBuffered = 0;
 
-    //     //                         sourceBuffer.addEventListener('updateend', () => {
-    //     //                             const buffered = sourceBuffer.buffered;
-    //     //                             let totalBuffered = 0;
+  //     //                             for (let i = 0; i < buffered.length; i++) {
+  //     //                                 totalBuffered += buffered.end(i) - buffered.start(i);
+  //     //                             }
 
-    //     //                             for (let i = 0; i < buffered.length; i++) {
-    //     //                                 totalBuffered += buffered.end(i) - buffered.start(i);
-    //     //                             }
+  //     //                             console.log('Total buffered duration in seconds:', totalBuffered);
+  //     //                             console.log('Buffered ranges:', buffered);
+  //     //                             push();
+  //     //                         }, { once: true });
+  //     //                         sourceBuffer.addEventListener('error', (e) => {
+  //     //                             console.error('SourceBuffer error:', e);
+  //     //                             if (e.target) {
+  //     //                                 console.error('Error details:', e.target.error);
+  //     //                             }
+  //     //                         });
+  //     //                         try {
+  //     //                             try {
+  //     //                                 console.log(value)
+  //     //                                 sourceBuffer.appendBuffer(value);
+  //     //                                 console.log(sourceBuffer);
 
-    //     //                             console.log('Total buffered duration in seconds:', totalBuffered);
-    //     //                             console.log('Buffered ranges:', buffered);
-    //     //                             push();
-    //     //                         }, { once: true });
-    //     //                         sourceBuffer.addEventListener('error', (e) => {
-    //     //                             console.error('SourceBuffer error:', e);
-    //     //                             if (e.target) {
-    //     //                                 console.error('Error details:', e.target.error);
-    //     //                             }
-    //     //                         });
-    //     //                         try {
-    //     //                             try {
-    //     //                                 console.log(value)
-    //     //                                 sourceBuffer.appendBuffer(value);
-    //     //                                 console.log(sourceBuffer);
+  //     //                             } catch (e) {
+  //     //                                 console.error('Failed to append buffer:', e.message, e);
+  //     //                             }
+  //     //                         } catch (e) {
+  //     //                             console.error('Failed to append buffer:', e);
+  //     //                         }
+  //     //                     }).catch(err => {
+  //     //                         console.error('Error while reading the stream:', err);
+  //     //                     });
+  //     //                 }
+  //     //                 push();
+  //     //             });
 
+  //     //         } else if (response.status === 401 && !retry) {
+  //     //             const refreshSuccess = await checkRefreshToken(navigate);
+  //     //             if (refreshSuccess) {
+  //     //                 fetchVideoData(id1, id2, navigate, true);
+  //     //             }
+  //     //         } else {
+  //     //             console.error('Movie has not been updated yet!');
+  //     //         }
 
-    //     //                             } catch (e) {
-    //     //                                 console.error('Failed to append buffer:', e.message, e);
-    //     //                             }
-    //     //                         } catch (e) {
-    //     //                             console.error('Failed to append buffer:', e);
-    //     //                         }
-    //     //                     }).catch(err => {
-    //     //                         console.error('Error while reading the stream:', err);
-    //     //                     });
-    //     //                 }
-    //     //                 push();
-    //     //             });
+  //     //     } catch (error) {
+  //     //         console.error('Network error occurred.');
+  //     //         console.error('Error fetching film data:', error);
+  //     //     }
+  //     // }
 
-    //     //         } else if (response.status === 401 && !retry) {
-    //     //             const refreshSuccess = await checkRefreshToken(navigate);
-    //     //             if (refreshSuccess) {
-    //     //                 fetchVideoData(id1, id2, navigate, true);
-    //     //             }
-    //     //         } else {
-    //     //             console.error('Movie has not been updated yet!');
-    //     //         }
+  //     // fetchVideoData(id1, id2, navigate);
 
-    //     //     } catch (error) {
-    //     //         console.error('Network error occurred.');
-    //     //         console.error('Error fetching film data:', error);
-    //     //     }
-    //     // }
+  //     // const video = videoRef.current;
 
-    //     // fetchVideoData(id1, id2, navigate);
-
-
-    //     // const video = videoRef.current;
-
-    // }, [navigate, id1, id2]);
-    const [films, setfilms] = useState(null)
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetchDisplayList('http://127.0.0.1:8000/service/get_thinhhanh/')
-                setfilms(response);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchData();
-    }, [navigate]);
-
-    // if (isLoading) { return (<div style={{ paddingTop: '100px' }}>is loading...</div>) }
-    // if (error) { return (<div style={{ paddingTop: '100px' }}>{error}</div>) }
-
-
-    const handleMotaClick = () => {
-        // Thực hiện logic "Xem thêm thông tin" ở đây
-        // Ví dụ: hiển thị modal, chuyển hướng đến trang chi tiết, ...
-        // console.log('Xem thêm thông tin về phim:', 'film.title');
+  // }, [navigate, id1, id2]);
+  const [films, setfilms] = useState(null)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`)
+        setfilms(response);
+      } catch (error) {
+        console.error(error);
+      }
     };
 
-    const handleTapClick = (episodeNumber) => {
-        // Thực hiện logic khi click vào số tập
-        if (!(episodeNumber == id2)) {
-            navigate(`/film/${id1}/${episodeNumber}`)
-        }
+    fetchData();
+  }, [navigate]);
 
-    };
-    return (
-        <div id='container_film'>
-            <div id="film">
-                <video
-                    src='http://127.0.0.1:8000/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4'
-                    // src={film}
-                    controls
-                    style={{
-                        width: '98%',
-                        boxSizing: 'border-box',
-                        borderRadius: '5px',
-                        margin: 'auto',
-                    }}
+  // if (isLoading) { return (<div style={{ paddingTop: '100px' }}>is loading...</div>) }
+  // if (error) { return (<div style={{ paddingTop: '100px' }}>{error}</div>) }
 
-                />
-                <div id="ten">
-                    {/* <h2>{film['episode_data']['title']}</h2> */}
-                    <p>{'film.info'}</p>
-                </div>
-                <button onClick={handleMotaClick} id="mota">
-                    Xem thêm thông tin
-                </button>
-                <div id="thongtin">
-                    <div>
-                        {/* <img src={''} alt={'film.title'} /> */}
-                    </div>
-                    <p>{'film.description'}</p>
-                </div>
+  const handleMotaClick = () => {
+    // Thực hiện logic "Xem thêm thông tin" ở đây
+    // Ví dụ: hiển thị modal, chuyển hướng đến trang chi tiết, ...
+    // console.log('Xem thêm thông tin về phim:', 'film.title');
+  };
 
-                <fieldset id="tap">
-                    <legend>
-                        <h3>Tập phim</h3>
-                    </legend>
-                    {/* {film['episodes_number']?.map((item) => (
+  const handleTapClick = (episodeNumber) => {
+    // Thực hiện logic khi click vào số tập
+    if (!(episodeNumber == id2)) {
+      navigate(`/film/${id1}/${episodeNumber}`);
+    }
+  };
+  return (
+    <div id="container_film">
+      <div id="film">
+        <video
+          src="http://127.0.0.1:8000/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4"
+          // src={film}
+          controls
+          style={{
+            width: "98%",
+            boxSizing: "border-box",
+            borderRadius: "5px",
+            margin: "auto",
+          }}
+        />
+        <div id="ten">
+          {/* <h2>{film['episode_data']['title']}</h2> */}
+          <p>{"film.info"}</p>
+        </div>
+        <button onClick={handleMotaClick} id="mota">
+          Xem thêm thông tin
+        </button>
+        <div id="thongtin">
+          <div>{/* <img src={''} alt={'film.title'} /> */}</div>
+          <p>{"film.description"}</p>
+        </div>
+
+        <fieldset id="tap">
+          <legend>
+            <h3>Tập phim</h3>
+          </legend>
+          {/* {film['episodes_number']?.map((item) => (
                         <button onClick={() => { handleTapClick(item) }}>tập {item}</button>
                     ))} */}
-                </fieldset>
-                <div className='container_display'>
-                    <h2>PHIM LIÊN QUAN</h2>
-                    {films ? <CreateDisplayList films={films} /> : <></>}
-                </div>
-
-            </div>
-            <div className='height_list'> {films ? <FilmList films={films} /> : <></>}</div>
-
+        </fieldset>
+        <div className="cmt">
+          <h2>Bình Luận</h2>
         </div>
-        // ... Phần footer và import data
-    );
+
+        <div className="container_display">
+          <h2>Phim đề cử</h2>
+          {films ? <CreateDisplayList films={films} /> : <></>}
+        </div>
+      </div>
+
+      <div className="height_list">
+        <h2 id="right-list">Phim đề cử</h2>
+
+        {films ? <FilmList films={films} /> : <></>}
+      </div>
+    </div>
+    // ... Phần footer và import data
+  );
 }
 
 export default Film;
-
-
-
-
-
-
-
-
-
-
-
-
 
 // function mota() {
 //     var div = document.getElementById('thongtin')
@@ -351,7 +335,6 @@ export default Film;
 //     }
 
 // }
-
 
 // // hàm tạo ra một ô trưng bày phim
 // function taoLink(i, img1, video1, content1, name) {
@@ -439,8 +422,6 @@ export default Film;
 //     div.style.height = '0px';
 //     div.querySelector('video').pause();
 // }
-
-
 
 // function back(button) {
 //     div = button.parentElement.querySelector('div[class=display_list]');

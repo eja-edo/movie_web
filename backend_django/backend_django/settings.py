@@ -125,13 +125,13 @@ SOCIALACCOUNT_PROVIDERS['facebook']['APP'] = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+  
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+   'corsheaders.middleware.CorsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
     
 ]
@@ -221,15 +221,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 import os
 STATIC_URL = 'static/'
-
-
 STATICFILES_DIRS = [
     BASE_DIR / "static",
+     os.path.join(BASE_DIR, 'static'),
 ]
-
-
 # Thư mục để collectstatic sao chép các tệp tĩnh vào
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# URL để truy cập media
+MEDIA_URL = '/media/'
+
+# Đường dẫn thư mục lưu trữ file media trên server
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type

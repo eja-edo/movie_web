@@ -6,12 +6,12 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from apps.users.models import ProfileUser
+
 
 
 class Actors(models.Model):
     actor_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(unique=True, max_length=100, blank=True, null=True)
     profile_url = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
@@ -19,21 +19,28 @@ class Actors(models.Model):
         db_table = 'actors'
 
 
-class Comments(models.Model):
-    comment_id = models.AutoField(primary_key=True)
-    episode = models.ForeignKey('Episodes', on_delete=models.DO_NOTHING, blank=True, null=True)  # Giả sử 'Episodes' nằm trong cùng app hoặc đã được import
-    user = models.ForeignKey(ProfileUser, on_delete=models.DO_NOTHING, blank=True, null=True)  # Sử dụng model class trực tiếp
-    content = models.TextField(blank=True, null=True)
+class Banners(models.Model):
+    banner_id = models.AutoField(primary_key=True)
+    movie = models.ForeignKey('Movies', models.DO_NOTHING, blank=True, null=True)
+    url_banner = models.CharField(max_length=255, blank=True, null=True)
+    title = models.CharField(unique=True, max_length=255)
+    description = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'comments'
+        db_table = 'banners'
 
-        
+
+
+
 class Directors(models.Model):
     director_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(unique=True, max_length=100, blank=True, null=True)
     profile_url = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
@@ -58,41 +65,66 @@ class Episodes(models.Model):
 
 class Genres(models.Model):
     genre_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(unique=True, max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'genres'
 
 
+class Monopolys(models.Model):
+    monopoly_id = models.AutoField(primary_key=True)
+    name = models.CharField(unique=True, max_length=100)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'monopolys'
+
+
 class Movieactors(models.Model):
-    movie = models.ForeignKey('Movies', models.DO_NOTHING, blank=True, null=True)
-    actor = models.ForeignKey(Actors, models.DO_NOTHING, blank=True, null=True)
-    role = models.CharField(max_length=100, blank=True, null=True)
+    movie = models.ForeignKey('Movies', models.DO_NOTHING)
+    actor = models.ForeignKey(Actors, models.DO_NOTHING)
+    role = models.CharField(max_length=100)
 
     class Meta:
         managed = False
         db_table = 'movieactors'
+        unique_together = (('movie', 'actor', 'role'),)
 
 
 class Moviedirectors(models.Model):
-    movie = models.ForeignKey('Movies', models.DO_NOTHING, blank=True, null=True)
-    director = models.ForeignKey(Directors, models.DO_NOTHING, blank=True, null=True)
+    movie = models.ForeignKey('Movies', models.DO_NOTHING)  # The composite primary key (movie_id, director_id) found, that is not supported. The first column is selected.
+    director = models.ForeignKey(Directors, models.DO_NOTHING)
+
     class Meta:
         managed = False
         db_table = 'moviedirectors'
+        unique_together = (('movie', 'director'),)
+
+
+class Moviegenres(models.Model):
+    movie = models.ForeignKey('Movies', models.DO_NOTHING)  # The composite primary key (movie_id, genre_id) found, that is not supported. The first column is selected.
+    genre = models.ForeignKey(Genres, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'moviegenres'
+        unique_together = (('movie', 'genre'),)
 
 
 class Movies(models.Model):
     movie_id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=155, blank=True, null=True)
+    title = models.CharField(unique=True, max_length=155, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     release_date = models.DateTimeField(blank=True, null=True)
     runtime = models.IntegerField(blank=True, null=True)
     poster_url = models.CharField(max_length=255, blank=True, null=True)
     trailer_url = models.CharField(max_length=255, blank=True, null=True)
     rating = models.FloatField(blank=True, null=True)
-    genre = models.ForeignKey(Genres, models.DO_NOTHING, blank=True, null=True)
+    monopoly = models.ForeignKey(Monopolys, models.DO_NOTHING, blank=True, null=True)
+    nation = models.ForeignKey('Nations', models.DO_NOTHING, blank=True, null=True)
     views = models.BigIntegerField(blank=True, null=True)
 
     class Meta:
@@ -100,25 +132,33 @@ class Movies(models.Model):
         db_table = 'movies'
 
 
-class Watchlists(models.Model):
-    view_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(ProfileUser, models.DO_NOTHING, blank=True, null=True)
-    movie = models.ForeignKey(Movies, models.DO_NOTHING, blank=True, null=True)
-    watch_at = models.DateTimeField(blank=True, null=True)
+class Nations(models.Model):
+    nation_id = models.AutoField(primary_key=True)
+    name = models.CharField(unique=True, max_length=50, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'watchlists'
-
-
-class Reviews(models.Model):
-    movie = models.OneToOneField(Movies, models.DO_NOTHING, primary_key=True)  # The composite primary key (movie_id, user_id) found, that is not supported. The first column is selected.
-    user = models.ForeignKey(ProfileUser, models.DO_NOTHING)
-    rating = models.FloatField(blank=True, null=True)
-    comment = models.TextField(blank=True, null=True)
-    create_at = models.DateTimeField(blank=True, null=True)
+        db_table = 'nations'
+class News(models.Model):
+    news_id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=255)
+    content_url = models.CharField(max_length=255, blank=True, null=True)
+    main_content = models.TextField(blank=True, null=True)
+    image_url = models.CharField(max_length=255, blank=True, null=True)
+    publish_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        managed = False
-        db_table = 'reviews'
-        unique_together = (('movie', 'user'),)
+        db_table = 'news'  # Tên bảng đã có sẵn trong PostgreSQL
+        managed = False  # Không cho Django tự động tạo/migrate bảng
+
+    def __str__(self):
+        return self.title
+
+
+
+
+
+
