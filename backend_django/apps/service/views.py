@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db import connection
 from django.http import JsonResponse,HttpResponse
-from .models import Movies , Genres , Episodes, Actors, Directors, Moviedirectors, Movieactors 
+from .models import Movies , Genres , Episodes, Actors, Directors, Moviedirectors, Movieactors ,News
 from datetime import datetime
 from django.views.decorators.csrf import csrf_protect
 from rest_framework.views import APIView
@@ -21,10 +21,12 @@ from django.views.decorators.http import require_POST
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
-import os
-import re
 
 from django.db.models import Sum
+import re
+import os
+from django.shortcuts import get_object_or_404
+from pathlib import Path
 from django.conf import settings
 
 def normalize_string(s):
@@ -264,15 +266,15 @@ def searchview(request):
         return Response(status=400, data={'detail': str(e)})
     
 
-def serve_html(request):
-    # if not file_name.endswith('.html'):
-    #     return HttpResponse("Invalid file type", status=400)
-    
-    file_path = os.path.join(settings.BASE_DIR,"static/assets/docx/melo2/melo2.html")
-   # sử dụng đường dẫn thay thế cho path join 
 
-    # In ra để kiểm tra
-    print(f"📌 Checking file path: {file_path}")
+def serve_html(request, id):
+    # Lấy bản ghi từ PostgreSQL theo id
+    news_item = get_object_or_404(News, news_id=id)
+
+    # Lấy đường dẫn file HTML từ content_url
+    file_path = os.path.join(settings.BASE_DIR, news_item.content_url)
+
+    print(f"📌 Checking file path: {file_path}")  # Debug đường dẫn file
 
     if os.path.exists(file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -280,6 +282,61 @@ def serve_html(request):
         return HttpResponse(html_content, content_type="text/html")
     else:
         return HttpResponse(f"🚨 File not found: {file_path}", status=404)
+
+from django.http import JsonResponse
+from .models import News
+
+def get_news_list(request):
+    news_items = News.objects.all().order_by("-publish_date")[:12]  # Lấy 10 bài mới nhất
+    news_list = [
+        {
+            "id": item.news_id,
+            "title": item.title,
+            "content": item.main_content[:200] + "...",  # Giới hạn nội dung
+            "image_url": item.image_url if item.image_url else "",  # Kiểm tra ảnh
+        }
+        for item in news_items
+    ]
+    return JsonResponse({"news": news_list}, safe=False)
+
+
+# def serve_html(request, id=None):  # Cho phép id là None
+#     id = 3  # Gán tạm id cố định là 1
+
+#     # Lấy bản ghi từ database
+#     news_item = get_object_or_404(News, news_id=id)
+
+#     # Lấy đường dẫn file HTML từ content_url
+#     file_path = os.path.join(settings.BASE_DIR, news_item.content_url)
+
+#     print(f"📌 Checking file path: {file_path}")  # Debug đường dẫn file
+
+#     if os.path.exists(file_path):
+#         with open(file_path, 'r', encoding='utf-8') as file:
+#             html_content = file.read()
+#         return HttpResponse(html_content, content_type="text/html")
+#     else:
+#         return HttpResponse(f"🚨 File not found: {file_path}", status=404)
+
+
+
+#  def serve_html(request):
+#     # if not file_name.endswith('.html'):
+#     #     return HttpResponse("Invalid file type", status=400)
+    
+#     file_path = os.path.join(settings.BASE_DIR,"static/assets/docx/melo2/melo2.html")
+#    # sử dụng đường dẫn thay thế cho path join 
+
+#     # In ra để kiểm tra
+#     print(f"📌 Checking file path: {file_path}")
+
+#     if os.path.exists(file_path):
+#         with open(file_path, 'r', encoding='utf-8') as file:
+#             html_content = file.read()
+#         return HttpResponse(html_content, content_type="text/html")
+#     else:
+#         return HttpResponse(f"🚨 File not found: {file_path}", status=404)
+
     
 
 # def serve_html(request):

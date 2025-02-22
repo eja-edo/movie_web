@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // Nếu bạn dùng react-router
+import { useParams } from "react-router-dom";
 import "./contintuc.scss";
-
+import NewsScrip from "../news/newsScrip";
 const TTcon = () => {
-  const { folder, file } = useParams(); // Lấy folder và file từ URL
+  const { id } = useParams(); // Lấy id từ URL
+
+  console.log("🔍 ID từ URL:", id);
+
   const [htmlContent, setHtmlContent] = useState("");
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/service/get-html/`)
+
+    fetch(`${process.env.REACT_APP_API_URL}/service/get-html/${id}/`)
+
       .then((response) => response.text())
       .then((data) => setHtmlContent(data))
       .catch((error) => console.error("Error fetching HTML:", error));
-  }, [folder, file]);
+  }, [id]);
 
   return (
     <div className="ttcon">
