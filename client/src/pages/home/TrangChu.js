@@ -4,10 +4,7 @@ import "./trang_chu.scss";
 import BannerQC from "../../components/BannerQC/BannerQC";
 import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayList";
 import LazyLoad from "react-lazyload";
-import {
-  fetchDisplayList,
-  fetchDisplayListByGenre10,
-} from "../../services/movieAPI";
+import movieAPI from "../../services/movieAPI";
 import ShowDisplay from "../../components/showdisplay/showdisplay";
 function TrangChu() {
   const [crHeaderVisible, setCrHeaderVisible] = useState(false);
@@ -19,7 +16,26 @@ function TrangChu() {
   const [filmKinhDi, setFilmKD] = useState(null);
   const [filmle, setFilmLe] = useState(null);
   const [filmHanhDong, setFilmHD] = useState(null);
+  const [TopGenres, setTopGenres] = useState(null);
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const fetchTopGenres = async () => {
+      try {
+        const response = await movieAPI.getTopGenres();
+        if (Array.isArray(response)) {
+          setTopGenres(response);
+        } else {
+          console.error("Dữ liệu TopGenres không hợp lệ:", response);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchTopGenres();
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -33,15 +49,16 @@ function TrangChu() {
           filmLeData,
           filmHanhDongData,
         ] = await Promise.all([
-          fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
-          fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_phimhot_10/`),
-          fetchDisplayListByGenre10("Phim hoạt hình"),
-          fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
-          fetchDisplayListByGenre10("Phim tình cảm"),
-          fetchDisplayListByGenre10("Phim kinh dị"),
-          fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
-          fetchDisplayListByGenre10("Phim hành động"),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_phimhot_10/`),
+          movieAPI.getDisplayListByGenre10(TopGenres[0]?.genre_id || ""), // Kiểm tra dữ liệu trước khi truy cập
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
+          movieAPI.getDisplayListByGenre10(TopGenres[1]?.genre_id || ""),
+          movieAPI.getDisplayListByGenre10(TopGenres[2]?.genre_id || ""),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`),
+          movieAPI.getDisplayListByGenre10(TopGenres[3]?.genre_id || ""),
         ]);
+
         // cập nhật state
         setFilmth(thinhHanhData);
         setFilmhot(filmHotData);
@@ -56,8 +73,10 @@ function TrangChu() {
       }
     };
 
-    fetchData();
-  }, []);
+    if (TopGenres != null) {
+      fetchData();
+    }
+  }, [TopGenres]);  // Chạy lại khi TopGenres thay đổi
 
   // useEffect(() => {
   //     const trangChu = document.getElementById('TrangChu');
@@ -96,7 +115,7 @@ function TrangChu() {
     >
       <BannerQC />
 
-      <div class="trangchu">
+      <div className="trangchu">
         <a
           href="#"
           className="xemthem"
@@ -137,7 +156,7 @@ function TrangChu() {
         </LazyLoad>
       </div>
       <ShowDisplay />
-      <div class="trangchu">
+      <div className="trangchu">
         <a
           href="#"
           className="xemthem"
@@ -146,7 +165,7 @@ function TrangChu() {
             handleNavigation("/tesst_film.html");
           }}
         >
-          <h2>PHIM HOẠT HINH</h2>
+          <h2>{TopGenres && TopGenres.length > 0 ? TopGenres[0].name.toUpperCase() : ""}</h2>
           <div
             className="xemtatca"
             onClick={() => handleNavigation("/tesst_film.html")}
@@ -184,7 +203,7 @@ function TrangChu() {
             handleNavigation("/phimdienanh.html");
           }}
         >
-          <h2>PHIM TÌNH CẢM </h2>
+          <h2>{TopGenres && TopGenres.length > 1 ? TopGenres[1].name.toUpperCase() : ""}</h2>
           <div
             className="xemtatca"
             onClick={() => handleNavigation("/phimdienanh.html")}
@@ -209,7 +228,7 @@ function TrangChu() {
           }}
         >
           <video
-            src="http://127.0.0.1:8000/static/assets/short-video/Teaser_NgoiDenKyQuai3.mp4"
+            src={`${process.env.REACT_APP_API_URL}/static/assets/short-video/Teaser_NgoiDenKyQuai3.mp4`}
             muted
             loop
             onCanPlay={handleVideoLoad}
@@ -226,7 +245,7 @@ function TrangChu() {
           >
             <img
               style={{ width: "100%" }}
-              src="http://127.0.0.1:8000/static/assets/img/ovn93mk3_title-ngoidenkyquai3-nenden_815_255.png"
+              src={`${process.env.REACT_APP_API_URL}/static/assets/img/ovn93mk3_title-ngoidenkyquai3-nenden_815_255.png`}
               alt=""
             />
             <p style={{ marginLeft: "10px" }}>
@@ -278,7 +297,7 @@ function TrangChu() {
             handleNavigation("/theloai_timphim.html");
           }}
         >
-          <h2>PHIM KINH DỊ</h2>
+          <h2>{TopGenres && TopGenres.length > 2 ? TopGenres[2].name.toUpperCase() : ""}</h2>
           <div
             className="xemtatca"
             onClick={() => handleNavigation("/theloai_timphim.html")}
@@ -316,7 +335,7 @@ function TrangChu() {
             handleNavigation("/theloai_timphim.html");
           }}
         >
-          <h2>PHIM HÀNH ĐỘNG</h2>
+          <h2>{TopGenres && TopGenres.length > 3 ? TopGenres[3].name.toUpperCase() : ""}</h2>
           <div
             className="xemtatca"
             onClick={() => handleNavigation("/theloai_timphim.html")}

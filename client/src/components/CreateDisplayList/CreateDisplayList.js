@@ -98,7 +98,7 @@ const CreateDisplayList = memo((films) => {
             const poster = filmItems[index]['poster_url']
             const title = filmItems[index]['title']
             const content = `${filmItems[index]['release_date']}|${filmItems[index]['runtime']}|${filmItems[index]['rating']}|${filmItems[index]['views']}`
-            setInfoFilm({ 'index': index, 'id': id, 'title': title, 'video': url, 'poster': poster, 'content': content })
+            setInfoFilm({ 'index': index, 'id': id, 'title': title, 'video': process.env.REACT_APP_API_URL + url, 'poster': process.env.REACT_APP_API_URL + poster, 'content': content })
             div.style.height = '23lvw';
             // div.style.width = "45lvw";
             div.style.transition = 'all 300ms ease';
@@ -179,7 +179,7 @@ const CreateDisplayList = memo((films) => {
                 <i className="fa-solid fa-arrow-right"></i>
             </button>
             <div className="video" ref={divVideoRef} >
-                <video src={infoFilm.video} muted loop autoPlay poster={infoFilm.poster} ref={videoRef} />
+                <video src={process.env.REACT_APP_API_URL + infoFilm.video} muted loop autoPlay poster={infoFilm.poster} ref={videoRef} />
 
                 <div className="control">
                     <h2>{infoFilm.title}</h2>
@@ -213,7 +213,7 @@ const CreateDisplayList = memo((films) => {
                         <div key={index} data-key={index} className="film-container">
                             <a className="img" onMouseLeave={(event) => tatdi(event.currentTarget)}
                                 onMouseEnter={(event) => molen(event.currentTarget)} onClick={(event) => handleClickImg(event.currentTarget)} >
-                                <img src={item.poster_url} alt={item.title}
+                                <img src={process.env.REACT_APP_API_URL + item.poster_url} alt={item.title}
                                 />
                             </a>
 

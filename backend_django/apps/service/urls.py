@@ -1,7 +1,7 @@
 from django.urls import path, include
 from . import views
 
-from .views import  TestAPIview , getFilm , GetDetailMovie, serve_html, stream_video_view
+from .views import  TestAPIview, GetDetailMovie, serve_html
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -20,10 +20,9 @@ urlpatterns =[
 
 
     path('test/',TestAPIview.as_view(), name = 'test'),
-    path('film/',getFilm.as_view(),name='getfilm'),
-    path('api/video/', stream_video_view, name='stream_video'),
     path('detailMovie/', GetDetailMovie.as_view(), name='detail'),
     path('searchkeys/',views.searchview, name = 'searchkey'),
     path('get-html/', serve_html),
+    path('get_top_genres/', views.get_top_genres, name = 'get_genre_hot'),
 ]
 

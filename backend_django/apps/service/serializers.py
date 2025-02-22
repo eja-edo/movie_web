@@ -1,7 +1,12 @@
 from rest_framework import serializers
-from .models import Movies,Episodes
+from .models import Movies,Episodes, Genres
 
+class GenreSerializer(serializers.ModelSerializer):
+    total_views = serializers.IntegerField()
 
+    class Meta:
+        model = Genres
+        fields = ['genre_id', 'name', 'total_views']
 
 class MovieSerializer(serializers.ModelSerializer):
     release_date = serializers.SerializerMethodField() # Sử dụng SerializerMethodField

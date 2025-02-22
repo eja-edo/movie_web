@@ -5,7 +5,7 @@ import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayL
 import FilmList from "../../components/FilmList/FilmList.js";
 import checkRefreshToken from "../../services/token.js";
 import VideoPlayer from "../../components/VideoPlayer.js";
-import { fetchVideoData, fetchDisplayList } from "../../services/movieAPI.js";
+import movieAPI from "../../services/movieAPI.js";
 
 // const Film = ({ movieId, episodeNum }) => {
 //     // const videoUrl = `http://localhost:8000/service/film/`; // Endpoint của API Django
@@ -43,7 +43,7 @@ import { fetchVideoData, fetchDisplayList } from "../../services/movieAPI.js";
 //         id="videoPlayer"
 //         controls
 //         style={{ width: "100%" }}
-//         src="http://127.0.0.1:8000/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4"
+//         src={`${process.env.REACT_APP_API_URL}/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4`}
 //     />;
 // };
 // export default Film;
@@ -241,7 +241,7 @@ function Film() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`)
+        const response = await movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`)
         setfilms(response);
       } catch (error) {
         console.error(error);
@@ -270,7 +270,7 @@ function Film() {
     <div id="container_film">
       <div id="film">
         <video
-          src="http://127.0.0.1:8000/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4"
+          src={`${process.env.REACT_APP_API_URL}/service/api/video/?path=assets/short-video/Teaser_dark_gathering (11).mp4`}
           // src={film}
           controls
           style={{

@@ -28,7 +28,6 @@ SECRET_KEY = 'django-insecure-t@tl3cslcje@hdz=e!*&x_)sf(m)3sin^7a=lmj9y&#!4-1@e#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -244,10 +243,12 @@ CORS_ORIGIN_WHITELIST = [
       "http://127.0.0.1:3001",
       'http://localhost:3001',
       'http://localhost:3000', 
+      'http://mycustomdomain.com',
         # Thay thế bằng nguồn gốc frontend của bạn
       # ... thêm các nguồn gốc khác nếu cần
   ]
 
+ALLOWED_HOSTS = ["mycustomdomain.com", "127.0.0.1", "localhost"]
 
 
 REST_FRAMEWORK = {
@@ -264,7 +265,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3001',
     'http://127.0.0.1:5500',
     'http://localhost:3001', 
-    'http://localhost:3000', 
+    'http://localhost:3000',
+    'http://mycustomdomain.com', 
      # Thêm domain của frontend vào đây
     # Nếu bạn muốn cho phép tất cả các domain (không khuyến nghị):
     # CORS_ORIGIN_ALLOW_ALL = True
@@ -294,7 +296,7 @@ CORS_ALLOW_HEADERS = [
 
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:5500','http://127.0.0.1:3001','http://localhost:3001','http://localhost:3000', ]
+CSRF_TRUSTED_ORIGINS = [ 'http://mycustomdomain.com','http://127.0.0.1:5500','http://127.0.0.1:3001','http://localhost:3001','http://localhost:3000', ]
 
 CORS_ALLOW_CREDENTIALS = True
 

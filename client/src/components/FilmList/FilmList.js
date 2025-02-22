@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./FilmList.css";
 
 const FilmList = (films) => {
@@ -20,18 +20,18 @@ const FilmList = (films) => {
                 films.map((item, index) => (
                     <a href="mtphim.html" className="max_scanner_img" key={index} onMouseEnter={() => handleMouseEnter(index)} onMouseLeave={handleMouseLeave}>
                         <div>
-                            <img src={item.poster_url} alt={item.title} />
+                            <img src={process.env.REACT_APP_API_URL + item.poster_url} alt={item.title} />
                             <video
                                 loop
                                 autoPlay
                                 muted
-                                style={{display: hoveredIndex === index ? "block" : "none"}}
-                                src={hoveredIndex === index ? item.trailer_url : null} // Chỉ đặt src khi hover
+                                style={{ display: hoveredIndex === index ? "block" : "none" }}
+                                src={hoveredIndex === index ? process.env.REACT_APP_API_URL + item.trailer_url : null} // Chỉ đặt src khi hover
                             />
                             <div>
                                 <h4>{item.title}</h4>
                                 <div>
-                                    <p style={{display: "none"}}>{item.id}</p>
+                                    <p style={{ display: "none" }}>{item.id}</p>
                                     <p>
                                         {item.rating} {item.views}
                                     </p>

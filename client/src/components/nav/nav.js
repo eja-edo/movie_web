@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./nav.scss";
-import {useNavigate} from "react-router-dom";
-import {fetchSearch} from "../../services/movieAPI";
+import { useNavigate } from "react-router-dom";
+import movieAPI from "../../services/movieAPI";
 
 function Nav() {
     const navigate = useNavigate();
@@ -27,7 +27,7 @@ function Nav() {
 
         const getsuggest = async () => {
             try {
-                const result = await fetchSearch(value);
+                const result = await movieAPI.getSearch(value);
                 setSuggest(result);
                 console.log(value);
                 console.log(result);
@@ -73,13 +73,13 @@ function Nav() {
             redirect: "follow",
         };
 
-        fetch("http://localhost:8000/user/logout/", requestOptions)
+        fetch(`${process.env.REACT_APP_API_URL}/user/logout/`, requestOptions)
             .then((response) => response.text())
             .then(() => {
                 console.log("đã logout");
                 localStorage.setItem("accessToken", null);
                 localStorage.setItem("refreshToken", null);
-                localStorage.setItem("user", JSON.stringify({login: false}));
+                localStorage.setItem("user", JSON.stringify({ login: false }));
                 setLogin(false);
                 navigate("/");
             })
@@ -99,9 +99,9 @@ function Nav() {
         <div id="header">
             <div id="main_content_header">
                 <div id="min_menu">
-                    <a style={{marginLeft: 10, marginRight: 10}} onClick={handleMenuToggle}>
-                        <i className="fa-solid fa-bars" style={{display: showMenu ? "none" : "flex", marginLeft: 15}}></i>
-                        <i className="fa-solid fa-x" style={{display: showMenu ? "flex" : "none", marginLeft: 15}}></i>
+                    <a style={{ marginLeft: 10, marginRight: 10 }} onClick={handleMenuToggle}>
+                        <i className="fa-solid fa-bars" style={{ display: showMenu ? "none" : "flex", marginLeft: 15 }}></i>
+                        <i className="fa-solid fa-x" style={{ display: showMenu ? "flex" : "none", marginLeft: 15 }}></i>
                     </a>
                     {
                         <ul
@@ -168,9 +168,9 @@ function Nav() {
                     }
                 </div>
                 <img
-                    src="http://127.0.0.1:8000/static/assets//img/img_duong/logoweb.png"
+                    src={`${process.env.REACT_APP_API_URL}/static/assets//img/img_duong/logoweb.png`}
                     alt=""
-                    style={{width: "9%", height: "auto", cursor: "pointer"}}
+                    style={{ width: "9%", height: "auto", cursor: "pointer" }}
                     onClick={() => {
                         navigate("/TrangChu");
                     }}
@@ -312,10 +312,10 @@ function Nav() {
                                     setClickUser(clickUser ? false : true);
                                 }}
                             >
-                                <img src={avt ? avt : "http://127.0.0.1:8000/static/assets/img/defaultImgUser.png"}></img>
+                                <img src={avt ? avt : `${process.env.REACT_APP_API_URL}/static/assets/img/defaultImgUser.png`}></img>
 
-                                <ul style={{display: clickUser ? "flex" : "none"}}>
-                                    <li style={{borderBottom: "gray solid 1px"}}>
+                                <ul style={{ display: clickUser ? "flex" : "none" }}>
+                                    <li style={{ borderBottom: "gray solid 1px" }}>
                                         <a>Chỉnh sửa thông tin</a>
                                     </li>
                                     <li>

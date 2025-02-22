@@ -7,7 +7,7 @@ const TTcon = () => {
   const [htmlContent, setHtmlContent] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/service/get-html/")
+    fetch(`${process.env.REACT_APP_API_URL}/service/get-html/`)
       .then((response) => response.text())
       .then((data) => setHtmlContent(data))
       .catch((error) => console.error("Error fetching HTML:", error));
