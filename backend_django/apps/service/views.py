@@ -383,6 +383,22 @@ def serve_html(request, id):
     else:
         return HttpResponse(f"🚨 File not found: {file_path}", status=404)
 
+from django.http import JsonResponse
+from .models import News
+
+def get_news_list(request):
+    news_items = News.objects.all().order_by("-publish_date")[:12]  # Lấy 10 bài mới nhất
+    news_list = [
+        {
+            "id": item.news_id,
+            "title": item.title,
+            "content": item.main_content[:200] + "...",  # Giới hạn nội dung
+            "image_url": item.image_url if item.image_url else "",  # Kiểm tra ảnh
+        }
+        for item in news_items
+    ]
+    return JsonResponse({"news": news_list}, safe=False)
+
 
 # def serve_html(request, id=None):  # Cho phép id là None
 #     id = 3  # Gán tạm id cố định là 1

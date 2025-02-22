@@ -15,6 +15,7 @@ import Timkiem from "./pages/pagetk/timkiem.js";
 import Intro from "./pages/intro/intro.js";
 import TTcon from "./pages/pagecontintuc/contintuc.js";
 import CategoryPage from "./pages/CategoryPage/CategortPage.js";
+import NewsScrip from "./pages/news/newsScrip.js";
 
 function App() {
   return (
@@ -27,9 +28,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/film/:id1/:id2" element={<Film />} /> Assumed route for
         films listing
+        <Route path="/newsScrip" element={<NewsScrip />} />{" "}
         <Route path="/detail/:id" element={<MovieDetails />} />{" "}
         {/* Route for individual film details */}
         <Route path="/r/:listFilm" element={<Filter />} />
+        <Route path="/ttcon/:id" element={<TTcon />} />
         <Route path="/intro" element={<Intro />} />
         <Route path="/page404" element={<Page404 />} />
         <Route path="/category/:type" element={<CategoryPage />} />{" "}
