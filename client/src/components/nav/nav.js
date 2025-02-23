@@ -73,7 +73,7 @@ function Nav() {
             redirect: "follow",
         };
 
-        fetch(`${process.env.REACT_APP_API_URL}/user/logout/`, requestOptions)
+        fetch(`${process.env.REACT_APP_API_URL}/api/user/logout/`, requestOptions)
             .then((response) => response.text())
             .then(() => {
                 console.log("đã logout");

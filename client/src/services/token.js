@@ -16,7 +16,7 @@ const removeTokens = () => {
 const checkRefreshToken = async (navigate) => {
 
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/user/api/token/refresh/`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/api/token/refresh/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh: localStorage.getItem('refreshToken') }),

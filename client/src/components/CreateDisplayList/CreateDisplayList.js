@@ -98,7 +98,7 @@ const CreateDisplayList = memo((films) => {
             const poster = filmItems[index]['poster_url']
             const title = filmItems[index]['title']
             const content = `${filmItems[index]['release_date']}|${filmItems[index]['runtime']}|${filmItems[index]['rating']}|${filmItems[index]['views']}`
-            setInfoFilm({ 'index': index, 'id': id, 'title': title, 'video': process.env.REACT_APP_API_URL + url, 'poster': process.env.REACT_APP_API_URL + poster, 'content': content })
+            setInfoFilm({ 'index': index, 'id': id, 'title': title, 'video': url, 'poster': poster, 'content': content })
             div.style.height = '23lvw';
             // div.style.width = "45lvw";
             div.style.transition = 'all 300ms ease';
@@ -179,7 +179,7 @@ const CreateDisplayList = memo((films) => {
                 <i className="fa-solid fa-arrow-right"></i>
             </button>
             <div className="video" ref={divVideoRef} >
-                <video src={process.env.REACT_APP_API_URL + infoFilm.video} muted loop autoPlay poster={infoFilm.poster} ref={videoRef} />
+                <video src={infoFilm.video != '' ? process.env.REACT_APP_API_URL + infoFilm.video : ''} muted loop autoPlay poster={infoFilm.poster != '' ? process.env.REACT_APP_API_URL + infoFilm.poster : ''} ref={videoRef} />
 
                 <div className="control">
                     <h2>{infoFilm.title}</h2>

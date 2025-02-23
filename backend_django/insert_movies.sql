@@ -712,6 +712,6 @@ VALUES
 'static/assets/docx/wtpring/wtpring.html', 
  'Sau 2 tháng thổn thức cùng các nhân vật 
  trong phim When the phone rings, khán giả thở phào với cái kết viên mãn.', 
- 'static/assets/docx/wtpring/images/image1.jpg', '2025-02-19 15:30:00', TRUE),
+ 'static/assets/docx/wtpring/images/image1.jpg', '2025-02-19 15:30:00', TRUE)
 
 

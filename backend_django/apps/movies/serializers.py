@@ -1,12 +1,32 @@
 from rest_framework import serializers
-from .models import Movies,Episodes, Genres
+from .models import Movies, Moviegenres, Movieactors, Moviedirectors, Episodes
+
+from rest_framework import serializers
+from apps.core.models import Nations, Genres
+from apps.people.models import Actors, Directors
+
+class NationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nations
+        fields = ["nation_id", "name"]
 
 class GenreSerializer(serializers.ModelSerializer):
-    total_views = serializers.IntegerField()
-
     class Meta:
         model = Genres
-        fields = ['genre_id', 'name', 'total_views']
+        fields = ["genre_id", "name"]
+
+class ActorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Actors
+        fields = ["actor_id", "name"]
+
+class DirectorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Directors
+        fields = ["director_id", "name"]
+
+
+
 
 class MovieSerializer(serializers.ModelSerializer):
     release_date = serializers.SerializerMethodField() # Sử dụng SerializerMethodField
@@ -32,18 +52,18 @@ class bannerSerializer(serializers.ModelSerializer):
             'trailer_url'
         ]
 
-class DetailSerializer(serializers.ModelSerializer):
-    # release_date = serializers.SerializerMethodField() # Sử dụng SerializerMethodField
-    genre = serializers.CharField(source='genre.name') # Lấy tên thể loại
-    actors = serializers.ListField(child=serializers.CharField(max_length=100))
-    directors = serializers.ListField(child = serializers.CharField(max_length=100))
-    episodes_num = serializers.ListField(child = serializers.CharField(max_length=15))
-    class Meta:
-        model = Movies
-        fields = [
-            'movie_id','title','description', 'release_date', 'runtime', 
-            'poster_url', 'rating', 'genre', 'views','actors','directors','episodes_num'
-        ]
+# class DetailSerializer(serializers.ModelSerializer):
+#     # release_date = serializers.SerializerMethodField() # Sử dụng SerializerMethodField
+#     genre = serializers.CharField(source='genre.name') # Lấy tên thể loại
+#     actors = serializers.ListField(child=serializers.CharField(max_length=100))
+#     directors = serializers.ListField(child = serializers.CharField(max_length=100))
+#     episodes_num = serializers.ListField(child = serializers.CharField(max_length=15))
+#     class Meta:
+#         model = Movies
+#         fields = [
+#             'movie_id','title','description', 'release_date', 'runtime', 
+#             'poster_url', 'rating', 'genre', 'views','actors','directors','episodes_num'
+#         ]
 
     # def get_release_date(self, obj):
     #     return obj['release_date'].date() # Chuyển đổi datetime thành date
@@ -57,10 +77,35 @@ class filmSerializer(serializers.ModelSerializer):
             'url_video'
         ]
 
-class episodesSerializer(serializers.ModelSerializer):
+class EpisodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Episodes
         fields =[
-            'episode_number'
+            'episode_id','episode_number'
         ]
- 
+class DetailSerializer(serializers.ModelSerializer):
+    nation = NationSerializer()  # Lấy thông tin quốc gia
+
+    genres = serializers.SerializerMethodField()  # Lấy danh sách thể loại
+    actors = serializers.SerializerMethodField()  # Lấy danh sách diễn viên
+    directors = serializers.SerializerMethodField()  # Lấy danh sách đạo diễn
+    episodes = EpisodeSerializer(many=True, read_only=True, source='episodes_set')  # Lấy tập phim
+
+    release_date = serializers.SerializerMethodField()  # Chuyển đổi datetime thành date
+
+    class Meta:
+        model = Movies
+        fields = ["movie_id", "title", 'release_date', "nation", 'runtime', 
+                  'poster_url', 'rating', 'views', "genres", "actors", "directors", 'episodes']
+
+    def get_release_date(self, obj):
+        return obj.release_date.date() if obj.release_date else None  # Tránh lỗi nếu ngày rỗng
+
+    def get_genres(self, obj):
+        return [genre.genre.name for genre in obj.moviegenres_set.all()]  # Lấy danh sách thể loại
+
+    def get_actors(self, obj):
+        return [{"actor_id": item.actor.actor_id, "name": item.actor.name} for item in obj.movieactors_set.all()]  # Lấy danh sách diễn viên
+
+    def get_directors(self, obj):
+        return [{"director_id": item.director.director_id, "name": item.director.name} for item in obj.moviedirectors_set.all()]  # Lấy danh sách đạo diễn

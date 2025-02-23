@@ -24,7 +24,7 @@ const CategoryPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`);
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/movies/get_thinhhanh/`);
                 const data = await response.json();
                 setFilms(data);
             } catch (error) {

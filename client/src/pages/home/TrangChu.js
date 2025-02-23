@@ -49,13 +49,13 @@ function TrangChu() {
           filmLeData,
           filmHanhDongData,
         ] = await Promise.all([
-          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`),
-          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_phimhot_10/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/api/movies/get_thinhhanh/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/api/movies/get_phimhot_10/`),
           movieAPI.getDisplayListByGenre10(TopGenres[0]?.genre_id || ""), // Kiểm tra dữ liệu trước khi truy cập
-          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/api/movies/get_thinhhanh/`),
           movieAPI.getDisplayListByGenre10(TopGenres[1]?.genre_id || ""),
           movieAPI.getDisplayListByGenre10(TopGenres[2]?.genre_id || ""),
-          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/movies/get_thinhhanh/`),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/api/movies/get_thinhhanh/`),
           movieAPI.getDisplayListByGenre10(TopGenres[3]?.genre_id || ""),
         ]);
 
@@ -165,7 +165,7 @@ function TrangChu() {
             handleNavigation("/tesst_film.html");
           }}
         >
-          <h2>{TopGenres && TopGenres.length > 0 ? TopGenres[0].name.toUpperCase() : ""}</h2>
+          <h2>{TopGenres != null && TopGenres.length > 0 ? TopGenres[0].name.toUpperCase() : ""}</h2>
           <div
             className="xemtatca"
             onClick={() => handleNavigation("/tesst_film.html")}
@@ -203,7 +203,7 @@ function TrangChu() {
             handleNavigation("/phimdienanh.html");
           }}
         >
-          <h2>{TopGenres && TopGenres.length > 1 ? TopGenres[1].name.toUpperCase() : ""}</h2>
+          <h2>{TopGenres != null && TopGenres.length > 1 ? TopGenres[1].name.toUpperCase() : ""}</h2>
           <div
             className="xemtatca"
             onClick={() => handleNavigation("/phimdienanh.html")}
@@ -297,7 +297,7 @@ function TrangChu() {
             handleNavigation("/theloai_timphim.html");
           }}
         >
-          <h2>{TopGenres && TopGenres.length > 2 ? TopGenres[2].name.toUpperCase() : ""}</h2>
+          <h2>{TopGenres != null && TopGenres.length > 2 ? TopGenres[2].name.toUpperCase() : ""}</h2>
           <div
             className="xemtatca"
             onClick={() => handleNavigation("/theloai_timphim.html")}
@@ -335,7 +335,7 @@ function TrangChu() {
             handleNavigation("/theloai_timphim.html");
           }}
         >
-          <h2>{TopGenres && TopGenres.length > 3 ? TopGenres[3].name.toUpperCase() : ""}</h2>
+          <h2>{TopGenres != null && TopGenres.length > 3 ? TopGenres[3].name.toUpperCase() : ""}</h2>
           <div
             className="xemtatca"
             onClick={() => handleNavigation("/theloai_timphim.html")}
