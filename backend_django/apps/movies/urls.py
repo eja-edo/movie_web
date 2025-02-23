@@ -1,7 +1,6 @@
 from django.urls import path, include
 from . import views
 
-from .views import GetDetailMovie
 
 
 
@@ -15,7 +14,7 @@ urlpatterns =[
     # path('get_phimtinhcam_10/', views.get_phimtinhcam, name = 'getphimtinhcam'),
     path('get_films_by_genre10/', views.get_films_by_genre10 , name = 'getFilmsByGenre10'),
 
-    path('detailMovie/', GetDetailMovie.as_view(), name='detail'),
+    path('get_movie_details/<int:movie_id>/', views.get_movie_details, name='detail'),
     path('searchkeys/',views.searchview, name = 'searchkey'),
     path('get_top_genres/', views.get_top_genres, name = 'get_genre_hot'),
 ]

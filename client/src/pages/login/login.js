@@ -40,7 +40,7 @@ function Login() {
       redirect: "follow",
     };
 
-    fetch(`${process.env.REACT_APP_API_URL}/user/login/`, requestOptions)
+    fetch(`${process.env.REACT_APP_API_URL}/api/user/login/`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
@@ -62,7 +62,7 @@ function Login() {
         if (response.authResponse) {
           // Đăng nhập thành công
           console.log(response);
-          fetch(`${process.env.REACT_APP_API_URL}/user/facebook/login/token/`, {
+          fetch(`${process.env.REACT_APP_API_URL}/api/user/facebook/login/token/`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -100,7 +100,7 @@ function Login() {
       const fetchinfouser = async () => {
         try {
           const accessToken = localStorage.getItem('accessToken');
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/user/getDetail/`, { // Use template literal
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/getDetail/`, { // Use template literal
             method: 'GET', // Use GET request to fetch film details
             headers: {
               "Authorization": `Bearer ${accessToken}`,
@@ -146,7 +146,7 @@ function Login() {
     };
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/user/register/`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

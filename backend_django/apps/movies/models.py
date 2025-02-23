@@ -20,8 +20,9 @@ class Movies(models.Model):
         db_table = 'movies'
 
 class Moviegenres(models.Model):
-    movie = models.ForeignKey('Movies', models.DO_NOTHING)  
-    genre = models.ForeignKey('core.Genres', models.DO_NOTHING)
+    mg_id = models.AutoField(primary_key=True)
+    movie = models.ForeignKey('Movies', models.DO_NOTHING, blank=True, null=True)
+    genre = models.ForeignKey('core.Genres', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -29,9 +30,10 @@ class Moviegenres(models.Model):
         unique_together = (('movie', 'genre'),)
 
 class Movieactors(models.Model):
-    movie = models.ForeignKey('Movies', models.DO_NOTHING)
-    actor = models.ForeignKey('people.Actors', models.DO_NOTHING)
-    role = models.CharField(max_length=100)
+    ma_id = models.AutoField(primary_key=True)
+    movie = models.ForeignKey('Movies', models.DO_NOTHING, blank=True, null=True)
+    actor = models.ForeignKey('people.Actors', models.DO_NOTHING, blank=True, null=True)
+    role = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -39,6 +41,7 @@ class Movieactors(models.Model):
         unique_together = (('movie', 'actor', 'role'),)
 
 class Moviedirectors(models.Model):
+    md_id = models.AutoField(primary_key=True)
     movie = models.ForeignKey('Movies', models.DO_NOTHING)  # The composite primary key (movie_id, director_id) found, that is not supported. The first column is selected.
     director = models.ForeignKey('people.Directors', models.DO_NOTHING)
 

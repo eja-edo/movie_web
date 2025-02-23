@@ -3,6 +3,7 @@ from apps.core.models import Monopolys
 
 # Create your models here.
 class Codemonopoly(models.Model):
+    cm_id = models.AutoField(primary_key=True)
     code = models.ForeignKey('Codes', models.DO_NOTHING)  # The composite primary key (code_id, monopoly_id) found, that is not supported. The first column is selected.
     monopoly = models.ForeignKey('core.Monopolys', models.DO_NOTHING)
 

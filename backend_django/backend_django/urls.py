@@ -21,14 +21,14 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('service/', include('apps.service.urls')),
-    path('user/',include('apps.users.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('movies/', include('apps.movies.urls')),
-    path('news/', include('apps.news.urls')),
-    path('people/', include('apps.people.urls')),
-    path('piomotions/', include('apps.piomotions.urls')),
-    path('core/', include('apps.core.urls')),
+    path('api/service/', include('apps.service.urls')),
+    path('api/user/',include('apps.users.urls')),
+    path('api/accounts/', include('allauth.urls')),
+    path('api/movies/', include('apps.movies.urls')),
+    path('api/news/', include('apps.news.urls')),
+    path('api/people/', include('apps.people.urls')),
+    path('api/piomotions/', include('apps.piomotions.urls')),
+    path('api/core/', include('apps.core.urls')),
 
     
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

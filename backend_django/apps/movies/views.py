@@ -17,7 +17,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.middleware.csrf import CsrfViewMiddleware
 import json
-from .serializers import MovieSerializer, filmSerializer, bannerSerializer, episodesSerializer ,DetailSerializer, GenreSerializer
+from .serializers import MovieSerializer, filmSerializer, bannerSerializer, EpisodeSerializer ,DetailSerializer, GenreSerializer
 from django.views.decorators.http import require_POST
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import api_view, permission_classes
@@ -29,6 +29,10 @@ import os
 from django.shortcuts import get_object_or_404
 from pathlib import Path
 from django.conf import settings
+
+
+from .models import Movies, Moviegenres, Movieactors, Moviedirectors
+from .serializers import DetailSerializer, GenreSerializer, ActorSerializer, DirectorSerializer
 
 # Create your views here.
 def normalize_string(s):
@@ -88,41 +92,58 @@ def get_top_genres(request):
     else:
         return JsonResponse({"message": "Không có thể loại phù hợp"}, status=404)
 
-class GetDetailMovie(APIView):
-    def post(self, request):
-        try:
-            data = request.data
-            movie_id = data.get('movie_id')
-            movie = Movies.objects.get(movie_id=int(movie_id))
-            director_ids = Moviedirectors.objects.filter(movie_id=movie_id).values_list('director_id', flat=True)
-            directors = Directors.objects.filter(director_id__in=director_ids).values_list('name', flat=True)
-            actor_ids = Movieactors.objects.filter(movie_id=movie_id).values_list('actor_id', flat=True)
-            actors = Actors.objects.filter(actor_id__in=actor_ids).values_list('name', flat=True)
-            episodes_num = Episodes.objects.filter(movie_id=movie_id).values_list('episode_number',flat=True)
-            movie_data = { # Loại bỏ 'movie': movie
-                'movie_id': movie.movie_id,  # Truyền movie_id vào data
-                'title': movie.title, # Truyền các trường dữ liệu từ movie vào movie_data
-                'description': movie.description,
-                'release_date': movie.release_date,
-                'runtime': movie.runtime,
-                'poster_url': movie.poster_url,
-                'rating': movie.rating,
-                'genre': movie.genre.name, 
-                'views': movie.views,
-                'directors': list(directors),
-                'actors': list(actors),
-                'episodes_num':list(episodes_num)
-            }
-            serializer = DetailSerializer(data=movie_data)
-            if serializer.is_valid():
-                return Response(serializer.data)
-            else:
-                return Response(serializer.errors, status=400)
+# class GetDetailMovie(APIView):
+#     def post(self, request):
+#         try:
+#             data = request.data
+#             movie_id = data.get('movie_id')
+#             movie = Movies.objects.get(movie_id=int(movie_id))
+#             director_ids = Moviedirectors.objects.filter(movie_id=movie_id).values_list('director_id', flat=True)
+#             directors = Directors.objects.filter(director_id__in=director_ids).values_list('name', flat=True)
+#             actor_ids = Movieactors.objects.filter(movie_id=movie_id).values_list('actor_id', flat=True)
+#             actors = Actors.objects.filter(actor_id__in=actor_ids).values_list('name', flat=True)
+#             episodes_num = Episodes.objects.filter(movie_id=movie_id).values_list('episode_number',flat=True)
+#             movie_data = { # Loại bỏ 'movie': movie
+#                 'movie_id': movie.movie_id,  # Truyền movie_id vào data
+#                 'title': movie.title, # Truyền các trường dữ liệu từ movie vào movie_data
+#                 'description': movie.description,
+#                 'release_date': movie.release_date,
+#                 'runtime': movie.runtime,
+#                 'poster_url': movie.poster_url,
+#                 'rating': movie.rating,
+#                 'genre': movie.genre.name, 
+#                 'views': movie.views,
+#                 'directors': list(directors),
+#                 'actors': list(actors),
+#                 'episodes_num':list(episodes_num)
+#             }
+#             serializer = DetailSerializer(data=movie_data)
+#             if serializer.is_valid():
+#                 return Response(serializer.data)
+#             else:
+#                 return Response(serializer.errors, status=400)
 
-        except Movies.DoesNotExist:
-            return Response({"error": "Movie not found"}, status=404)
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
+#         except Movies.DoesNotExist:
+#             return Response({"error": "Movie not found"}, status=404)
+#         except Exception as e:
+#             return Response({"error": str(e)}, status=500)
+
+
+
+def get_movie_details(request, movie_id):
+    try:
+        movie = Movies.objects.prefetch_related(
+            'moviegenres_set__genre',  # Lấy danh sách thể loại
+            'movieactors_set__actor',  # Lấy danh sách diễn viên
+            'moviedirectors_set__director',  # Lấy danh sách đạo diễn
+            'episodes_set'  # Lấy danh sách tập phim
+        ).select_related('nation').get(movie_id=movie_id)
+
+        serializer = DetailSerializer(movie)
+        return JsonResponse(serializer.data, safe=False)
+    except Movies.DoesNotExist:
+        return Response({'error': 'Movie not found'}, status=404)
+
 
 @csrf_exempt
 def searchview(request):

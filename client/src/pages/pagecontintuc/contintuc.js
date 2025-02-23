@@ -11,7 +11,7 @@ const TTcon = () => {
 
   useEffect(() => {
 
-    fetch(`${process.env.REACT_APP_API_URL}/news/get-html/${id}/`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/news/get-html/${id}/`)
 
       .then((response) => response.text())
       .then((data) => setHtmlContent(data))
