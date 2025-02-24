@@ -28,7 +28,7 @@ const movieAPI = {
 
     getTopGenres: async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/movies/get_top_genres/`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/core/get_top_genres/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

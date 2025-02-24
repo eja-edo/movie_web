@@ -228,7 +228,7 @@ function TrangChu() {
           }}
         >
           <video
-            src={`${process.env.REACT_APP_API_URL}/static/assets/short-video/Teaser_NgoiDenKyQuai3.mp4`}
+            src={`${process.env.REACT_APP_API_URL}/static_sv/assets/short-video/Teaser_NgoiDenKyQuai3.mp4`}
             muted
             loop
             onCanPlay={handleVideoLoad}
@@ -245,7 +245,7 @@ function TrangChu() {
           >
             <img
               style={{ width: "100%" }}
-              src={`${process.env.REACT_APP_API_URL}/static/assets/img/ovn93mk3_title-ngoidenkyquai3-nenden_815_255.png`}
+              src={`${process.env.REACT_APP_API_URL}/static_sv/assets/img/ovn93mk3_title-ngoidenkyquai3-nenden_815_255.png`}
               alt=""
             />
             <p style={{ marginLeft: "10px" }}>

@@ -168,7 +168,7 @@ function Nav() {
                     }
                 </div>
                 <img
-                    src={`${process.env.REACT_APP_API_URL}/static/assets//img/img_duong/logoweb.png`}
+                    src={`${process.env.REACT_APP_API_URL}/static_sv/assets//img/img_duong/logoweb.png`}
                     alt=""
                     style={{ width: "9%", height: "auto", cursor: "pointer" }}
                     onClick={() => {
@@ -312,7 +312,7 @@ function Nav() {
                                     setClickUser(clickUser ? false : true);
                                 }}
                             >
-                                <img src={avt ? avt : `${process.env.REACT_APP_API_URL}/static/assets/img/defaultImgUser.png`}></img>
+                                <img src={avt ? avt : `${process.env.REACT_APP_API_URL}/static_sv/assets/img/defaultImgUser.png`}></img>
 
                                 <ul style={{ display: clickUser ? "flex" : "none" }}>
                                     <li style={{ borderBottom: "gray solid 1px" }}>

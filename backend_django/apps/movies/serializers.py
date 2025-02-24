@@ -10,10 +10,6 @@ class NationSerializer(serializers.ModelSerializer):
         model = Nations
         fields = ["nation_id", "name"]
 
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Genres
-        fields = ["genre_id", "name"]
 
 class ActorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -83,6 +79,15 @@ class EpisodeSerializer(serializers.ModelSerializer):
         fields =[
             'episode_id','episode_number'
         ]
+
+class VideoSerializer(serializers.ModelSerializer):
+    movie_title = serializers.CharField(source='movie.title', read_only=True)  # Lấy tiêu đề phim từ khóa ngoại
+
+    class Meta:
+        model = Episodes
+        fields = ['episode_id', 'url_video', 'movie_id', 'movie_title']
+
+
 class DetailSerializer(serializers.ModelSerializer):
     nation = NationSerializer()  # Lấy thông tin quốc gia
 
