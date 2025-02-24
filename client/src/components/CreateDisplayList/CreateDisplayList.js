@@ -179,7 +179,7 @@ const CreateDisplayList = memo((films) => {
                 <i className="fa-solid fa-arrow-right"></i>
             </button>
             <div className="video" ref={divVideoRef} >
-                <video src={infoFilm.video} muted loop autoPlay poster={infoFilm.poster} ref={videoRef} />
+                <video src={infoFilm.video != '' ? process.env.REACT_APP_API_URL + infoFilm.video : ''} muted loop autoPlay poster={infoFilm.poster != '' ? process.env.REACT_APP_API_URL + infoFilm.poster : ''} ref={videoRef} />
 
                 <div className="control">
                     <h2>{infoFilm.title}</h2>
@@ -213,7 +213,7 @@ const CreateDisplayList = memo((films) => {
                         <div key={index} data-key={index} className="film-container">
                             <a className="img" onMouseLeave={(event) => tatdi(event.currentTarget)}
                                 onMouseEnter={(event) => molen(event.currentTarget)} onClick={(event) => handleClickImg(event.currentTarget)} >
-                                <img src={item.poster_url} alt={item.title}
+                                <img src={process.env.REACT_APP_API_URL + item.poster_url} alt={item.title}
                                 />
                             </a>
 

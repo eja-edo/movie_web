@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './details.scss';
 import CreateDisplayList from '../../components/CreateDisplayList/CreateDisplayList';
 import FilmList from '../../components/FilmList/FilmList';
-import { fetchDisplayList, fetchFilmData } from '../../services/movieAPI';
+import movieAPI from '../../services/movieAPI';
 
 
 const MovieDetails = () => {
@@ -16,7 +16,7 @@ const MovieDetails = () => {
     useEffect(() => {
         const getfetchMovie = async () => {
             try {
-                const response = await fetchFilmData(id, navigate)
+                const response = await movieAPI.getFilmData(id, navigate)
                 setMovie(response)
                 console.log(response)
             } catch (error) {
@@ -31,7 +31,7 @@ const MovieDetails = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetchDisplayList(`${process.env.REACT_APP_API_URL}/service/get_thinhhanh/`)
+                const response = await movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/api/movies/get_thinhhanh/`)
                 setFilms(response);
             } catch (error) {
                 console.error(error);

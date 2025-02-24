@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./timkiem.scss";
 import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayList";
 import LazyLoad from "react-lazyload";
-import { fetchDisplayList } from "../../services/movieAPI";
+import movieAPI from "../../services/movieAPI";
 import ShowDisplay from "../../components/showdisplay/showdisplay";
 function Timkiem() {
   const [myList, setMylist] = useState(null);
@@ -11,7 +11,7 @@ function Timkiem() {
     const fetchData = async () => {
       try {
         const [myListData] = await Promise.all([
-          fetchDisplayList("http://127.0.0.1:8000/service/get_thinhhanh/"),
+          movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/api/movies/get_thinhhanh/`),
         ]);
         setMylist(myListData);
       } catch (error) {

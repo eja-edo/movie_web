@@ -1,7 +1,8 @@
 from django.urls import path, include
 from . import views
-from .views import get_news_list
-from .views import  TestAPIview , getFilm , GetDetailMovie, serve_html, stream_video_view
+
+from .views import  TestAPIview, GetDetailMovie, serve_html, get_news_list
+
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -20,10 +21,9 @@ urlpatterns =[
 
 
     path('test/',TestAPIview.as_view(), name = 'test'),
-    path('film/',getFilm.as_view(),name='getfilm'),
-    path('api/video/', stream_video_view, name='stream_video'),
     path('detailMovie/', GetDetailMovie.as_view(), name='detail'),
     path('searchkeys/',views.searchview, name = 'searchkey'),
+    path('get_top_genres/', views.get_top_genres, name = 'get_genre_hot'),
     path('get-html/<int:id>/', serve_html, name='serve_html'),
     path("get-news/", get_news_list, name="get_news_list"),  # Định tuyến API
 ]

@@ -6,7 +6,7 @@ function Intro() {
     <div className="intro-container">
       <div>
         <img
-          src="http://127.0.0.1:8000/static/assets/img/img_duong/intro2.png"
+          src={`${process.env.REACT_APP_API_URL}/static_sv/assets/img/img_duong/intro2.png`}
           id="introimg1"
           alt="Phim25 logo with cartoon characters"
         />
@@ -19,15 +19,15 @@ function Intro() {
         </p>
         <div id="intro_three">
           <img
-            src="http://127.0.0.1:8000/static/assets/img/img_duong/intro3.png"
+            src={`${process.env.REACT_APP_API_URL}/static_sv/assets/img/img_duong/intro3.png`}
             id="introimg2"
           />
           <img
-            src="http://127.0.0.1:8000/static/assets/img/img_duong/intro4.png"
+            src={`${process.env.REACT_APP_API_URL}/static_sv/assets/img/img_duong/intro4.png`}
             id="introimg3"
           />
           <img
-            src="http://127.0.0.1:8000/static/assets/img/img_duong/intro5.png"
+            src={`${process.env.REACT_APP_API_URL}/static_sv/assets/img/img_duong/intro5.png`}
             id="introimg4"
           />
         </div>

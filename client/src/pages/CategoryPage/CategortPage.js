@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import "./category.scss";
 import ShowDisplay from "../../components/showdisplay/showdisplay";
 import SortDropdown from "../../components/sort/sort";
-import {fetchDisplayList, fetchFilmData} from "../../services/movieAPI";
+import movieAPI from "../../services/movieAPI";
 import FilmListColumn from "../../components/FilmListColumn/FilmListColumn";
 import Pagination from "../../components/pagination/pagination";
 
 const CategoryPage = () => {
-    const {type} = useParams(); // Lấy tham số từ URL
+    const { type } = useParams(); // Lấy tham số từ URL
     const [films, setFilms] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -16,15 +16,15 @@ const CategoryPage = () => {
     const [totalPages, setTotalPages] = useState(40); // Giả định có 40 trang
 
     const sortOptions = [
-        {value: "new", label: "Phim mới nhất"},
-        {value: "popular", label: "Phim xem nhiều nhất"},
-        {value: "rated", label: "Phim đánh giá cao nhất"},
+        { value: "new", label: "Phim mới nhất" },
+        { value: "popular", label: "Phim xem nhiều nhất" },
+        { value: "rated", label: "Phim đánh giá cao nhất" },
     ];
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:8000/service/get_thinhhanh/");
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/movies/get_thinhhanh/`);
                 const data = await response.json();
                 setFilms(data);
             } catch (error) {

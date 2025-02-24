@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./BannerQC.scss";
-import { fetchBannerQC } from "../../services/movieAPI";
+import movieAPI from "../../services/movieAPI";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const BannerQC = () => {
@@ -34,7 +34,7 @@ const BannerQC = () => {
   useEffect(() => {
     const getMovies = async () => {
       try {
-        const data = await fetchBannerQC();
+        const data = await movieAPI.getBannerQC();
         setBannerQC(data);
       } catch (error) {
         setError(error.message);
@@ -54,7 +54,7 @@ const BannerQC = () => {
         <div id="qc_video" ref={qcVideoRef}>
           {bannerQC.slice(0, 5).map((item, index) => (
             <div key={index} className="if_video">
-              <video src={item.trailer_url} autoPlay loop muted />
+              <video src={process.env.REACT_APP_API_URL + item.trailer_url} autoPlay loop muted />
             </div>
           ))}
         </div>

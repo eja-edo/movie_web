@@ -66,9 +66,10 @@ CREATE TABLE movies (
 
 --Bảng liên kết movies và genres
 create table movieGenres(
+	mg_id SERIAL PRIMARY KEY,
 	movie_id int,
 	genre_id int,
-	primary key(movie_id, genre_id),
+	unique(movie_id, genre_id),
 	foreign key (movie_id) references movies(movie_id) ON DELETE CASCADE,
 	foreign key (genre_id) references genres(genre_id) ON DELETE CASCADE
 );
@@ -118,19 +119,21 @@ CREATE TABLE directors (
 
 -- Liên kết phim và diễn viên
 CREATE TABLE movieActors (
+	ma_id SERIAL PRIMARY KEY,
     movie_id INT,
     actor_id INT,
     role VARCHAR(100) DEFAULT 'Diễn viên',
-	primary key(movie_id, actor_id, role),
+	unique(movie_id, actor_id, role),
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     FOREIGN KEY (actor_id) REFERENCES actors(actor_id) ON DELETE CASCADE
 );
 
 -- Liên kết phim và đạo diễn
 CREATE TABLE movieDirectors (
+	md_id SERIAL PRIMARY KEY,
     movie_id INT,
     director_id INT,
-	primary key(movie_id,director_id),
+	unique(movie_id,director_id),
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
     FOREIGN KEY (director_id) REFERENCES directors(director_id) ON DELETE CASCADE
 );
@@ -189,11 +192,12 @@ CREATE TABLE codes (
 );
 
 CREATE TABLE codeMonopoly (
+	cm_id SERIAL PRIMARY KEY,
     code_id INT NOT NULL,               -- Liên kết đến bảng codes
     monopoly_id INT NOT NULL,           -- Liên kết đến bảng Monopolys
     FOREIGN KEY (code_id) REFERENCES codes(code_id) ON DELETE CASCADE,
     FOREIGN KEY (monopoly_id) REFERENCES Monopolys(monopoly_id) ON DELETE CASCADE,
-	primary key(code_id,monopoly_id)
+	unique(code_id,monopoly_id)
 );
 
 CREATE TABLE news (
@@ -221,6 +225,4 @@ CREATE TABLE news (
 --     FOREIGN KEY (user_id) REFERENCES profile_user(id),  -- Liên kết đến bảng người dùng
 --     CONSTRAINT check_title_length CHECK (length(title) > 0)  -- Ràng buộc tiêu đề không trống
 -- );
-
-
 

@@ -10,7 +10,9 @@ const TTcon = () => {
   const [htmlContent, setHtmlContent] = useState("");
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/service/get-html/${id}/`) // Truy vấn với id động
+
+    fetch(`${process.env.REACT_APP_API_URL}/api/news/get-html/${id}/`)
+
       .then((response) => response.text())
       .then((data) => setHtmlContent(data))
       .catch((error) => console.error("Error fetching HTML:", error));
