@@ -17,22 +17,22 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.middleware.csrf import CsrfViewMiddleware
 import json
-from .serializers import MovieSerializer, filmSerializer, bannerSerializer, EpisodeSerializer ,DetailSerializer, GenreSerializer
+from .serializers import MovieSerializer, filmSerializer, bannerSerializer, EpisodeSerializer ,DetailSerializer, VideoSerializer, DirectorSerializer
 from django.views.decorators.http import require_POST
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
 
-from django.db.models import Sum
+
 import re
 import os
 from django.shortcuts import get_object_or_404
 from pathlib import Path
 from django.conf import settings
 
+from django.core.paginator import Paginator, EmptyPage
 
 from .models import Movies, Moviegenres, Movieactors, Moviedirectors
-from .serializers import DetailSerializer, GenreSerializer, ActorSerializer, DirectorSerializer
 
 # Create your views here.
 def normalize_string(s):
@@ -77,73 +77,40 @@ def get_films_by_genre10(request):
         return JsonResponse({"message": "Không tìm thấy phim với thể loại này"}, status=404)
 
 
-def get_top_genres(request):
-    # Truy vấn lấy 5 thể loại có nhiều lượt xem nhất
-    top_genres = (
-        Genres.objects
-        .annotate(total_views=Sum('moviegenres__movie__views'))  # Tổng lượt xem
-        .order_by('-total_views')  # Sắp xếp giảm dần
-        [:5]  # Giới hạn 5 thể loại
-    )
-    # Sử dụng serializer để chuyển đổi queryset thành JSON
-    if top_genres:
-        serializer = GenreSerializer(top_genres, many=True)
-        return JsonResponse(serializer.data, safe=False)
-    else:
-        return JsonResponse({"message": "Không có thể loại phù hợp"}, status=404)
-
-# class GetDetailMovie(APIView):
-#     def post(self, request):
-#         try:
-#             data = request.data
-#             movie_id = data.get('movie_id')
-#             movie = Movies.objects.get(movie_id=int(movie_id))
-#             director_ids = Moviedirectors.objects.filter(movie_id=movie_id).values_list('director_id', flat=True)
-#             directors = Directors.objects.filter(director_id__in=director_ids).values_list('name', flat=True)
-#             actor_ids = Movieactors.objects.filter(movie_id=movie_id).values_list('actor_id', flat=True)
-#             actors = Actors.objects.filter(actor_id__in=actor_ids).values_list('name', flat=True)
-#             episodes_num = Episodes.objects.filter(movie_id=movie_id).values_list('episode_number',flat=True)
-#             movie_data = { # Loại bỏ 'movie': movie
-#                 'movie_id': movie.movie_id,  # Truyền movie_id vào data
-#                 'title': movie.title, # Truyền các trường dữ liệu từ movie vào movie_data
-#                 'description': movie.description,
-#                 'release_date': movie.release_date,
-#                 'runtime': movie.runtime,
-#                 'poster_url': movie.poster_url,
-#                 'rating': movie.rating,
-#                 'genre': movie.genre.name, 
-#                 'views': movie.views,
-#                 'directors': list(directors),
-#                 'actors': list(actors),
-#                 'episodes_num':list(episodes_num)
-#             }
-#             serializer = DetailSerializer(data=movie_data)
-#             if serializer.is_valid():
-#                 return Response(serializer.data)
-#             else:
-#                 return Response(serializer.errors, status=400)
-
-#         except Movies.DoesNotExist:
-#             return Response({"error": "Movie not found"}, status=404)
-#         except Exception as e:
-#             return Response({"error": str(e)}, status=500)
-
-
-
-def get_movie_details(request, movie_id):
+#Lấy video của tập film
+def get_video_movie(request, movie_id, episode_id):
     try:
-        movie = Movies.objects.prefetch_related(
-            'moviegenres_set__genre',  # Lấy danh sách thể loại
-            'movieactors_set__actor',  # Lấy danh sách diễn viên
-            'moviedirectors_set__director',  # Lấy danh sách đạo diễn
-            'episodes_set'  # Lấy danh sách tập phim
-        ).select_related('nation').get(movie_id=movie_id)
-
-        serializer = DetailSerializer(movie)
+        episode = get_object_or_404(Episodes.objects.select_related('movie'), 
+                                    movie_id=movie_id, episode_id=episode_id)
+        serializer = VideoSerializer(episode)
         return JsonResponse(serializer.data, safe=False)
-    except Movies.DoesNotExist:
-        return Response({'error': 'Movie not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
+
+#Lấy thông tin chi tiết của phim
+def get_movie_details(request, movie_id):
+    # Kiểm tra xem movie_id có phải là số nguyên hợp lệ không
+    try:
+        movie_id = int(movie_id)
+        if movie_id <= 0:
+            return Response({'error': 'Invalid movie ID'}, status=400)
+    except ValueError:
+        return Response({'error': 'Movie ID must be an integer'}, status=400)
+
+    # Truy vấn dữ liệu và xử lý lỗi nếu không tìm thấy phim
+    movie = get_object_or_404(
+        Movies.objects.prefetch_related(
+            'moviegenres_set__genre',  
+            'movieactors_set__actor',  
+            'moviedirectors_set__director',  
+            'episodes_set'  
+        ).select_related('nation'),
+        movie_id=movie_id
+    )
+
+    serializer = DetailSerializer(movie)
+    return JsonResponse(serializer.data, safe=False)
 
 @csrf_exempt
 def searchview(request):
@@ -159,3 +126,37 @@ def searchview(request):
     except Exception as e:
         return Response(status=400, data={'detail': str(e)})
     
+
+#Lấy danh sách phim theo thể loại
+def get_movies_by_genre(request):
+    genre_id = request.GET.get('genre_id')  # Lọc theo thể loại
+    order_by = request.GET.get('order_by', 'title')  # Mặc định sắp xếp theo title
+    page = request.GET.get('page', 1)  # Mặc định lấy trang 1
+    per_page = 10  # Số lượng phim trên mỗi trang
+
+    movies = Movies.objects.all()
+
+    # Lọc theo thể loại nếu có genre_id
+    if genre_id:
+        movies = movies.filter(moviegenres__genre_id=genre_id)
+
+    # Hỗ trợ sắp xếp theo các trường hợp hợp lệ
+    valid_order_fields = ['title', '-title', 'release_date', '-release_date']
+    if order_by in valid_order_fields:
+        movies = movies.order_by(order_by)
+
+    # Phân trang
+    paginator = Paginator(movies, per_page)
+    try:
+        movies_page = paginator.page(page)
+    except EmptyPage:
+        return JsonResponse({"error": "Page not found"}, status=404)
+
+    # Serialize dữ liệu
+    serializer = MovieSerializer(movies_page, many=True)
+    return JsonResponse({
+        "count": paginator.count,
+        "next": movies_page.next_page_number() if movies_page.has_next() else None,
+        "previous": movies_page.previous_page_number() if movies_page.has_previous() else None,
+        "results": serializer.data
+    }, safe=False)

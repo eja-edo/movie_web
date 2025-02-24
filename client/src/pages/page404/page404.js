@@ -12,7 +12,7 @@ function Page404() {
     >
       <h1 style={{ fontSize: "100px", margin: "0" }}>
         <img
-          src={`${process.env.REACT_APP_API_URL}/static/assets/img/img_duong/page404error.jpg`}
+          src={`${process.env.REACT_APP_API_URL}/static_sv/assets/img/img_duong/page404error.jpg`}
           alt="Snake with 3D glasses"
           style={{ width: "40%", marginTop: "5%" }}
         />
