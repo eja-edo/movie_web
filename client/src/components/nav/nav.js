@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import "./nav.scss";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import movieAPI from "../../services/movieAPI";
+import DropdownMenu from "../dropdownMenu/DropdownMenu";
 
 function Nav() {
     const navigate = useNavigate();
@@ -10,6 +11,8 @@ function Nav() {
     const [avt, setImg] = useState(null);
     const [login, setLogin] = useState(false);
     const [suggestSearch, setSuggest] = useState(null);
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const handleMenuToggle = () => {
         setShowMenu(!showMenu);
     };
@@ -79,7 +82,7 @@ function Nav() {
                 console.log("đã logout");
                 localStorage.setItem("accessToken", null);
                 localStorage.setItem("refreshToken", null);
-                localStorage.setItem("user", JSON.stringify({ login: false }));
+                localStorage.setItem("user", JSON.stringify({login: false}));
                 setLogin(false);
                 navigate("/");
             })
@@ -99,9 +102,9 @@ function Nav() {
         <div id="header">
             <div id="main_content_header">
                 <div id="min_menu">
-                    <a style={{ marginLeft: 10, marginRight: 10 }} onClick={handleMenuToggle}>
-                        <i className="fa-solid fa-bars" style={{ display: showMenu ? "none" : "flex", marginLeft: 15 }}></i>
-                        <i className="fa-solid fa-x" style={{ display: showMenu ? "flex" : "none", marginLeft: 15 }}></i>
+                    <a style={{marginLeft: 10, marginRight: 10}} onClick={handleMenuToggle}>
+                        <i className="fa-solid fa-bars" style={{display: showMenu ? "none" : "flex", marginLeft: 15}}></i>
+                        <i className="fa-solid fa-x" style={{display: showMenu ? "flex" : "none", marginLeft: 15}}></i>
                     </a>
                     {
                         <ul
@@ -170,7 +173,7 @@ function Nav() {
                 <img
                     src={`${process.env.REACT_APP_API_URL}/static_sv/assets//img/img_duong/logoweb.png`}
                     alt=""
-                    style={{ width: "9%", height: "auto", cursor: "pointer" }}
+                    style={{width: "9%", height: "auto", cursor: "pointer"}}
                     onClick={() => {
                         navigate("/TrangChu");
                     }}
@@ -188,29 +191,21 @@ function Nav() {
                             {/* <div className="tick" style={{ display: 'flex' }}></div> */}
                         </a>
                     </li>
-                    <li>
-                        <a
-                            onClick={() => {
-                                navigate("/category/genre");
-                            }}
-                            target="main"
-                            rel="noopener noreferrer"
-                        >
+                    {/* Dropdown Thể loại */}
+                    <li className="dropdown" onMouseEnter={() => setIsDropdownVisible(true)} onMouseLeave={() => setIsDropdownVisible(false)}>
+                        <a target="main" rel="noopener noreferrer">
                             Thể loại
-                            {/* <div className="tick"></div> */}
                         </a>
+
+                        {isDropdownVisible && <DropdownMenu apiEndpoint="http://localhost:8080/api/core/genres/" type="genre" onClose={() => setIsDropdownVisible(false)} />}
                     </li>
-                    <li>
-                        <a
-                            onClick={() => {
-                                navigate("/category/country");
-                            }}
-                            target="main"
-                            rel="noopener noreferrer"
-                        >
+                    {/* Dropdown Quốc gia */}
+                    <li className="dropdown" onMouseEnter={() => setIsDropdownVisible(true)} onMouseLeave={() => setIsDropdownVisible(false)}>
+                        <a target="main" rel="noopener noreferrer">
                             Quốc gia
-                            {/* <div className="tick"></div> */}
                         </a>
+
+                        {isDropdownVisible && <DropdownMenu apiEndpoint="http://localhost:8080/api/core/nations/" type="country" onClose={() => setIsDropdownVisible(false)} />}
                     </li>
                     <li>
                         <a
@@ -314,8 +309,8 @@ function Nav() {
                             >
                                 <img src={avt ? avt : `${process.env.REACT_APP_API_URL}/static_sv/assets/img/defaultImgUser.png`}></img>
 
-                                <ul style={{ display: clickUser ? "flex" : "none" }}>
-                                    <li style={{ borderBottom: "gray solid 1px" }}>
+                                <ul style={{display: clickUser ? "flex" : "none"}}>
+                                    <li style={{borderBottom: "gray solid 1px"}}>
                                         <a>Chỉnh sửa thông tin</a>
                                     </li>
                                     <li>
