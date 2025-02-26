@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.db import connection
 from django.http import JsonResponse,HttpResponse
 from .models import Movies , Genres , Episodes, Moviedirectors, Movieactors 
+from apps.core.models import Nations , Genres
+from apps.people.models import Directors, Actors
 from apps.people.models import Directors, Actors
 from datetime import datetime
 from django.views.decorators.csrf import csrf_protect
@@ -17,12 +19,12 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.middleware.csrf import CsrfViewMiddleware
 import json
-from .serializers import MovieSerializer, filmSerializer, bannerSerializer, EpisodeSerializer ,DetailSerializer, VideoSerializer, DirectorSerializer
+from .serializers import MovieSerializer, filmSerializer, bannerSerializer, EpisodeSerializer ,DetailSerializer, VideoSerializer, DirectorSerializer, SearchSerializer
 from django.views.decorators.http import require_POST
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
-
+from thefuzz import process
 
 import re
 import os
@@ -33,6 +35,8 @@ from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage
 
 from .models import Movies, Moviegenres, Movieactors, Moviedirectors
+
+from django.db.models import Q
 
 # Create your views here.
 def normalize_string(s):
@@ -78,12 +82,25 @@ def get_films_by_genre10(request):
 
 
 #Lấy video của tập film
+@api_view(['GET'])
 def get_video_movie(request, movie_id, episode_id):
     try:
+        # Lấy tập phim đang xem
         episode = get_object_or_404(Episodes.objects.select_related('movie'), 
                                     movie_id=movie_id, episode_id=episode_id)
-        serializer = VideoSerializer(episode)
-        return JsonResponse(serializer.data, safe=False)
+
+        # Lấy danh sách các tập khác của cùng bộ phim, sắp xếp theo tập
+        episodes_list = Episodes.objects.filter(movie_id=movie_id).order_by('episode_id')
+
+        # Serialize dữ liệu
+        episode_serializer = VideoSerializer(episode)
+        episodes_list_serializer = EpisodeSerializer(episodes_list, many=True)
+
+        return JsonResponse({
+            "current_episode": episode_serializer.data,
+            "episodes_list": episodes_list_serializer.data
+        }, safe=False)
+
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
@@ -112,20 +129,42 @@ def get_movie_details(request, movie_id):
     serializer = DetailSerializer(movie)
     return JsonResponse(serializer.data, safe=False)
 
-@csrf_exempt
-def searchview(request):
-    try:
-        data = json.loads(request.body)
-        keys = data.get('keys')
-        normalized_keys = normalize_string(keys)
+def search_movies(request):
+    query = request.GET.get('q', '').strip()
 
-        movies = Movies.objects.filter(
-            title__istartswith=normalized_keys
-        ).values_list('title', flat=True)
-        return JsonResponse({'movies': list(movies)}, safe=False)
-    except Exception as e:
-        return Response(status=400, data={'detail': str(e)})
-    
+    if not query:
+        return Response({'error': 'No search query provided'}, status=400)
+
+    # Lấy danh sách phim cần tìm kiếm
+    movies = Movies.objects.all()
+
+    # Danh sách tất cả các tiêu chí cần so khớp fuzzy
+    movie_data = [
+        (movie.movie_id, movie.title, movie.poster_url, movie.description) for movie in movies
+    ]
+
+    # Sử dụng fuzzy matching để tìm phim có tiêu đề gần giống với từ khóa nhập vào
+    fuzzy_results = process.extractBests(query, [title for _, title, _, _ in movie_data], score_cutoff=80)
+
+    # Lọc danh sách phim dựa trên tiêu đề gần giống
+    fuzzy_matched_movies = [
+        movie for movie in movies if movie.title in [result[0] for result in fuzzy_results]
+    ]
+
+    # Nếu fuzzy search không có kết quả, fallback về tìm kiếm truyền thống
+    if not fuzzy_matched_movies:
+        movies = movies.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(moviegenres__genre__name__icontains=query) |
+            Q(movieactors__actor__name__icontains=query) |
+            Q(moviedirectors__director__name__icontains=query)
+        ).distinct()
+    else:
+        movies = fuzzy_matched_movies
+
+    serializer = SearchSerializer(movies, many=True)
+    return JsonResponse({"movies": serializer.data}, safe=False)
 
 #Lấy danh sách phim theo thể loại
 def get_movies_by_genre(request):
@@ -156,7 +195,47 @@ def get_movies_by_genre(request):
     serializer = MovieSerializer(movies_page, many=True)
     return JsonResponse({
         "count": paginator.count,
-        "next": movies_page.next_page_number() if movies_page.has_next() else None,
-        "previous": movies_page.previous_page_number() if movies_page.has_previous() else None,
+        "total_videos": len(movies_page),
+        "page": page,
         "results": serializer.data
     }, safe=False)
+
+#phân trang theo quốc gia
+def get_movies_by_nation(request):
+    nation_id = request.GET.get('nation_id')  # Lọc theo quốc gia
+    order_by = request.GET.get('order_by', 'title')  # Mặc định sắp xếp theo title
+    page = int(request.GET.get('page', 1))  # Mặc định lấy trang 1
+    per_page = 10  # Số lượng phim trên mỗi trang
+
+    movies = Movies.objects.all()
+    # Lọc theo quốc gia nếu có nation_id
+    if nation_id:
+        movies = movies.filter(nation_id=nation_id)
+
+    # Hỗ trợ sắp xếp theo các trường hợp hợp lệ
+    valid_order_fields = ['title', '-title', 'release_date', '-release_date']
+    if order_by in valid_order_fields:
+        movies = movies.order_by(order_by)
+
+    # Phân trang
+    paginator = Paginator(movies, per_page)
+    try:
+        movies_page = paginator.page(page)
+    except EmptyPage:
+        return JsonResponse({"error": "Page not found"}, status=404)
+
+    # Serialize dữ liệu
+    serializer = MovieSerializer(movies_page, many=True)
+    
+    return JsonResponse({
+        "count": paginator.count,
+        "total_videos": len(movies_page),  # Tổng số phim trên trang hiện tại
+        "page": page,
+        "results": serializer.data
+    }, safe=False)
+
+
+
+
+
+
