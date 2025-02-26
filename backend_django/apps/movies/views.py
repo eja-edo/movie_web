@@ -82,6 +82,7 @@ def get_films_by_genre10(request):
 
 
 #Lấy video của tập film
+@api_view(['GET'])
 def get_video_movie(request, movie_id, episode_id):
     try:
         # Lấy tập phim đang xem

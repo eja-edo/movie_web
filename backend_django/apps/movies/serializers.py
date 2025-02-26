@@ -2,13 +2,18 @@ from rest_framework import serializers
 from .models import Movies, Moviegenres, Movieactors, Moviedirectors, Episodes
 
 from rest_framework import serializers
-from apps.core.models import Nations, Genres
+from apps.core.models import Nations, Genres, Monopolys
 from apps.people.models import Actors, Directors
 
 class NationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nations
         fields = ["nation_id", "name"]
+
+class monopolySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Monopolys
+        fields = ["monopoly_id", "name"]
 
 
 class ActorSerializer(serializers.ModelSerializer):
@@ -26,12 +31,13 @@ class DirectorSerializer(serializers.ModelSerializer):
 
 class MovieSerializer(serializers.ModelSerializer):
     release_date = serializers.SerializerMethodField() # Sử dụng SerializerMethodField
+    monopoly = monopolySerializer()
 
     class Meta:
         model = Movies
         fields = [
             'movie_id', 'title', 'release_date', 'runtime', 
-            'poster_url', 'trailer_url', 'rating', 'views'
+            'poster_url', 'trailer_url', 'rating', 'views', 'monopoly'
         ]
 
     def get_release_date(self, obj):
