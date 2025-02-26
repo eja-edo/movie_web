@@ -88,6 +88,13 @@ class VideoSerializer(serializers.ModelSerializer):
         fields = ['episode_id', 'url_video', 'movie_id', 'movie_title']
 
 
+class SearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movies
+        fields = ['movie_id', 'title', 'poster_url']
+
+
+
 class DetailSerializer(serializers.ModelSerializer):
     nation = NationSerializer()  # Lấy thông tin quốc gia
 
