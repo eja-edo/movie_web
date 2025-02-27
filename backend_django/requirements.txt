@@ -7,3 +7,4 @@ mysqlclient==2.2.4
 requests==2.31.0
 django-cors-headers==4.3.1
 djangorestframework-jwt==1.11.0
+thefuzz==0.22.1
