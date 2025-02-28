@@ -5,7 +5,7 @@ const Pagination = ({currentPage, totalPages, onPageChange}) => {
     const generatePages = () => {
         const pages = [];
 
-        if (totalPages <= 1) return pages;
+        if (totalPages <= 1) return [1];
 
         if (totalPages <= 7) {
             // Show all pages if totalPages is small

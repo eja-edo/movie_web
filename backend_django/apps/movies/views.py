@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db import connection
 from django.http import JsonResponse,HttpResponse
-from .models import Movies , Genres , Episodes, Moviedirectors, Movieactors 
+from .models import Movies , Episodes, Moviedirectors, Movieactors 
 from apps.core.models import Nations , Genres
 from apps.people.models import Directors, Actors
 from apps.people.models import Directors, Actors
@@ -166,18 +166,22 @@ def search_movies(request):
     serializer = SearchSerializer(movies, many=True)
     return JsonResponse({"movies": serializer.data}, safe=False)
 
-#Lấy danh sách phim theo thể loại
+#Phân trang theo thể loại
 def get_movies_by_genre(request):
     genre_id = request.GET.get('genre_id')  # Lọc theo thể loại
     order_by = request.GET.get('order_by', 'title')  # Mặc định sắp xếp theo title
-    page = request.GET.get('page', 1)  # Mặc định lấy trang 1
+    page = int(request.GET.get('page', 1))  # Mặc định lấy trang 1
     per_page = 10  # Số lượng phim trên mỗi trang
 
     movies = Movies.objects.all()
+    genre_name = "Tất cả thể loại"  # Mặc định nếu không có genre_id hoặc không tìm thấy
 
-    # Lọc theo thể loại nếu có genre_id
+    # Lọc theo thể loại nếu có genre_id hợp lệ
     if genre_id:
-        movies = movies.filter(moviegenres__genre_id=genre_id)
+        genre = Genres.objects.filter(genre_id=genre_id).first()
+        if genre:
+            movies = movies.filter(moviegenres__genre_id=genre_id)
+            genre_name = str(genre.name)
 
     # Hỗ trợ sắp xếp theo các trường hợp hợp lệ
     valid_order_fields = ['title', '-title', 'release_date', '-release_date']
@@ -186,6 +190,8 @@ def get_movies_by_genre(request):
 
     # Phân trang
     paginator = Paginator(movies, per_page)
+    total_pages = paginator.num_pages  # Lấy tổng số trang
+
     try:
         movies_page = paginator.page(page)
     except EmptyPage:
@@ -193,10 +199,12 @@ def get_movies_by_genre(request):
 
     # Serialize dữ liệu
     serializer = MovieSerializer(movies_page, many=True)
+
     return JsonResponse({
-        "count": paginator.count,
+        "total_pages": total_pages,
         "total_videos": len(movies_page),
         "page": page,
+        "Title": {"Thể Loại": genre_name},
         "results": serializer.data
     }, safe=False)
 
@@ -208,9 +216,14 @@ def get_movies_by_nation(request):
     per_page = 10  # Số lượng phim trên mỗi trang
 
     movies = Movies.objects.all()
-    # Lọc theo quốc gia nếu có nation_id
+    nation_name = "Tất cả quốc gia"  # Mặc định nếu không có nation_id hoặc không tìm thấy
+
+    # Lọc theo quốc gia nếu có nation_id hợp lệ
     if nation_id:
-        movies = movies.filter(nation_id=nation_id)
+        nation = Nations.objects.filter(nation_id=nation_id).first()
+        if nation:
+            movies = movies.filter(nation_id=nation_id)
+            nation_name = str(nation.name)  # Chuyển thành chuỗi để tránh lỗi JSON
 
     # Hỗ trợ sắp xếp theo các trường hợp hợp lệ
     valid_order_fields = ['title', '-title', 'release_date', '-release_date']
@@ -219,6 +232,8 @@ def get_movies_by_nation(request):
 
     # Phân trang
     paginator = Paginator(movies, per_page)
+    total_pages = paginator.num_pages  # Lấy tổng số trang
+
     try:
         movies_page = paginator.page(page)
     except EmptyPage:
@@ -226,14 +241,14 @@ def get_movies_by_nation(request):
 
     # Serialize dữ liệu
     serializer = MovieSerializer(movies_page, many=True)
-    
-    return JsonResponse({
-        "count": paginator.count,
-        "total_videos": len(movies_page),  # Tổng số phim trên trang hiện tại
-        "page": page,
-        "results": serializer.data
-    }, safe=False)
 
+    return JsonResponse({
+        "total_pages": total_pages,
+        "total_videos": len(movies_page),
+        "page": page,
+        "Title": {"Quốc gia": nation_name},  # Đảm bảo đây là chuỗi hợp lệ
+        "results": serializer.data
+    }, json_dumps_params={'ensure_ascii': False}, safe=False)
 
 
 
