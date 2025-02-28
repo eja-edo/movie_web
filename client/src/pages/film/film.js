@@ -10,51 +10,65 @@ function Film() {
   const { id1, id2 } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [videoUrl, setVideoUrl] = useState("");
+  const [data, setData] = useState("");
   const [movie, setMovie] = useState(null);
   const [films, setFilms] = useState(null);
 
-  // Lấy URL video
   useEffect(() => {
-    const fetchVideo = async () => {
+    console.log("Dữ liệu đã cập nhật:", data);
+  }, [data]); // Chạy mỗi khi `data` thay đổi
+  console.log("Dữ liệu đã cập nhật:", id1, id2);
+  useEffect(() => {
+    let isMounted = true; // Tránh cập nhật state khi component bị unmount
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
-        const videoUrl = await movieAPI.getVideoData(id1, id2, navigate);
-        setVideoUrl(videoUrl || "");
+        // Chạy song song để giảm thời gian chờ
+        const [videoData, movieData] = await Promise.all([
+          movieAPI.getVideoData(id1, id2, navigate),
+          movieAPI.getFilmData(id1, navigate),
+        ]);
+
+        if (isMounted) {
+          setData(videoData);
+          setMovie(movieData);
+        }
       } catch (err) {
-        setError("Không thể tải video.");
+        if (isMounted) setError("Lỗi khi tải dữ liệu phim.");
+        console.error("Lỗi tải dữ liệu:", err);
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     };
-    fetchVideo();
+
+    fetchData();
+
+    return () => {
+      isMounted = false; // Cleanup function
+    };
   }, [id1, id2, navigate]);
 
-  // Lấy thông tin phim
   useEffect(() => {
-    const fetchMovieData = async () => {
-      try {
-        const response = await movieAPI.getFilmData(id1, navigate);
-        setMovie(response);
-      } catch (err) {
-        setError("Lỗi tải thông tin phim.");
-      }
-    };
-    fetchMovieData();
-  }, [id1, navigate]);
+    let isMounted = true;
 
-  // Lấy danh sách phim đề cử
-  useEffect(() => {
-    const fetchData = async () => {
+    const fetchFilmList = async () => {
       try {
         const response = await movieAPI.getDisplayList(
           `${process.env.REACT_APP_API_URL}/api/movies/get_thinhhanh/`
         );
-        setFilms(response);
+        if (isMounted) setFilms(response);
       } catch (err) {
         console.error("Lỗi tải danh sách phim:", err);
       }
     };
-    fetchData();
+
+    fetchFilmList();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleMotaClick = () => {
@@ -74,8 +88,9 @@ function Film() {
     <div id="container_film">
       <div id="film">
         {/* Video Player */}
+
         <video
-          src={videoUrl}
+          src={process.env.REACT_APP_API_URL + data.current_episode.url_video}
           controls
           style={{
             width: "98%",
@@ -113,7 +128,7 @@ function Film() {
           <legend>
             <h3>Tập phim</h3>
           </legend>
-          {/* {movie?.episodes?.length ? (
+          {movie?.episodes?.length ? (
             movie.episodes.map((ep) => (
               <button
                 key={ep.episode_id}
@@ -130,7 +145,7 @@ function Film() {
             ))
           ) : (
             <p>Chưa có tập phim.</p>
-          )} */}
+          )}
         </fieldset>
 
         {/* Bình luận */}
