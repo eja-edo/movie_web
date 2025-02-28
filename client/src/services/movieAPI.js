@@ -102,9 +102,6 @@ const movieAPI = {
         `${process.env.REACT_APP_API_URL}/api/movies/get_movie_details/${id}/`,
         {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
         }
       );
 
@@ -142,6 +139,7 @@ const movieAPI = {
   },
   getVideoData: async (id1, id2, navigate, retry = false) => {
     try {
+      const accessToken = localStorage.getItem("accessToken");
       const apiUrl = `${process.env.REACT_APP_API_URL}/api/movies/${id1}/episodes/${id2}/`;
       console.log("Calling API:", apiUrl);
 
@@ -149,6 +147,7 @@ const movieAPI = {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -157,24 +156,15 @@ const movieAPI = {
         if (response.status === 401 && !retry) {
           const refreshSuccess = await checkRefreshToken(navigate);
           if (refreshSuccess) {
-            return await movieAPI.getVideoData(id1, id2, navigate, true);
+            const result = await movieAPI.getVideoData(id1, id2, navigate);
           }
         }
         return null;
       }
 
       const data = await response.json();
-      console.log("API Response Data:", data);
 
-      if (!data.url_video) {
-        console.error("API did not return a valid video URL");
-        return null;
-      }
-
-      return `${process.env.REACT_APP_API_URL}${data.url_video.replace(
-        /\\/g,
-        "/"
-      )}`;
+      return data;
     } catch (error) {
       console.error("Error fetching film data:", error);
       return null;

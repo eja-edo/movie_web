@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import TrangChu from "./pages/home/TrangChu.js";
 import Login from "./pages/login/login.js";
@@ -18,6 +18,7 @@ import CategoryPage from "./pages/CategoryPage/CategortPage.js";
 import NewsScrip from "./pages/news/newsScrip.js";
 
 function App() {
+
     return (
         <BrowserRouter>
             <Nav /> {/* Navbar is usually outside the Routes to be visible on all pages */}
@@ -38,6 +39,7 @@ function App() {
             <FooterComponents />
         </BrowserRouter>
     );
+
 }
 
 export default App;
