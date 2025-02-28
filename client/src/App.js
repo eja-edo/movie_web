@@ -26,8 +26,7 @@ function App() {
         <Route path="/" element={<TrangChu />} /> {/* Home Page */}
         <Route path="/TrangChu" element={<TrangChu />} /> {/* Home Page */}
         <Route path="/login" element={<Login />} />
-        <Route path="/film/:id1/:id2" element={<Film />} /> Assumed route for
-        films listing
+        <Route path="/film/:id1/:id2" element={<Film />} />
         <Route path="/newsScrip" element={<NewsScrip />} />{" "}
         <Route path="/detail/:id" element={<MovieDetails />} />{" "}
         {/* Route for individual film details */}
@@ -35,8 +34,10 @@ function App() {
         <Route path="/ttcon/:id" element={<TTcon />} />
         <Route path="/intro" element={<Intro />} />
         <Route path="/page404" element={<Page404 />} />
-        <Route path="/category/:type" element={<CategoryPage />} />{" "}
-        {/* Trang hợp nhất */}
+        <Route
+          path="/category/:type"
+          element={<CategoryPage key={window.location.pathname} />}
+        />
         {/* Trang thể loại */}
         {/* You can add more routes here for other pages/components */}
       </Routes>
