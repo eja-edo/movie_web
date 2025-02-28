@@ -204,7 +204,7 @@ def get_movies_by_genre(request):
         "total_pages": total_pages,
         "total_videos": len(movies_page),
         "page": page,
-        "Thể Loại": genre_name,
+        "Title": {"Thể Loại": genre_name},
         "results": serializer.data
     }, safe=False)
 
@@ -246,7 +246,7 @@ def get_movies_by_nation(request):
         "total_pages": total_pages,
         "total_videos": len(movies_page),
         "page": page,
-        "Quốc Gia": nation_name,  # Đảm bảo đây là chuỗi hợp lệ
+        "Title": {"Quốc gia": nation_name},  # Đảm bảo đây là chuỗi hợp lệ
         "results": serializer.data
     }, json_dumps_params={'ensure_ascii': False}, safe=False)
 

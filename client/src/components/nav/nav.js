@@ -197,7 +197,7 @@ function Nav() {
                             Thể loại
                         </a>
 
-                        {isDropdownVisible && <DropdownMenu apiEndpoint="http://localhost:8080/api/core/genres/" type="genre" onClose={() => setIsDropdownVisible(false)} />}
+                        {isDropdownVisible && <DropdownMenu apiEndpoint={`${process.env.REACT_APP_API_URL}/api/core/genres/`} type="genre" onClose={() => setIsDropdownVisible(false)} />}
                     </li>
                     {/* Dropdown Quốc gia */}
                     <li className="dropdown" onMouseEnter={() => setIsDropdownVisible(true)} onMouseLeave={() => setIsDropdownVisible(false)}>
@@ -205,7 +205,7 @@ function Nav() {
                             Quốc gia
                         </a>
 
-                        {isDropdownVisible && <DropdownMenu apiEndpoint="http://localhost:8080/api/core/nations/" type="country" onClose={() => setIsDropdownVisible(false)} />}
+                        {isDropdownVisible && <DropdownMenu apiEndpoint={`${process.env.REACT_APP_API_URL}/api/core/nations/`} type="country" onClose={() => setIsDropdownVisible(false)} />}
                     </li>
                     <li>
                         <a

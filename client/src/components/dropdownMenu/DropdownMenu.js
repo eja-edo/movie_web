@@ -1,22 +1,12 @@
 import {useState, useEffect} from "react";
 import "./DropdownMenu.scss";
-import {Link} from "react-router-dom";
-
-function toSlug(name) {
-    return name
-        .toLowerCase()
-        .normalize("NFD") // Loại bỏ dấu tiếng Việt
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/đ/g, "d") // Chuyển "đ" thành "d"
-        .replace(/\s+/g, "-") // Thay khoảng trắng bằng dấu "-"
-        .replace(/[^a-z0-9-]/g, ""); // Loại bỏ ký tự đặc biệt
-}
-// Hàm toSlug dùng để chuyển tên thể loại hoặc quốc gia thành slug để dùng trong URL
+import {Link, useLocation, useNavigate} from "react-router-dom";
 
 function DropdownMenu({apiEndpoint, type, onClose}) {
     const [items, setItems] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false); // Kiểm tra API đã load xong chưa
-
+    const location = useLocation(); // Lấy URL hiện tại
+    const navigate = useNavigate();
     useEffect(() => {
         fetch(apiEndpoint)
             .then((response) => response.json())
@@ -34,13 +24,29 @@ function DropdownMenu({apiEndpoint, type, onClose}) {
     const layoutClass = items.length >= 5 ? "two-columns" : "one-column";
     return (
         <ul className={`dropdown-menu multi-column-dropdown ${layoutClass}`}>
-            {items.map((item) => (
-                <li key={`${type}-${item.id || toSlug(item.name)}`}>
-                    <Link to={`/category/${type}/${toSlug(item.name)}`} onClick={onClose}>
-                        {item.name}
-                    </Link>
-                </li>
-            ))}
+            {items.map((item, index) => {
+                const itemId = item.genre_id || item.nation_id || item.id || `unknown-${index}`;
+
+                // Lấy các query params hiện tại
+                const searchParams = new URLSearchParams(location.search);
+
+                // Xóa `genre_id` hoặc `country_id` cũ (để tránh bị lỗi khi chọn thể loại & quốc gia cùng lúc)
+                searchParams.delete("genre_id");
+                searchParams.delete("country_id");
+
+                // Thêm `genre_id` hoặc `country_id` mới
+                searchParams.set(`${type}_id`, itemId);
+
+                const queryString = searchParams.toString(); // Chuyển thành chuỗi URL
+
+                return (
+                    <li key={`${type}-${itemId}`}>
+                        <Link to={`/category/${type}?${queryString}`} onClick={onClose}>
+                            {item.name}
+                        </Link>
+                    </li>
+                );
+            })}
         </ul>
     );
 }
