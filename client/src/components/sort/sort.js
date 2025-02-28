@@ -1,11 +1,20 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./sort.scss";
+import {useSearchParams} from "react-router-dom";
 
 const SortDropdown = ({options}) => {
-    const [selectedOption, setSelectedOption] = useState("");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [selectedOption, setSelectedOption] = useState(searchParams.get("order_by") || "");
+
+    useEffect(() => {
+        setSelectedOption(searchParams.get("order_by") || "");
+    }, [searchParams]);
 
     const handleChange = (event) => {
-        setSelectedOption(event.target.value);
+        const newValue = event.target.value;
+        setSelectedOption(newValue);
+        searchParams.set("order_by", newValue);
+        setSearchParams(searchParams);
     };
 
     return (
@@ -14,9 +23,8 @@ const SortDropdown = ({options}) => {
                 Sắp xếp theo:
             </label>
             <select id="sort-select" className="sort__select" value={selectedOption} onChange={handleChange}>
-                <option value="">Chọn một tùy chọn</option>
-                {options.map((option, index) => (
-                    <option key={index} value={option.value}>
+                {options.map((option) => (
+                    <option key={option.value} value={option.value}>
                         {option.label}
                     </option>
                 ))}

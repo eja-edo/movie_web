@@ -31,7 +31,7 @@ function App() {
                 <Route path="/ttcon/:id" element={<TTcon />} />
                 <Route path="/intro" element={<Intro />} />
                 <Route path="/page404" element={<Page404 />} />
-                <Route path="/category/:type/:slug" element={<CategoryPage key={window.location.pathname} />} />
+                <Route path="/category/:type" element={<CategoryPage key={window.location.pathname} />} />
                 {/* Trang thể loại */}
                 {/* You can add more routes here for other pages/components */}
             </Routes>
