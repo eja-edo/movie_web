@@ -21,20 +21,17 @@ const CategoryPage = () => {
 
     const genre_id = searchParams.get("genre_id");
     const country_id = searchParams.get("country_id");
-    const order_by = searchParams.get("order_by") || "-rating";
+    const order_by = searchParams.get("order_by") || "-release_date";
     const page = searchParams.get("page") || "1";
 
     const sortOptions = [
-        {label: "Tiêu đề (A-Z)", value: "title"},
         {label: "Ngày phát hành (Mới nhất)", value: "-release_date"},
+        {label: "Tiêu đề (A-Z)", value: "title"},
         {label: "Đánh giá (Cao nhất)", value: "-rating"},
         {label: "Lượt xem (Nhiều nhất)", value: "-views"},
     ];
 
     useEffect(() => {
-        setLoading(true);
-        setError(null);
-
         const fetchData = async () => {
             setLoading(true);
             setError(null);
@@ -57,7 +54,7 @@ const CategoryPage = () => {
                               .join(", ")
                         : data.Title || "Không xác định"
                 );
-
+                console.log("Dữ liệu API (trước khi setFilms):", [...data.results]);
                 setFilms(data.results || []);
                 setCurrentPage(data.page || 1);
                 setTotalPages(data.total_pages || 1);
@@ -81,17 +78,22 @@ const CategoryPage = () => {
     };
 
     return (
-        <div id="category_page">
-            <ShowDisplay />
-            <div className="category_page__header">
-                <h2 className="category_page__title">{title || "Đang tải..."}</h2>
-                <SortDropdown options={sortOptions} />
+        <>
+            <div className="showdisplay_wrapper">
+                <ShowDisplay />
             </div>
-            <div className="listFilm">{loading ? <p>Loading...</p> : error ? <p>{error}</p> : films.length ? <FilmListColumn films={films} /> : <p>Không có phim nào được tìm thấy.</p>}</div>
-            <div className="pagination_container">
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+
+            <div id="category_page">
+                <div className="category_page__header">
+                    <h2 className="category_page__title">{title || "Đang tải..."}</h2>
+                    <SortDropdown options={sortOptions} />
+                </div>
+                <div className="listFilm">{loading ? <p>Loading...</p> : error ? <p>{error}</p> : films.length ? <FilmListColumn films={films} /> : <p>Không có phim nào được tìm thấy.</p>}</div>
+                <div className="pagination_container">
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
