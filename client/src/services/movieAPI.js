@@ -102,9 +102,6 @@ const movieAPI = {
         `${process.env.REACT_APP_API_URL}/api/movies/get_movie_details/${id}/`,
         {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
         }
       );
 
@@ -142,13 +139,15 @@ const movieAPI = {
   },
   getVideoData: async (id1, id2, navigate, retry = false) => {
     try {
+      const accessToken = localStorage.getItem("accessToken");
       const apiUrl = `${process.env.REACT_APP_API_URL}/api/movies/${id1}/episodes/${id2}/`;
-      console.log("Calling API:", apiUrl);
+      console.log("Calling API1:", apiUrl);
 
       const response = await fetch(apiUrl, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -157,29 +156,108 @@ const movieAPI = {
         if (response.status === 401 && !retry) {
           const refreshSuccess = await checkRefreshToken(navigate);
           if (refreshSuccess) {
-            return await movieAPI.getVideoData(id1, id2, navigate, true);
+            const result = await movieAPI.getVideoData(id1, id2, navigate);
           }
         }
         return null;
       }
 
       const data = await response.json();
-      console.log("API Response Data:", data);
 
-      if (!data.url_video) {
-        console.error("API did not return a valid video URL");
-        return null;
-      }
-
-      return `${process.env.REACT_APP_API_URL}${data.url_video.replace(
-        /\\/g,
-        "/"
-      )}`;
+      return data;
     } catch (error) {
       console.error("Error fetching film data:", error);
       return null;
     }
   },
+  getFirstEpisode: async (movieId, navigate) => {
+    try {
+      // Gọi API để lấy thông tin phim và danh sách tập
+      const response = await movieAPI.getFilmData(movieId, navigate);
+
+      if (response && response.episodes && response.episodes.length > 0) {
+        const firstEpisodeId = response.episodes[0].episode_id; // Lấy episode_id của tập đầu tiên
+
+        // Gọi API để lấy dữ liệu chi tiết của tập đầu tiên
+        const firstEpisodeData = await movieAPI.getVideoData(
+          movieId,
+          firstEpisodeId,
+          navigate
+        );
+
+        return firstEpisodeData; // Trả về thông tin tập đầu tiên
+      }
+
+      return null; // Trả về null nếu không có tập nào
+    } catch (error) {
+      console.error("Lỗi khi lấy tập đầu tiên:", error);
+      return null;
+    }
+  },
+  getFirstEpisodeBanner: async (navigate, clickedBannerId) => {
+    try {
+      const bannerQC = await movieAPI.getBannerQC();
+      console.log("📌 Danh sách phim QC:", bannerQC);
+
+      if (!bannerQC || !Array.isArray(bannerQC) || bannerQC.length === 0) {
+        console.error("❌ Không có phim QC nào.");
+        return null;
+      }
+
+      console.log("✅ ID banner được click:", clickedBannerId);
+      const selectedMovie = bannerQC.find(
+        (movie) => String(movie.movie_id) === String(clickedBannerId)
+      );
+
+      if (!selectedMovie || !selectedMovie.movie_id) {
+        console.error("❌ Không tìm thấy phim với ID:", clickedBannerId);
+        return null;
+      }
+
+      const movieId = selectedMovie.movie_id;
+      console.log("✅ ID phim được chọn:", movieId);
+
+      // 🔹 Gọi API để lấy danh sách tập phim
+      const movieEpisodes = await movieAPI.getFilmData(movieId, navigate);
+
+      if (!movieEpisodes || !movieEpisodes.episodes?.length) {
+        console.error("❌ Không tìm thấy danh sách tập phim!");
+        return null;
+      }
+
+      const firstEpisodeId = movieEpisodes.episodes[0]?.episode_id;
+      if (!firstEpisodeId) {
+        console.error("❌ Không tìm thấy tập đầu tiên!");
+        return null;
+      }
+
+      console.log("🎬 ID tập đầu tiên:", firstEpisodeId);
+
+      // 🔹 Gọi API để lấy dữ liệu chi tiết của tập đầu tiên
+      const firstEpisodeData = await movieAPI.getVideoData(
+        movieId,
+        firstEpisodeId,
+        navigate
+      );
+
+      if (!firstEpisodeData || !firstEpisodeData.current_episode) {
+        console.error(
+          "❌ Không lấy được dữ liệu tập đầu tiên hoặc dữ liệu bị thiếu."
+        );
+        return null;
+      }
+
+      console.log("🎬 Dữ liệu tập đầu tiên trả về:", firstEpisodeData);
+      return {
+        ...firstEpisodeData,
+        movie_id: movieId, // Đảm bảo movie_id có trong dữ liệu trả về
+      };
+    } catch (error) {
+      console.error("❌ Lỗi khi lấy tập đầu tiên:", error);
+      return null;
+    }
+  },
+
   getSearch: async (value) => {
     try {
       const myHeaders = new Headers();

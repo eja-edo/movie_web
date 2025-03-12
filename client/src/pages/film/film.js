@@ -10,70 +10,72 @@ function Film() {
     const {id1, id2} = useParams();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [videoUrl, setVideoUrl] = useState("");
-    const [movie, setMovie] = useState(null);
+    const [data, setData] = useState("");
+
     const [films, setFilms] = useState(null);
 
-    // Lấy URL video
     useEffect(() => {
-        const fetchVideo = async () => {
+        if (!id1 || !id2) {
+            console.error("❌ LỖI: id1 hoặc id2 bị undefined!", id1, id2);
+            return;
+        }
+
+        let isMounted = true;
+
+        const fetchData = async () => {
+            setIsLoading(true);
+            setError(null);
             try {
-                const videoUrl = await movieAPI.getVideoData(id1, id2, navigate);
-                setVideoUrl(videoUrl || "");
+                const [videoData] = await Promise.all([movieAPI.getVideoData(id1, id2, navigate)]);
+
+                if (isMounted) {
+                    setData(videoData);
+                }
             } catch (err) {
-                setError("Không thể tải video.");
+                if (isMounted) setError("Lỗi khi tải dữ liệu phim.");
+                console.error("Lỗi tải dữ liệu:", err);
             } finally {
-                setIsLoading(false);
+                if (isMounted) setIsLoading(false);
             }
         };
-        fetchVideo();
+
+        fetchData();
+
+        return () => {
+            isMounted = false;
+        };
     }, [id1, id2, navigate]);
 
-    // Lấy thông tin phim
     useEffect(() => {
-        const fetchMovieData = async () => {
-            try {
-                const response = await movieAPI.getFilmData(id1, navigate);
-                setMovie(response);
-            } catch (err) {
-                setError("Lỗi tải thông tin phim.");
-            }
-        };
-        fetchMovieData();
-    }, [id1, navigate]);
+        let isMounted = true;
 
-    // Lấy danh sách phim đề cử
-    useEffect(() => {
-        const fetchData = async () => {
+        const fetchFilmList = async () => {
             try {
                 const response = await movieAPI.getDisplayList(`${process.env.REACT_APP_API_URL}/api/movies/get_thinhhanh/`);
-                setFilms(response);
+                if (isMounted) setFilms(response);
             } catch (err) {
                 console.error("Lỗi tải danh sách phim:", err);
             }
         };
-        fetchData();
+
+        fetchFilmList();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     const handleMotaClick = () => {
-        console.log("Xem thêm thông tin về phim:", movie?.title);
+        console.log("Xem thêm thông tin về phim:", data?.title);
     };
-
-    const handleTapClick = (episode_id) => {
-        if (episode_id !== id2) {
-            navigate(`/film/${id1}/${episode_id}`);
-        }
-    };
-
-    if (isLoading) return <div style={{paddingTop: "100px"}}>Đang tải...</div>;
-    if (error) return <div style={{paddingTop: "100px"}}>{error}</div>;
 
     return (
         <div id="container_film">
             <div id="film">
                 {/* Video Player */}
+
                 <video
-                    src={videoUrl}
+                    src={process.env.REACT_APP_API_URL + data.current_episode.url_video}
                     controls
                     style={{
                         width: "98%",
@@ -85,7 +87,7 @@ function Film() {
 
                 {/* Thông tin phim */}
                 <div id="ten">
-                    <h2>{movie?.title || "Tên phim đang cập nhật"}</h2>
+                    <h2>{data?.current_episode.movie_title || "Tên phim đang cập nhật"}</h2>
                 </div>
 
                 <button onClick={handleMotaClick} id="mota">
@@ -93,8 +95,8 @@ function Film() {
                 </button>
 
                 <div id="thongtin">
-                    {movie?.poster_url && <img src={`${process.env.REACT_APP_API_URL}${movie.poster_url.replace(/\\/g, "/")}`} alt={movie.title} className="banner" />}
-                    <p>{movie?.description || "Chưa có mô tả"}</p>
+                    {data?.current_episode.poster_url && <img src={`${process.env.REACT_APP_API_URL}${data.poster_url.replace(/\\/g, "/")}`} alt={data.title} className="banner" />}
+                    <p>{data?.current_episode.description || "Chưa có mô tả"}</p>
                 </div>
 
                 {/* Danh sách tập phim */}
@@ -102,24 +104,32 @@ function Film() {
                     <legend>
                         <h3>Tập phim</h3>
                     </legend>
-                    {/* {movie?.episodes?.length ? (
-            movie.episodes.map((ep) => (
-              <button
-                key={ep.episode_id}
-                onClick={() => handleTapClick(ep.episode_id)}
-                style={{
-                  background: ep.episode_id === id2 ? "#ffcc00" : "#ddd",
-                  margin: "5px",
-                  padding: "8px",
-                  borderRadius: "5px",
-                }}
-              >
-                Tập {ep.episode_number}
-              </button>
-            ))
-          ) : (
-            <p>Chưa có tập phim.</p>
-          )} */}
+                    {data?.episodes_list?.length ? (
+                        data.episodes_list.map((ep) => {
+                            const isActive = parseInt(ep.episode_id) === parseInt(id2);
+                            return (
+                                <button
+                                    key={ep.episode_id}
+                                    onClick={() => handleTapClick(ep.episode_id)}
+                                    style={{
+                                        background: isActive ? "#FFE792" : "#ddd",
+                                        color: isActive ? "#333" : "#333",
+                                        fontWeight: isActive ? "bold" : "normal",
+                                        margin: "5px",
+                                        padding: "8px",
+                                        borderRadius: "5px",
+                                        border: "1px solid #ccc",
+                                        cursor: "pointer",
+                                        transition: "0.3s ease-in-out",
+                                    }}
+                                >
+                                    Tập {ep.episode_number}
+                                </button>
+                            );
+                        })
+                    ) : (
+                        <p>Chưa có tập phim.</p>
+                    )}
                 </fieldset>
 
                 {/* Bình luận */}

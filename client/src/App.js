@@ -23,7 +23,7 @@ function App() {
         <BrowserRouter>
             <Nav /> {/* Navbar is usually outside the Routes to be visible on all pages */}
             <Routes>
-                <Route path="/" element={<TrangChu />} /> {/* Home Page */}
+                <Route path="/" element={<Timkiem />} /> {/* Home Page */}
                 <Route path="/TrangChu" element={<TrangChu />} /> {/* Home Page */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/film/:id1/:id2" element={<Film />} />
@@ -33,8 +33,8 @@ function App() {
                 <Route path="/intro" element={<Intro />} />
                 <Route path="/page404" element={<Page404 />} />
                 <Route path="/category/:type" element={<CategoryPage key={window.location.pathname} />} />
-                <Route path="/mylist" element={<MyListPage />} />
                 {/* Trang thể loại */}
+                <Route path="/mylist" element={<MyListPage />} />
                 {/* You can add more routes here for other pages/components */}
             </Routes>
             <FooterComponents />
