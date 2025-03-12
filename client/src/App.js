@@ -16,6 +16,7 @@ import Intro from "./pages/intro/intro.js";
 import TTcon from "./pages/pagecontintuc/contintuc.js";
 import CategoryPage from "./pages/CategoryPage/CategortPage.js";
 import NewsScrip from "./pages/news/newsScrip.js";
+import MyListPage from "./pages/myList/myList.js";
 
 function App() {
     return (
@@ -32,6 +33,7 @@ function App() {
                 <Route path="/intro" element={<Intro />} />
                 <Route path="/page404" element={<Page404 />} />
                 <Route path="/category/:type" element={<CategoryPage key={window.location.pathname} />} />
+                <Route path="/mylist" element={<MyListPage />} />
                 {/* Trang thể loại */}
                 {/* You can add more routes here for other pages/components */}
             </Routes>

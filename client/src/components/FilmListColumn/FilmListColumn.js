@@ -25,13 +25,13 @@ const FilmListColumn = ({films}) => {
         <div className="film-list-container">
             {films.length > 0 ? (
                 films.map((item, index) => {
-                    const filmId = item.id || item.genre_id || item.nation_id || `film-${index}`;
+                    const filmId = item.id || item.genre_id || item.nation_id || `${index}`;
                     const filmTitle = item.title || "Không có tiêu đề";
                     const filmPoster = item.poster_url ? `${process.env.REACT_APP_API_URL}${item.poster_url}` : "/default-poster.jpg";
                     const filmTrailer = item.trailer_url ? `${process.env.REACT_APP_API_URL}${item.trailer_url}` : null;
 
                     return (
-                        <Link to={`/film/${filmId}`} className="film-card" key={filmId} onMouseEnter={() => handleMouseEnter(index)} onMouseLeave={handleMouseLeave}>
+                        <Link to={`/detail/${filmId}`} className="film-card" key={filmId} onMouseEnter={() => handleMouseEnter(index)} onMouseLeave={handleMouseLeave}>
                             <div className="film-thumbnail">
                                 <img src={filmPoster} alt={filmTitle} />
                                 {filmTrailer && hoveredIndex === index && <video loop autoPlay muted src={filmTrailer} style={{display: "block"}} />}
