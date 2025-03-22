@@ -4,7 +4,7 @@ import "./details.scss";
 import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayList";
 import FilmList from "../../components/FilmList/FilmList";
 import movieAPI from "../../services/movieAPI";
-
+//adasdasjdlasjdlasjdlkajflkjdlkjflakjsfkljaskfjalkfjalsfjlakfjalkjdlakdjalsjdalskdj
 const MovieDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Lấy movieId từ URL
