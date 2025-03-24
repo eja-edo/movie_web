@@ -129,42 +129,110 @@ def get_movie_details(request, movie_id):
     serializer = DetailSerializer(movie)
     return JsonResponse(serializer.data, safe=False)
 
+#Tìm kiếm phim
 def search_movies(request):
     query = request.GET.get('q', '').strip()
-
+    
     if not query:
-        return Response({'error': 'No search query provided'}, status=400)
+        return JsonResponse({'error': 'No search query provided'}, status=400)
 
-    # Lấy danh sách phim cần tìm kiếm
+    # Lấy danh sách tất cả phim
     movies = Movies.objects.all()
 
-    # Danh sách tất cả các tiêu chí cần so khớp fuzzy
+    # Danh sách tất cả thông tin cần fuzzy search
     movie_data = [
-        (movie.movie_id, movie.title, movie.poster_url, movie.description) for movie in movies
+        (
+            movie.movie_id, 
+            movie.title, 
+            movie.description, 
+            ', '.join([genre.genre.name for genre in movie.moviegenres_set.all()]),  # Danh sách thể loại
+            ', '.join([actor.actor.name for actor in movie.movieactors_set.all()]),  # Danh sách diễn viên
+            ', '.join([director.director.name for director in movie.moviedirectors_set.all()])  # Danh sách đạo diễn
+        ) for movie in movies
     ]
 
-    # Sử dụng fuzzy matching để tìm phim có tiêu đề gần giống với từ khóa nhập vào
-    fuzzy_results = process.extractBests(query, [title for _, title, _, _ in movie_data], score_cutoff=80)
-
-    # Lọc danh sách phim dựa trên tiêu đề gần giống
-    fuzzy_matched_movies = [
-        movie for movie in movies if movie.title in [result[0] for result in fuzzy_results]
+    # Kết hợp dữ liệu thành một chuỗi để fuzzy search
+    combined_data = [
+        f"{title} {description} {genres} {actors} {directors}" for _, title, description, genres, actors, directors in movie_data
     ]
+
+    # Lọc danh sách phim có độ tương thích cao nhất (tối đa 10 kết quả)
+    fuzzy_results = process.extractBests(query, combined_data, score_cutoff=70, limit=10)
+
+    # Lọc phim dựa trên danh sách fuzzy_results
+    matched_movie_ids = [movie_data[idx][0] for idx, _, _ in fuzzy_results]
+    fuzzy_matched_movies = movies.filter(movie_id__in=matched_movie_ids)
 
     # Nếu fuzzy search không có kết quả, fallback về tìm kiếm truyền thống
     if not fuzzy_matched_movies:
-        movies = movies.filter(
+        fuzzy_matched_movies = movies.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(moviegenres__genre__name__icontains=query) |
+            Q(movieactors__actor__name__icontains=query) |
+            Q(moviedirectors__director__name__icontains=query)
+        ).distinct()[:10]  # Giới hạn 10 kết quả
+
+    serializer = SearchSerializer(fuzzy_matched_movies, many=True)
+    return JsonResponse({"movies": serializer.data}, safe=False)
+
+    
+def search_full_movies(request):
+    query = request.GET.get('q', '').strip()
+    page = int(request.GET.get('page', 1))  # Mặc định lấy trang 1
+    per_page = int(request.GET.get('per_page', 10))  # Số phim mỗi trang
+
+    if not query:
+        return JsonResponse({'error': 'No search query provided'}, status=400)
+
+    movies = Movies.objects.all()
+
+    # Chuẩn bị dữ liệu cho fuzzy search
+    movie_data = [
+        (
+            movie.movie_id, 
+            movie.title, 
+            movie.description, 
+            ', '.join([genre.genre.name for genre in movie.moviegenres_set.all()]),  
+            ', '.join([actor.actor.name for actor in movie.movieactors_set.all()]),  
+            ', '.join([director.director.name for director in movie.moviedirectors_set.all()])  
+        ) for movie in movies
+    ]
+
+    combined_data = [
+        f"{title} {description} {genres} {actors} {directors}" for _, title, description, genres, actors, directors in movie_data
+    ]
+
+    # Fuzzy search lấy danh sách phim phù hợp
+    fuzzy_results = process.extractBests(query, combined_data, score_cutoff=70, limit=100)
+
+    matched_movie_ids = [movie_data[idx][0] for idx, _, _ in fuzzy_results]
+    fuzzy_matched_movies = movies.filter(movie_id__in=matched_movie_ids)
+
+    # Nếu fuzzy search không có kết quả, fallback về tìm kiếm truyền thống
+    if not fuzzy_matched_movies:
+        fuzzy_matched_movies = movies.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query) |
             Q(moviegenres__genre__name__icontains=query) |
             Q(movieactors__actor__name__icontains=query) |
             Q(moviedirectors__director__name__icontains=query)
         ).distinct()
-    else:
-        movies = fuzzy_matched_movies
 
-    serializer = SearchSerializer(movies, many=True)
-    return JsonResponse({"movies": serializer.data}, safe=False)
+    # **Phân trang**
+    paginator = Paginator(fuzzy_matched_movies, per_page)
+    current_page = paginator.get_page(page)
+
+    serializer = MovieSerializer(current_page, many=True)
+
+    return JsonResponse({
+        "total_pages": paginator.num_pages,
+        "total_videos": len(serializer.data),  
+        "page": current_page.number,
+        "Title": {"Kết quả hiển thị theo từ khóa": query},  
+        "results": serializer.data
+    }, safe=False)
+
 
 #Phân trang theo thể loại
 def get_movies_by_genre(request):
