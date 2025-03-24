@@ -234,7 +234,7 @@ function Nav() {
                     <li>
                         <a
                             onClick={() => {
-                                navigate("/TrangChu");
+                                navigate("/mylist");
                             }}
                             target="main"
                             rel="noopener noreferrer"
