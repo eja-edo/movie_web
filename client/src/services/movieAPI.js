@@ -113,9 +113,8 @@ const movieAPI = {
           return;
         }
         result.release_date = new Date(result.release_date);
-        result.release_date = `${result.release_date.getDate()}/${
-          result.release_date.getMonth() + 1
-        }/${result.release_date.getFullYear()}`;
+        result.release_date = `${result.release_date.getDate()}/${result.release_date.getMonth() + 1
+          }/${result.release_date.getFullYear()}`;
         console.log("Movie data:", result);
         return result;
       } else if (response.status === 401 && !retry) {

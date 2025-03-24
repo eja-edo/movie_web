@@ -1,7 +1,8 @@
--- Xóa bảng phụ thuộc trước (có ràng buộc FOREIGN KEY)
+z-- Xóa bảng phụ thuộc trước (có ràng buộc FOREIGN KEY)
 DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS reviews CASCADE;
 DROP TABLE IF EXISTS watchlists CASCADE;
+DROP TABLE IF EXISTS wishlist CASCADE;
 DROP TABLE IF EXISTS movieActors CASCADE;
 DROP TABLE IF EXISTS movieDirectors CASCADE;
 DROP TABLE IF EXISTS episodes CASCADE;
@@ -167,6 +168,17 @@ CREATE TABLE watchlists (
     user_id INT,
     movie_id INT,
     watch_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES profile_user(id) ON DELETE CASCADE,
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
+);
+
+-- Bảng danh sách yêu thích của tôi
+CREATE TABLE wishlist (
+    wishlist_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    movie_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, movie_id),
     FOREIGN KEY (user_id) REFERENCES profile_user(id) ON DELETE CASCADE,
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
 );
