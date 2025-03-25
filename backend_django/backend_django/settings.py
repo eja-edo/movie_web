@@ -375,5 +375,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'duyanhsadg@gmail.com'  # Thay bằng Gmail của bạn
-EMAIL_HOST_PASSWORD = 'vwzy bxum hwmt gtgu'  # Mã App Password đã tạo
+EMAIL_HOST_PASSWORD =  config('EMAIL_HOST_PASSWORD') # Mã App Password đã tạo
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
