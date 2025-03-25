@@ -321,4 +321,86 @@ def get_movies_by_nation(request):
 
 
 
+def get_movies_by_actor(request):
+    actor_id = request.GET.get('actor_id')  # Lọc theo diễn viên
+    order_by = request.GET.get('order_by', 'title')  # Sắp xếp theo tiêu chí, mặc định là title
+    page = int(request.GET.get('page', 1))  # Trang mặc định là 1
+    per_page = 10  # Số phim mỗi trang
+
+    movies = Movies.objects.all()
+    actor_name = "Tất cả diễn viên"  # Mặc định nếu không có actor_id hoặc không tìm thấy
+
+    # Lọc theo diễn viên nếu có actor_id hợp lệ
+    if actor_id:
+        actor = Actors.objects.filter(actor_id=actor_id).first()
+        if actor:
+            movies = movies.filter(movie_id__in=Movieactors.objects.filter(actor_id=actor_id).values_list('movie_id', flat=True))
+            actor_name = str(actor.name)  # Chuyển thành chuỗi để tránh lỗi JSON
+
+    # Hỗ trợ sắp xếp theo các trường hợp hợp lệ
+    valid_order_fields = ['title', '-title', 'release_date', '-release_date']
+    if order_by in valid_order_fields:
+        movies = movies.order_by(order_by)
+
+    # Phân trang
+    paginator = Paginator(movies, per_page)
+    total_pages = paginator.num_pages  # Lấy tổng số trang
+
+    try:
+        movies_page = paginator.page(page)
+    except EmptyPage:
+        return JsonResponse({"error": "Page not found"}, status=404)
+
+    # Serialize dữ liệu
+    serializer = MovieSerializer(movies_page, many=True)
+
+    return JsonResponse({
+        "total_pages": total_pages,
+        "total_videos": len(movies_page),
+        "page": page,
+        "Title": {"Diễn viên": actor_name},  # Đảm bảo đây là chuỗi hợp lệ
+        "results": serializer.data
+    }, json_dumps_params={'ensure_ascii': False}, safe=False)
+
+
+def get_movies_by_director(request):
+    director_id = request.GET.get('director_id')  # Lọc theo đạo diễn
+    order_by = request.GET.get('order_by', 'title')  # Sắp xếp theo tiêu chí, mặc định là title
+    page = int(request.GET.get('page', 1))  # Trang mặc định là 1
+    per_page = 10  # Số phim mỗi trang
+
+    movies = Movies.objects.all()
+    director_name = "Tất cả đạo diễn"  # Mặc định nếu không có director_id hoặc không tìm thấy
+
+    # Lọc theo đạo diễn nếu có director_id hợp lệ
+    if director_id:
+        director = Directors.objects.filter(director_id=director_id).first()
+        if director:
+            movies = movies.filter(movie_id__in=Moviedirectors.objects.filter(director_id=director_id).values_list('movie_id', flat=True))
+            director_name = str(director.name)  # Chuyển thành chuỗi để tránh lỗi JSON
+
+    # Hỗ trợ sắp xếp theo các trường hợp hợp lệ
+    valid_order_fields = ['title', '-title', 'release_date', '-release_date']
+    if order_by in valid_order_fields:
+        movies = movies.order_by(order_by)
+
+    # Phân trang
+    paginator = Paginator(movies, per_page)
+    total_pages = paginator.num_pages  # Lấy tổng số trang
+
+    try:
+        movies_page = paginator.page(page)
+    except EmptyPage:
+        return JsonResponse({"error": "Page not found"}, status=404)
+
+    # Serialize dữ liệu
+    serializer = MovieSerializer(movies_page, many=True)
+
+    return JsonResponse({
+        "total_pages": total_pages,
+        "total_videos": len(movies_page),
+        "page": page,
+        "Title": {"Đạo diễn": director_name},  # Đảm bảo đây là chuỗi hợp lệ
+        "results": serializer.data
+    }, json_dumps_params={'ensure_ascii': False}, safe=False)
 

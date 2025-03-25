@@ -15,3 +15,7 @@ hoặc tải từng thư viện một bên trong file requirements.txt
 -Chạy file QueryDatabase.sql trong hệ quản trị cơ sở dữ liệu PostgreSQL 
 
 -Chạy server: python manage.py runserver
+
+tải redis
+
+chạy server:daphne -b 0.0.0.0 -p 8000 bakend_django.asgi:application

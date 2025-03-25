@@ -33,6 +33,10 @@ DEBUG = True
 # Application definition
 
 INSTALLED_APPS = [
+    #cấu hình web socket
+    'channels',
+    "daphne",  # Server ASGI
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,6 +52,7 @@ INSTALLED_APPS = [
     'apps.people',
     'apps.service',
     'apps.users',
+    'apps.comments',
   
     # Các ứng dụng bên ngoài
     'corsheaders',
@@ -63,10 +68,23 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'dj_rest_auth',
     'rest_framework.authtoken',
-    'rest_framework_simplejwt.token_blacklist'
+    'rest_framework_simplejwt.token_blacklist',
+
+
 ]
 
 SITE_ID = 1
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
+ASGI_APPLICATION = "backend_django.asgi.application"
 
 
 AUTHENTICATION_BACKENDS = [
@@ -251,11 +269,12 @@ CORS_ORIGIN_WHITELIST = [
       'http://localhost:3001',
       'http://localhost:3000', 
       'http://mycustomdomain.com',
+      'http://smovie.com'
         # Thay thế bằng nguồn gốc frontend của bạn
       # ... thêm các nguồn gốc khác nếu cần
   ]
 
-ALLOWED_HOSTS = ["mycustomdomain.com", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["smovie.com","mycustomdomain.com", "127.0.0.1", "localhost"]
 
 
 REST_FRAMEWORK = {
@@ -274,7 +293,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3001', 
     'http://localhost:3000',
     'http://mycustomdomain.com', 
-     # Thêm domain của frontend vào đây
+    'http://smovie.com', 
+     # Thêm domain của frontend vào đâyz
     # Nếu bạn muốn cho phép tất cả các domain (không khuyến nghị):
     # CORS_ORIGIN_ALLOW_ALL = True
 ]
@@ -303,7 +323,7 @@ CORS_ALLOW_HEADERS = [
 
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = [ 'http://mycustomdomain.com','http://127.0.0.1:5500','http://127.0.0.1:3001','http://localhost:3001','http://localhost:3000', ]
+CSRF_TRUSTED_ORIGINS = [ 'http://smovie.com','http://mycustomdomain.com','http://127.0.0.1:5500','http://127.0.0.1:3001','http://localhost:3001','http://localhost:3000', ]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -347,3 +367,13 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+
+#cấu hình gửi xác thực email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'duyanhsadg@gmail.com'  # Thay bằng Gmail của bạn
+EMAIL_HOST_PASSWORD = 'vwzy bxum hwmt gtgu'  # Mã App Password đã tạo
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
