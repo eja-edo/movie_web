@@ -1,4 +1,4 @@
-z-- Xóa bảng phụ thuộc trước (có ràng buộc FOREIGN KEY)
+-- Xóa bảng phụ thuộc trước (có ràng buộc FOREIGN KEY)
 DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS reviews CASCADE;
 DROP TABLE IF EXISTS watchlists CASCADE;
@@ -159,7 +159,7 @@ CREATE TABLE reviews (
     comment TEXT,
     create_at TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES profile_user(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE CASCADE
 );
 
 -- Bảng danh sách theo dõi
@@ -168,7 +168,7 @@ CREATE TABLE watchlists (
     user_id INT,
     movie_id INT,
     watch_at TIMESTAMP DEFAULT NOW(),
-    FOREIGN KEY (user_id) REFERENCES profile_user(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE CASCADE,
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
 );
 
@@ -179,7 +179,7 @@ CREATE TABLE wishlist (
     movie_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     UNIQUE(user_id, movie_id),
-    FOREIGN KEY (user_id) REFERENCES profile_user(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE CASCADE,
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
 );
 
@@ -191,7 +191,7 @@ CREATE TABLE comments (
     content TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (episode_id) REFERENCES episodes(episode_id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES profile_user(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE CASCADE
 );
 
 CREATE TABLE codes (
@@ -234,7 +234,7 @@ CREATE TABLE news (
 --     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Thời gian tạo thông báo
 --     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Thời gian cập nhật thông báo
 --     is_active BOOLEAN DEFAULT TRUE,            -- Trạng thái hoạt động của thông báo (hiển thị hay không)
---     FOREIGN KEY (user_id) REFERENCES profile_user(id),  -- Liên kết đến bảng người dùng
+--     FOREIGN KEY (user_id) REFERENCES auth_user(id),  -- Liên kết đến bảng người dùng
 --     CONSTRAINT check_title_length CHECK (length(title) > 0)  -- Ràng buộc tiêu đề không trống
 -- );
 

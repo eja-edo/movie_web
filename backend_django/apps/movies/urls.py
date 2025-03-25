@@ -23,6 +23,8 @@ urlpatterns =[
 
     path('genres/', views.get_movies_by_genre, name='get_movies_by_genre'),
     path('nations/', views.get_movies_by_nation, name='get_movies_by_nation'),
+    path('actors/', views.get_movies_by_actor, name='get_movies_by_actor'),
+    path('directors/', views.get_movies_by_director, name='get_movies_by_director'),
 ]
 
 

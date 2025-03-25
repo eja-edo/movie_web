@@ -1,6 +1,57 @@
 <!-- templates/acc_active_email.html -->
 
-Hi {{ user.username }},
+<!DOCTYPE html>
+<html lang="en">
 
-Please click on the link to confirm your registration:
-http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Activation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Hello, {{ user.username }}!</h2>
+        <p>Thank you for registering. Please confirm your email address by clicking the button below:</p>
+        <a class="btn" href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}">Activate Your Account</a>
+        <p class="footer">If you did not create this account, please ignore this email.</p>
+    </div>
+</body>
+
+</html>

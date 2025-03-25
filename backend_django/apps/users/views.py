@@ -20,6 +20,7 @@ from django.utils.decorators import method_decorator
 from rest_framework.decorators import api_view
 from django.contrib.auth.hashers import make_password
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -218,44 +219,67 @@ def register(request):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({'message': 'Invalid JSON'}, status=400, safe=False)
-        
-        # Sử dụng serializer để kiểm tra và xác thực dữ liệu
+            return JsonResponse({'message': 'Invalid JSON'}, status=400)
+
+        # Kiểm tra username trước khi tạo user
+        if User.objects.filter(username=data.get('username')).exists():
+            return JsonResponse({'message': 'Username already exists'}, status=400)
+
         serializer = RegisterSerializer(data=data)
         if serializer.is_valid():
-            # Kiểm tra nếu username đã tồn tại
-            if User.objects.filter(username=data['username']).exists():
-                return JsonResponse({'message': 'Username already exists'}, status=400, safe=False)
-            
-            # Tạo người dùng mới bằng serializer
             user = serializer.save()
-            print(user.email)
 
+            # Gửi email xác thực
             current_site = get_current_site(request)
-            mail_subject = 'Activate your account.'
+            mail_subject = 'Activate your account'
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
             message = render_to_string('acc_active_email.html', {
                 'user': user,
                 'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': default_token_generator.make_token(user),
+                'uid': uid,
+                'token': token,
             })
-            to_email = user.email
-            send_mail(mail_subject, message, settings.DEFAULT_FROM_EMAIL, [to_email])
-            
-            return JsonResponse({'message': 'Please confirm your email address to complete the registration'}, status=status.HTTP_201_CREATED)
+
+            # Sử dụng EmailMultiAlternatives để gửi email HTML
+            email = EmailMultiAlternatives(
+                mail_subject, "", settings.DEFAULT_FROM_EMAIL, [user.email]
+            )
+            email.attach_alternative(message, "text/html")
+            email.send()
+
+            return JsonResponse(
+                {'message': 'Please confirm your email address to complete the registration'},
+                status=status.HTTP_201_CREATED
+            )
+
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def activate(request, uidb64, token):
+def activate_account(request, uidb64, token):
     try:
+        # Giải mã user ID từ chuỗi uidb64
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
+
+    # Kiểm tra token hợp lệ
     if user is not None and default_token_generator.check_token(user, token):
-        user.is_active = True
+        user.is_active = True  # Kích hoạt tài khoản
         user.save()
-        login(request, user)
-        return redirect('home')
+        return HttpResponse("Your account has been activated! You can now log in.")  
     else:
-        return render(request, 'activation_invalid.html')
+        return HttpResponse("Activation link is invalid!", status=400)
+
+
+from django.core.mail import send_mail
+from django.conf import settings
+
+def send_test_email():
+    subject = "Test Email from Django"
+    message = "Hello! This is a test email from Django using Gmail SMTP."
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = ["duyanhsadg@example.com"]  # Thay bằng email người nhận
+
+    send_mail(subject, message, from_email, recipient_list)
