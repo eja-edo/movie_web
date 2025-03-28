@@ -33,7 +33,7 @@ DEBUG = True
 # Application definition
 
 INSTALLED_APPS = [
-    #cấu hình web socket
+    # Cấu hình WebSocket
     'channels',
     "daphne",  # Server ASGI
 
@@ -57,9 +57,8 @@ INSTALLED_APPS = [
     # Các ứng dụng bên ngoài
     'corsheaders',
     'rest_framework',
-    'rest_framework_simplejwt',
-    'rest_framework_jwt.authentication',
-    
+    'rest_framework_simplejwt', 
+    'rest_framework.authtoken', 
 
     'django.contrib.sites',
     'allauth',
@@ -67,11 +66,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'dj_rest_auth',
-    'rest_framework.authtoken',
-    'rest_framework_simplejwt.token_blacklist',
-
-
+    
+    'rest_framework_simplejwt.token_blacklist',  # Giữ nếu cần chặn token
 ]
+
 
 SITE_ID = 1
 
@@ -280,7 +278,6 @@ ALLOWED_HOSTS = ["smovie.com","mycustomdomain.com", "127.0.0.1", "localhost"]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES':[
         'rest_framework.permissions.IsAuthenticated',

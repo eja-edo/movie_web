@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Codemonopoly, Codes
 
-# Register your models here.
+admin.site.register(Codemonopoly)
+admin.site.register(Codes)

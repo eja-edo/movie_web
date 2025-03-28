@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Genres, Monopolys, Nations
 
-# Register your models here.
+admin.site.register(Genres)
+admin.site.register(Monopolys)
+admin.site.register(Nations)
