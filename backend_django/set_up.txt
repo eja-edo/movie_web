@@ -18,4 +18,7 @@ hoặc tải từng thư viện một bên trong file requirements.txt
 
 tải redis
 
+chạy setting môi trường $env:DJANGO_SETTINGS_MODULE="backend_django.settings"
+
+
 chạy server:daphne -b 0.0.0.0 -p 8000 bakend_django.asgi:application
