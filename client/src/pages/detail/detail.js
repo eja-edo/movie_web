@@ -4,6 +4,7 @@ import "./details.scss";
 import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayList";
 import FilmList from "../../components/FilmList/FilmList";
 import movieAPI from "../../services/movieAPI";
+import Comment from "../../components/comment/comment";
 //adasdasjdlasjdlasjdlkajflkjdlkjflakjsfkljaskfjalkfjalsfjlakfjalkjdlakdjalsjdalskdj
 const MovieDetails = () => {
   const navigate = useNavigate();
@@ -64,8 +65,8 @@ const MovieDetails = () => {
             />
             <h1>{movie.title}</h1>
 
-            <a href="#">Xem ngay</a>
-            <button>Tập phim</button>
+            {/* <a href="#">Xem ngay</a>
+            <button>Tập phim</button> */}
 
             <div id="infoMovie">
               <div>
@@ -124,17 +125,7 @@ const MovieDetails = () => {
           {films && <CreateDisplayList films={films} />}
         </div>
 
-        <p>Bình luận</p>
-        <div id="binh_luan">
-          <div id="nhap_bl">
-            <i className="fa-solid fa-user"></i>{" "}
-            <textarea
-              name="comment"
-              id="comment"
-              placeholder="Thêm bình luận..."
-            />
-          </div>
-        </div>
+        <Comment episode_id={movie.episodes[0]?.episode_id} />
       </div>
 
       <div className="height_list">{films && <FilmList films={films} />}</div>
