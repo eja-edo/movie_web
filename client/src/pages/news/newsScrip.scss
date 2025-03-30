@@ -7,6 +7,9 @@
     height: 100%;
     padding-bottom: 120px;
     background-color: #000;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 
     #topNews {
         margin-top: 5%;
@@ -47,77 +50,93 @@
         margin-top: 8%;
         font-family: "Poppins";
         font-size: 250%;
+        color: #fff;
+        font-size: 2rem;
+        margin-bottom: 30px;
+        font-weight: 600;
     }
 
     #ListNews {
         margin-top: 5%;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* ✅ Căn giữa danh sách tin */
-    width: 80%; /* ✅ Độ rộng 80% */
-    margin-left: auto;
-    margin-right: auto; /* ✅ Giữ khoảng cách đều 2 bên */
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+    }
 
+    .itemNews {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: grid;
+        grid-template-columns: 25% 75%;
+        width: 100%;
+        height: 220px;
+        font-size: small;
+        font-family: "Poppins";
+        padding: 10px;
+        margin-bottom: 15px;
 
-        .itemNews {
-            display: grid;
-    grid-template-columns: 25% 75%; /* ✅ Chia tỉ lệ hình ảnh và nội dung */
-    width: 100%; /* ✅ Để itemNews không tràn ra ngoài */
-    height: 220px; /* ✅ Chiều cao cố định */
-    font-size: small;
-    font-family: "Poppins";
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #222;
-    transition: transform 0.2s ease-in-out;
-    margin-bottom: 15px; /* ✅ Tạo khoảng cách giữa các bài viết */
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
 
-            &:hover {
-                transform: scale(1.02);
-            }
+        .img {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-            .img {
+            img {
                 width: 100%;
                 height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+        }
 
-                img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 8px;
+        div {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+
+            header {
+                h1 {
+                    color: #fff;
+                    font-size: 1.2rem;
+                    margin-bottom: 10px;
+                    font-weight: 500;
+                    line-height: 1.4;
                 }
             }
 
-            div {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                overflow: hidden; // ✅ Ngăn nội dung tràn
-            }
-
-            h1 {
-                margin-left: 20px;
-                font-size: 1.5rem;
-                max-height: 50px; // ✅ Giới hạn chiều cao tiêu đề
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
             p {
-                margin-top: 5px;
-                margin-left: 20px;
-                font-size: 1rem;
-                max-height: 60px; // ✅ Giới hạn chiều cao nội dung
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: -webkit-box;
-                -webkit-line-clamp: 3;
-                -webkit-box-orient: vertical;
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 0.9rem;
+                line-height: 1.6;
             }
         }
     }
-  }
+}
+
+@media (max-width: 768px) {
+    #newsScrip {
+        padding: 15px;
+
+        #namett {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        #ListNews {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+    }
+}

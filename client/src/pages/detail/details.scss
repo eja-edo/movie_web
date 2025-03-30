@@ -58,14 +58,47 @@
         #tap {
             border-radius: 5px;
             margin-top: 30px;
-
             display: flex;
             flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
 
-            button {
+            a {
+                text-decoration: none;
+                transition: transform 0.2s ease;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+
+                div {
+                    background: linear-gradient(145deg, #1a1a1a, #2c2c2c);
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    min-width: 45px;
+                    text-align: center;
+                    color: #fff;
+                    font-weight: 500;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    
+                    &:hover {
+                        background: linear-gradient(145deg, #ff4d4d, #ff6b6b);
+                        border-color: transparent;
+                    }
+                }
+            }
+
+            @media screen and (max-width: 768px) {
                 padding: 10px;
-                border-radius: 5px;
-                margin: 10px;
+                justify-content: center;
+                
+                a div {
+                    padding: 10px 15px;
+                    min-width: 35px;
+                }
             }
         }
 
@@ -73,24 +106,74 @@
 
         #infoMovie {
             display: flex;
-            margin: 20px;
+            margin: 20px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
 
             div {
+              
                 width: auto;
             }
 
-            .info {
-                margin-left: 150px;
-                width: 40%;
+            .ratings {
+                margin-bottom: 15px;
+                font-size: 1.1em;
                 
-                b {
-
-                    color: gray;
+                .stars {
+                    color: #ffd700;
+                    margin-right: 8px;
                 }
             }
 
+            p {
+                color: #e0e0e0;
+                line-height: 1.6;
+                margin-bottom: 12px;
+                font-size: 0.95em;
+            }
+
             #description {
-                margin-top: 10px;
+                margin-top: 15px;
+                padding: 15px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                border-left: 4px solid #ff4d4d;
+                font-size: 0.95em;
+                line-height: 1.7;
+                color: #f0f0f0;
+                max-width: 600px;
+            }
+
+            .info {
+                margin-left:50%;
+                width: 40%;
+                
+                b {
+                    color: #ff4d4d;
+                    font-weight: 600;
+                    margin-right: 8px;
+                }
+
+                p {
+                    margin-bottom: 15px;
+                }
+            }
+
+            @media screen and (max-width: 768px) {
+                flex-direction: column;
+                padding: 15px;
+
+                .info {
+                    margin-left: 0;
+                    width: 100%;
+                    margin-top: 20px;
+                }
+
+                #description {
+                    max-width: 100%;
+                }
             }
         }
     }
@@ -131,62 +214,108 @@
 
     /* Episodes List */
     #tap {
+        border: none;
+        padding: 1rem;
+        background: #f7f7f7;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 1rem 0;
+      }
+      #tap h3{
+        color: #cfcfcf;
+      }
+      
+      #tap legend {
+        padding: 0 10px;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+      
+      #tap button {
+        background: #fff;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        margin: 0.3rem;
+        font-size: 1rem;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      #tap button:hover {
+        background: #e9e9e9;
+        border-color: #5a5a5a;
+      }
+      
+      #tap button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
+      }
+      
+
+      #cmt {
+        background: linear-gradient(145deg, #ffffff, #f2f2f2);
+        border-radius: 10px;
+        padding: 24px;
+        margin: 30px 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        font-family: 'Poppins', sans-serif;
+      }
+      
+      #cmt p {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 16px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 8px;
+      }
+      
+      #binh_luan {
         display: flex;
-        flex-wrap: wrap;
-
-        a {
-            margin: 5px;
-
-            div {
-                background-color: #111;
-                padding: 10px;
-                border-radius: 5px;
-            }
-        }
-    }
-
-    /* Comments Section */
-    fieldset {
-        border-radius: 5px;
-        margin-top: 30px;
-    }
-
-    #binh_luan {
-        height: 60px;
-    }
-
-    #nhap_bl {
-        @include flex-center;
-        margin-left: 0px;
-
-        i {
-            padding: 15px;
-            border: 1px solid #fff;
-            border-radius: 100%;
-            height: 14px;
-            width: 14px;
-        }
-
-        textarea {
-            margin: 2px 0 0 10px;
-            height: 32px;
-            width: 80%;
-            font-size: 150%;
-            border: none;
-            background: none;
-            color: gray;
-            padding: 10px;
-            font-family: inherit;
-            resize: none;
-
-            &:focus {
-                border-bottom: 1px solid #fff;
-                outline: 0;
-                transition: all 1s ease;
-            }
-        }
-    }
-
+        flex-direction: column;
+        gap: 16px;
+      }
+      
+      #nhap_bl {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background-color: #fff;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      #nhap_bl:hover {
+        border-color: #4a90e2;
+      }
+      
+      #nhap_bl i {
+        font-size: 1.8rem;
+        color: #4a90e2;
+        margin-top: 4px;
+      }
+      
+      #nhap_bl textarea {
+        flex: 1;
+        border: none;
+        resize: vertical;
+        min-height: 100px;
+        font-size: 1rem;
+        color: #555;
+        font-family: 'Poppins', sans-serif;
+      }
+      
+      #nhap_bl textarea:focus {
+        outline: none;
+        box-shadow: inset 0 0 0 2px #4a90e2;
+      }
+      
 
 
 
