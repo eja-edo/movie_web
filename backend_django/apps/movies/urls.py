@@ -14,7 +14,8 @@ urlpatterns =[
     # path('get_phimtinhcam_10/', views.get_phimtinhcam, name = 'getphimtinhcam'),
     path('get_films_by_genre10/', views.get_films_by_genre10 , name = 'getFilmsByGenre10'),
 
-    path('get_movie_details/<int:movie_id>/', views.get_movie_details, name='detail'),
+    path('get_movie_details/<str:movie_id>/', views.get_movie_details, name='detail'),
+
 
     path('searchkeys/',views.search_movies, name = 'searchkey'),
     path('search_full_movies/',views.search_full_movies, name = 'searchkey'),

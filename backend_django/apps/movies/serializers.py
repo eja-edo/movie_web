@@ -36,7 +36,7 @@ class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movies
         fields = [
-            'movie_id', 'title', 'release_date', 'runtime','description', 
+            'movie_id', 'title', 'release_date', 'runtime',
             'poster_url', 'trailer_url', 'rating', 'views', 'monopoly'
         ]
 
@@ -120,7 +120,7 @@ class DetailSerializer(serializers.ModelSerializer):
         return obj.release_date.date() if obj.release_date else None  # Tránh lỗi nếu ngày rỗng
 
     def get_genres(self, obj):
-        return [genre.genre.name for genre in obj.moviegenres_set.all()]  # Lấy danh sách thể loại
+        return [{"genre_id": item.genre.genre_id, "name": item.genre.name} for item in obj.moviegenres_set.all()]  # Lấy danh sách thể loại
 
     def get_actors(self, obj):
         return [{"actor_id": item.actor.actor_id, "name": item.actor.name} for item in obj.movieactors_set.all()]  # Lấy danh sách diễn viên
