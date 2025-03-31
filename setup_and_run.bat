@@ -26,6 +26,7 @@ echo [5] Check Service Status
 echo [6] View Logs
 echo [7] Exit
 echo.
+set "choice="
 set /p choice="Enter your choice (1-7): "
 
 :: Xử lý lựa chọn
@@ -48,8 +49,9 @@ echo.
 python --version >nul 2>&1
 if %errorLevel% neq 0 (
     echo Python is not installed.
-    set /p install_python="Do you want to install Python 3.11? (Y/N): "
-    if /i "%install_python%"=="Y" (
+    set "install_python="
+    set /p install_python="Press Enter to install Python 3.11 or any key to skip: "
+    if "%install_python%"=="" (
         echo Installing Python...
         powershell -Command "& {Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe' -OutFile 'python-installer.exe'}"
         start /wait python-installer.exe /quiet InstallAllUsers=1 PrependPath=1
@@ -65,8 +67,9 @@ if %errorLevel% neq 0 (
 node --version >nul 2>&1
 if %errorLevel% neq 0 (
     echo Node.js is not installed.
-    set /p install_node="Do you want to install Node.js 18.17? (Y/N): "
-    if /i "%install_node%"=="Y" (
+    set "install_node="
+    set /p install_node="Press Enter to install Node.js 18.17 or any key to skip: "
+    if "%install_node%"=="" (
         echo Installing Node.js...
         powershell -Command "& {Invoke-WebRequest -Uri 'https://nodejs.org/dist/v18.17.0/node-v18.17.0-x64.msi' -OutFile 'node-installer.msi'}"
         start /wait msiexec /i node-installer.msi /qn
@@ -79,28 +82,45 @@ if %errorLevel% neq 0 (
 )
 
 :: Kiểm tra và cài đặt Redis
-redis-cli ping >nul 2>&1
+netstat -ano | findstr ":6379" >nul
 if %errorLevel% neq 0 (
     echo Redis is not installed.
-    set /p install_redis="Do you want to install Redis? (Y/N): "
-    if /i "%install_redis%"=="Y" (
+    set "install_redis="
+    set /p install_redis="Press Enter to install Redis or any key to skip: "
+    if "%install_redis%"=="" (
         echo Installing Redis...
         powershell -Command "& {Invoke-WebRequest -Uri 'https://github.com/microsoftarchive/redis/releases/download/win-3.0.504/Redis-x64-3.0.504.msi' -OutFile 'Redis-x64-3.0.504.msi'}"
         start /wait msiexec /i Redis-x64-3.0.504.msi /qn
         del Redis-x64-3.0.504.msi
+        
+        :: Đợi Redis cài đặt xong
+        timeout /t 5 /nobreak >nul
+        
+        :: Kiểm tra lại sau khi cài đặt
+        netstat -ano | findstr ":6379" >nul
+        if %errorLevel% equ 0 (
+            echo Redis installed successfully!
+        ) else (
+            echo Redis installation failed. Please try again.
+            pause
+            exit /b 1
+        )
     ) else (
         echo Redis installation skipped.
         pause
         exit /b 1
     )
+) else (
+    echo Redis is already installed.
 )
 
 :: Kiểm tra và cài đặt Nginx
-nginx -v >nul 2>&1
+netstat -ano | findstr ":80" >nul
 if %errorLevel% neq 0 (
     echo Nginx is not installed.
-    set /p install_nginx="Do you want to install Nginx? (Y/N): "
-    if /i "%install_nginx%"=="Y" (
+    set "install_nginx="
+    set /p install_nginx="Press Enter to install Nginx or any key to skip: "
+    if "%install_nginx%"=="" (
         echo Installing Nginx...
         powershell -Command "& {Invoke-WebRequest -Uri 'http://nginx.org/download/nginx-1.20.2.zip' -OutFile 'nginx.zip'}"
         powershell -Command "& {Expand-Archive -Path 'nginx.zip' -DestinationPath 'C:\nginx' -Force}"
@@ -133,8 +153,9 @@ cd ..
 
 :: Cấu hình Nginx
 echo Configuring Nginx...
-set /p config_nginx="Do you want to configure Nginx? (Y/N): "
-if /i "%config_nginx%"=="Y" (
+set "config_nginx="
+set /p config_nginx="Press Enter to configure Nginx or any key to skip: "
+if "%config_nginx%"=="" (
     :: Lấy đường dẫn hiện tại và chuyển đổi dấu \ thành /
     for %%I in ("%CD%") do set "CURRENT_PATH=%%~fI"
     set "CURRENT_PATH=%CURRENT_PATH:\=/%"
@@ -145,8 +166,9 @@ if /i "%config_nginx%"=="Y" (
 
 :: Cấu hình hosts file
 echo Configuring hosts file...
-set /p config_hosts="Do you want to add smovie.com to hosts file? (Y/N): "
-if /i "%config_hosts%"=="Y" (
+set "config_hosts="
+set /p config_hosts="Press Enter to add smovie.com to hosts file or any key to skip: "
+if "%config_hosts%"=="" (
     echo Adding smovie.com to hosts file...
     echo 127.0.0.1 smovie.com >> C:\Windows\System32\drivers\etc\hosts
 )
@@ -208,7 +230,7 @@ echo.
 echo Starting all services...
 
 :: Kiểm tra và khởi động Redis
-redis-cli ping >nul 2>&1
+netstat -ano | findstr ":6379" >nul
 if %errorLevel% neq 0 (
     echo Starting Redis...
     start /B redis-server
@@ -216,7 +238,7 @@ if %errorLevel% neq 0 (
 )
 
 :: Kiểm tra và khởi động Nginx
-nginx -t >nul 2>&1
+netstat -ano | findstr ":80" >nul
 if %errorLevel% neq 0 (
     echo Starting Nginx...
     start /B C:\nginx\nginx.exe
@@ -261,36 +283,36 @@ echo.
 echo Checking service status...
 echo.
 
-:: Kiểm tra Redis
-redis-cli ping >nul 2>&1
-if %errorLevel% equ 0 (
-    echo Redis: Running
+:: Kiểm tra Redis (port 6379)
+netstat -ano | findstr ":6379" >nul
+if %ERRORLEVEL% == 0 (
+    echo Redis: Running on port 6379
 ) else (
     echo Redis: Not running
 )
 
-:: Kiểm tra Nginx
-nginx -t >nul 2>&1
-if %errorLevel% equ 0 (
-    echo Nginx: Running
+:: Kiểm tra Nginx (port 80)
+netstat -ano | findstr ":80" >nul
+if %ERRORLEVEL% == 0 (
+    echo Nginx: Running on port 80
 ) else (
     echo Nginx: Not running
 )
 
-:: Kiểm tra Python
-python --version >nul 2>&1
-if %errorLevel% equ 0 (
-    echo Python: Installed
+:: Kiểm tra Django Backend (port 8000)
+netstat -ano | findstr ":8000" >nul
+if %ERRORLEVEL% == 0 (
+    echo Django Backend: Running on port 8000
 ) else (
-    echo Python: Not installed
+    echo Django Backend: Not running
 )
 
-:: Kiểm tra Node.js
-node --version >nul 2>&1
-if %errorLevel% equ 0 (
-    echo Node.js: Installed
+:: Kiểm tra React Frontend (port 3000)
+netstat -ano | findstr ":3000" >nul
+if %ERRORLEVEL% == 0 (
+    echo React Frontend: Running on port 3000
 ) else (
-    echo Node.js: Not installed
+    echo React Frontend: Not running
 )
 
 echo.
