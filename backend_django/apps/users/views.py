@@ -221,9 +221,12 @@ def register(request):
         except json.JSONDecodeError:
             return JsonResponse({'message': 'Invalid JSON'}, status=400)
 
-        # Kiểm tra username trước khi tạo user
+        # Kiểm tra username và email trước khi tạo user
         if User.objects.filter(username=data.get('username')).exists():
             return JsonResponse({'message': 'Username already exists'}, status=400)
+        
+        if User.objects.filter(email=data.get('email')).exists():
+            return JsonResponse({'message': 'Email already exists'}, status=400)
 
         serializer = RegisterSerializer(data=data)
         if serializer.is_valid():

@@ -82,7 +82,7 @@ if %errorLevel% neq 0 (
 )
 
 :: Kiểm tra và cài đặt Redis
-redis-cli ping >nul 2>&1
+netstat -ano | findstr ":6379" >nul
 if %errorLevel% neq 0 (
     echo Redis is not installed.
     set "install_redis="
@@ -97,7 +97,9 @@ if %errorLevel% neq 0 (
         timeout /t 5 /nobreak >nul
         
         :: Kiểm tra lại sau khi cài đặt
-        redis-cli ping >nul 2>&1
+
+        netstat -ano | findstr ":6379" >nul
+
         if %errorLevel% equ 0 (
             echo Redis installed successfully!
         ) else (
@@ -115,7 +117,7 @@ if %errorLevel% neq 0 (
 )
 
 :: Kiểm tra và cài đặt Nginx
-nginx -v >nul 2>&1
+netstat -ano | findstr ":80" >nul
 if %errorLevel% neq 0 (
     echo Nginx is not installed.
     set "install_nginx="
@@ -230,7 +232,7 @@ echo.
 echo Starting all services...
 
 :: Kiểm tra và khởi động Redis
-redis-cli ping >nul 2>&1
+netstat -ano | findstr ":6379" >nul
 if %errorLevel% neq 0 (
     echo Starting Redis...
     start /B redis-server
@@ -238,7 +240,7 @@ if %errorLevel% neq 0 (
 )
 
 :: Kiểm tra và khởi động Nginx
-nginx -t >nul 2>&1
+netstat -ano | findstr ":80" >nul
 if %errorLevel% neq 0 (
     echo Starting Nginx...
     start /B C:\nginx\nginx.exe
@@ -283,36 +285,36 @@ echo.
 echo Checking service status...
 echo.
 
-:: Kiểm tra Redis
-redis-cli ping >nul 2>&1
-if %errorLevel% equ 0 (
-    echo Redis: Running
+:: Kiểm tra Redis (port 6379)
+netstat -ano | findstr ":6379" >nul
+if %ERRORLEVEL% == 0 (
+    echo Redis: Running on port 6379
 ) else (
     echo Redis: Not running
 )
 
-:: Kiểm tra Nginx
-nginx -t >nul 2>&1
-if %errorLevel% equ 0 (
-    echo Nginx: Running
+:: Kiểm tra Nginx (port 80)
+netstat -ano | findstr ":80" >nul
+if %ERRORLEVEL% == 0 (
+    echo Nginx: Running on port 80
 ) else (
     echo Nginx: Not running
 )
 
-:: Kiểm tra Python
-python --version >nul 2>&1
-if %errorLevel% equ 0 (
-    echo Python: Installed
+:: Kiểm tra Django Backend (port 8000)
+netstat -ano | findstr ":8000" >nul
+if %ERRORLEVEL% == 0 (
+    echo Django Backend: Running on port 8000
 ) else (
-    echo Python: Not installed
+    echo Django Backend: Not running
 )
 
-:: Kiểm tra Node.js
-node --version >nul 2>&1
-if %errorLevel% equ 0 (
-    echo Node.js: Installed
+:: Kiểm tra React Frontend (port 3000)
+netstat -ano | findstr ":3000" >nul
+if %ERRORLEVEL% == 0 (
+    echo React Frontend: Running on port 3000
 ) else (
-    echo Node.js: Not installed
+    echo React Frontend: Not running
 )
 
 echo.

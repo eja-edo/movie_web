@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./login.scss"; // Import file CSS của bạn
 import { useNavigate } from "react-router-dom";
 function Login() {
-
-  document.documentElement.style.setProperty('--api-url', process.env.REACT_APP_API_URL);
+  document.documentElement.style.setProperty(
+    "--api-url",
+    process.env.REACT_APP_API_URL
+  );
 
   const [login, setLogin] = useState(false);
   const navigate = useNavigate();
@@ -62,15 +64,18 @@ function Login() {
         if (response.authResponse) {
           // Đăng nhập thành công
           console.log(response);
-          fetch(`${process.env.REACT_APP_API_URL}/api/user/facebook/login/token/`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              accessToken: response.authResponse.accessToken,
-            }),
-          })
+          fetch(
+            `${process.env.REACT_APP_API_URL}/api/user/facebook/login/token/`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                accessToken: response.authResponse.accessToken,
+              }),
+            }
+          )
             .then((response) => {
               if (response.ok) {
                 return response.json();
@@ -99,14 +104,18 @@ function Login() {
     if (login) {
       const fetchinfouser = async () => {
         try {
-          const accessToken = localStorage.getItem('accessToken');
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/getDetail/`, { // Use template literal
-            method: 'GET', // Use GET request to fetch film details
-            headers: {
-              "Authorization": `Bearer ${accessToken}`,
-            },
-            redirect: "follow"
-          });
+          const accessToken = localStorage.getItem("accessToken");
+          const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/api/user/getDetail/`,
+            {
+              // Use template literal
+              method: "GET", // Use GET request to fetch film details
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+              redirect: "follow",
+            }
+          );
 
           if (response.ok) {
             const result = await response.json();
@@ -129,7 +138,6 @@ function Login() {
       fetchinfouser();
     }
   }, [login]);
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password1, setPassword1] = useState("");
@@ -146,13 +154,16 @@ function Login() {
     };
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/register/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/user/register/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Có lỗi xảy ra.");
@@ -251,11 +262,6 @@ function Login() {
                 type="button"
                 className="signup-button"
                 onClick={() => handleFormSwitch("signup")}
-                style={{
-                  fontFamily: "Poppins",
-                  border: "none",
-                  background: "white",
-                }}
               >
                 Đăng ký
               </button>

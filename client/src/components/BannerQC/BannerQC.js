@@ -12,17 +12,21 @@ const BannerQC = () => {
   const [idVideo, setIdVideo] = useState(0); // Dùng useState để lưu trạng thái vị trí video
   const qcVideoRef = useRef(null); // Tham chiếu đến phần tử video
 
-  // Chuyển video QC sang trái
+  // Chuyển video QC sang phải
   const nextVideoQc = () => {
-    if (idVideo < 4) {
+    if (idVideo < bannerQC.length - 1) {
       setIdVideo((prev) => prev + 1);
+    } else {
+      setIdVideo(0); // Reset về video đầu tiên
     }
   };
 
-  // Chuyển video QC sang phải
+  // Chuyển video QC sang trái
   const backVideoQc = () => {
     if (idVideo > 0) {
       setIdVideo((prev) => prev - 1);
+    } else {
+      setIdVideo(bannerQC.length - 1); // Chuyển đến video cuối cùng
     }
   };
   const xem_ngay = async (movie_id) => {

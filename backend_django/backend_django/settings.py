@@ -155,8 +155,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
    'corsheaders.middleware.CorsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
-    
+    # 'utils.id_encryption_middleware.IDEncryptionMiddleware',
 ]
+
+# Cấu hình khóa mã hóa
+ENCRYPTION_KEY = config('ENCRYPTION_KEY') 
 
 ROOT_URLCONF = 'backend_django.urls'
 

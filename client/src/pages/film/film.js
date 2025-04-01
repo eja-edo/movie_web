@@ -65,11 +65,6 @@ function Film() {
         };
     }, []);
 
-    const handleTapClick = (episodeId) => {
-        // Navigate to the selected episode
-        // Assuming the route follows the pattern /film/:id1/:id2
-        navigate(`/film/${id1}/${episodeId}`);
-    };
     const handleMotaClick = () => {
         console.log("Xem thêm thông tin về phim:", data?.title);
     };
@@ -115,7 +110,7 @@ function Film() {
                             return (
                                 <button
                                     key={ep.episode_id}
-                                    onClick={() => handleTapClick(ep.episode_id)}
+                                    // onClick={() => handleTapClick(ep.episode_id)}
                                     style={{
                                         background: isActive ? "#FFE792" : "#ddd",
                                         color: isActive ? "#333" : "#333",
