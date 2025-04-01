@@ -65,6 +65,11 @@ function Film() {
         };
     }, []);
 
+    const handleTapClick = (episodeId) => {
+        // Navigate to the selected episode
+        // Assuming the route follows the pattern /film/:id1/:id2
+        navigate(`/film/${id1}/${episodeId}`);
+    };
     const handleMotaClick = () => {
         console.log("Xem thêm thông tin về phim:", data?.title);
     };

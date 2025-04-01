@@ -105,69 +105,21 @@
 
         #infoMovie {
             display: flex;
-            margin: 20px 0;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
+            margin: 20px;
 
             div {
                 width: auto;
             }
 
-            .ratings {
-                margin-bottom: 15px;
-                font-size: 1.1em;
-
-                .stars {
-                    color: #ffd700;
-                    margin-right: 8px;
-                }
-            }
-
-            p {
-                color: #e0e0e0;
-                line-height: 1.6;
-                margin-bottom: 12px;
-                font-size: 0.95em;
-            }
-
-            #description {
-                margin-top: 15px;
-                padding: 15px;
-                background: rgba(0, 0, 0, 0.3);
-                border-radius: 8px;
-                border-left: 4px solid #ff4d4d;
-                font-size: 0.95em;
-                line-height: 1.7;
-                color: #f0f0f0;
-                max-width: 600px;
-            }
-
             .info {
-                margin-left: 50%;
+                margin-left: 150px;
                 width: 40%;
-
+                
                 b {
-                    color: #ff4d4d;
-                    font-weight: 600;
-                    margin-right: 8px;
-                }
 
-                p {
-                    margin-bottom: 15px;
+                    color: gray;
                 }
             }
-
-            @media screen and (max-width: 768px) {
-                flex-direction: column;
-                padding: 15px;
-
-                .info {
-                    margin-left: 0;
-                    width: 100%;
-                    margin-top: 20px;
-                }
 
                 #description {
                     max-width: 100%;
@@ -278,38 +230,39 @@
     }
 
     #nhap_bl {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        background-color: #fff;
-        padding: 12px 16px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        @include flex-center;
+        margin-left: 0px;
+
+        i {
+            padding: 15px;
+            border: 1px solid #fff;
+            border-radius: 100%;
+            height: 14px;
+            width: 14px;
+        }
+
+        textarea {
+            margin: 2px 0 0 10px;
+            height: 32px;
+            width: 80%;
+            font-size: 150%;
+            border: none;
+            background: none;
+            color: gray;
+            padding: 10px;
+            font-family: inherit;
+            resize: none;
+
+            &:focus {
+                border-bottom: 1px solid #fff;
+                outline: 0;
+                transition: all 1s ease;
+            }
+        }
     }
 
-    #nhap_bl:hover {
-        border-color: #4a90e2;
-    }
 
-    #nhap_bl i {
-        font-size: 1.8rem;
-        color: #4a90e2;
-        margin-top: 4px;
-    }
 
-    #nhap_bl textarea {
-        flex: 1;
-        border: none;
-        resize: vertical;
-        min-height: 100px;
-        font-size: 1rem;
-        color: #555;
-        font-family: "Poppins", sans-serif;
-    }
 
-    #nhap_bl textarea:focus {
-        outline: none;
-        box-shadow: inset 0 0 0 2px #4a90e2;
-    }
+
 }

@@ -175,6 +175,7 @@ const MovieDetails = () => {
                         <i className="fa-solid fa-user"></i> <textarea name="comment" id="comment" placeholder="Thêm bình luận..." />
                     </div>
                 </div>
+
                 <Comment episode_id={movie.episodes[0]?.episode_id} />
             </div>
 
