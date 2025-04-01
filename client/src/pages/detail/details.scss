@@ -22,7 +22,6 @@
 
     .container_display {
         display: none;
-
     }
 
     @media screen and (max-width: 1000px) {
@@ -37,9 +36,6 @@
         }
     }
 
-
-
-
     #movie-container {
         width: 80%;
         overflow: hidden;
@@ -48,11 +44,16 @@
             width: 100%;
         }
 
-        // Fieldset chung
-
-        .banner{
+        .banner {
             width: 100%;
-           
+        }
+
+        .clickable {
+            cursor: pointer;
+        }
+
+        .clickable:hover {
+            color: #fd624d;
         }
 
         #tap {
@@ -69,24 +70,38 @@
             }
         }
 
-
-
         #infoMovie {
             display: flex;
+            justify-content: space-between; /* Đẩy info sang phải */
+            align-items: flex-start; /* Canh lề trên cùng */
             margin: 20px;
+            gap: 20px; /* Khoảng cách giữa ảnh phim và info */
+            .info-left {
+                width: 50%; /* Giới hạn chiều rộng info */
 
-            div {
-                width: auto;
+                .ratings {
+                    margin: 10px 0;
+                }
+
+                p {
+                    margin: 10px 0; /* Cách trên dưới mỗi dòng */
+                }
+            }
+            .info-right {
+                width: 50%; /* Giới hạn chiều rộng info */
+                text-align: left; /* Căn trái nội dung */
             }
 
-            .info {
-                margin-left: 150px;
-                width: 40%;
-                
-                b {
+            .info-right p {
+                margin: 10px 0; /* Cách trên dưới mỗi dòng */
+            }
 
-                    color: gray;
-                }
+            b {
+                color: gray;
+            }
+
+            .info-right_title {
+                color: #fff;
             }
 
             #description {
@@ -186,9 +201,4 @@
             }
         }
     }
-
-
-
-
-
 }

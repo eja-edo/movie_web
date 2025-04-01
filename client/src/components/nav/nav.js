@@ -3,7 +3,7 @@ import "./nav.scss";
 import {useNavigate} from "react-router-dom";
 import movieAPI from "../../services/movieAPI";
 import DropdownMenu from "../dropdownMenu/DropdownMenu";
-
+import SearchBar from "../searchBar/searchBar";
 function Nav() {
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
@@ -20,43 +20,6 @@ function Nav() {
         setLogin(JSON.parse(localStorage.getItem("user"))?.login || false);
         setImg(JSON.parse(localStorage.getItem("user"))?.url_avt || null);
     }, [navigate]);
-
-    const handleSearchChange = (event) => {
-        setSearchValue(event.target.value);
-    };
-
-    const handleSearchkey = (event) => {
-        const value = event.target.value;
-
-        const getsuggest = async () => {
-            try {
-                const result = await movieAPI.getSearch(value);
-                setSuggest(result);
-                console.log(value);
-                console.log(result);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        // if (!suggestSearch) {
-        //     getsuggest()
-        // }
-        // if (suggestSearch) {
-        //     if (suggestSearch.movie !== undefined && value !== '') {
-        //         getsuggest()
-        //     }
-        // }
-        if (value) {
-            getsuggest();
-        }
-    };
-
-    const handleSearchBlur = (input) => {
-        input.style.width = "0px";
-        input.style.padding = "0px";
-        document.getElementById("suggestSearch").style.display = "none";
-        document.getElementById("look").style.color = "#fff";
-    };
 
     const handleLogout = () => {
         const accessToken = localStorage.getItem("accessToken");
@@ -205,7 +168,7 @@ function Nav() {
                             Quốc gia
                         </a>
 
-                        {isDropdownVisible && <DropdownMenu apiEndpoint={`${process.env.REACT_APP_API_URL}/api/core/nations/`} type="country" onClose={() => setIsDropdownVisible(false)} />}
+                        {isDropdownVisible && <DropdownMenu apiEndpoint={`${process.env.REACT_APP_API_URL}/api/core/nations/`} type="nation" onClose={() => setIsDropdownVisible(false)} />}
                     </li>
                     <li>
                         <a
@@ -215,7 +178,7 @@ function Nav() {
                             target="main"
                             rel="noopener noreferrer"
                         >
-                            tin tức
+                            Tin tức
                             {/* <div className="tick"></div> */}
                         </a>
                     </li>
@@ -245,46 +208,8 @@ function Nav() {
                     </li>
                 </ul>
                 <ul id="ul_right">
-                    <li
-                        style={{
-                            width: "auto",
-                            justifyContent: "end",
-                            position: "relative",
-                        }}
-                    >
-                        <a
-                            onClick={(event) => {
-                                handleSearch(event.currentTarget);
-                            }}
-                            id="look"
-                            target="main"
-                        >
-                            <i className="fa-solid fa-magnifying-glass"></i>
-                            <div id="search_list"></div>
-                        </a>
-                        <input
-                            type="text"
-                            id="search"
-                            placeholder="ex: tên phim"
-                            value={searchValue}
-                            onChange={handleSearchChange}
-                            onKeyUp={handleSearchkey}
-                            onBlur={(event) => {
-                                handleSearchBlur(event.currentTarget);
-                            }}
-                        />
-                        <div id="suggestSearch">
-                            {suggestSearch ? (
-                                suggestSearch.map((item, index) => (
-                                    <span>
-                                        <i className="fa-solid fa-magnifying-glass"></i>
-                                        {" " + item}
-                                    </span>
-                                ))
-                            ) : (
-                                <></>
-                            )}
-                        </div>
+                    <li className="search-list-item">
+                        <SearchBar onSearch={handleSearch} />
                     </li>
                     <li>
                         <a>

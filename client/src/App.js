@@ -33,7 +33,7 @@ function App() {
                 <Route path="/intro" element={<Intro />} />
                 <Route path="/page404" element={<Page404 />} />
                 <Route path="/category/:type" element={<CategoryPage key={window.location.pathname} />} />
-                {/* Trang thể loại */}
+                <Route path="/search" element={<CategoryPage />} />
                 <Route path="/mylist" element={<MyListPage />} />
                 {/* You can add more routes here for other pages/components */}
             </Routes>

@@ -10,7 +10,7 @@ const CategoryPage = () => {
     const {type} = useParams();
     const [films, setFilms] = useState([]);
     const [title, setTitle] = useState("");
-    const [loading, setLoading] = useState(true);
+    const [loading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -20,7 +20,10 @@ const CategoryPage = () => {
     const navigate = useNavigate();
 
     const genre_id = searchParams.get("genre_id");
-    const country_id = searchParams.get("country_id");
+    const nation_id = searchParams.get("nation_id");
+    const director_id = searchParams.get("director_id");
+    const actor_id = searchParams.get("actor_id");
+    const searchQuery = searchParams.get("q");
     const order_by = searchParams.get("order_by") || "-release_date";
     const page = searchParams.get("page") || "1";
 
@@ -33,28 +36,48 @@ const CategoryPage = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true);
+            setIsLoading(true);
             setError(null);
 
             try {
-                const url = new URL(`${process.env.REACT_APP_API_URL}/api/movies/${type === "genre" ? "genres" : "nations"}/`);
-                if (genre_id) url.searchParams.append("genre_id", genre_id);
-                if (country_id) url.searchParams.append("nation_id", country_id);
-                url.searchParams.append("order_by", order_by);
-                url.searchParams.append("page", page);
+                let apiUrl = `${process.env.REACT_APP_API_URL}/api/movies/`;
 
-                const response = await fetch(url);
+                // Xử lý trường hợp tìm kiếm
+                if (location.pathname === "/search" && searchQuery) {
+                    apiUrl += `search_full_movies/?q=${encodeURIComponent(searchQuery)}`;
+                    setTitle(`Kết quả tìm kiếm cho: "${searchQuery}"`);
+                } else {
+                    // Xác định loại dữ liệu cần lấy dựa trên `type`
+                    if (type === "genre") apiUrl += "genres/";
+                    else if (type === "nation") apiUrl += "nations/";
+                    else if (type === "directors") apiUrl += "directors/";
+                    else if (type === "actors") apiUrl += "actors/";
+                    else throw new Error("Loại danh mục không hợp lệ!");
+
+                    const url = new URL(apiUrl);
+                    if (genre_id) url.searchParams.append("genre_id", genre_id);
+                    if (nation_id) url.searchParams.append("nation_id", nation_id);
+                    if (director_id) url.searchParams.append("director_id", director_id);
+                    if (actor_id) url.searchParams.append("actor_id", actor_id);
+                    url.searchParams.append("order_by", order_by);
+                    url.searchParams.append("page", page);
+                    apiUrl = url.toString();
+                }
+
+                const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
                 const data = await response.json();
 
-                setTitle(
-                    typeof data.Title === "object"
-                        ? Object.entries(data.Title)
-                              .map(([key, value]) => `${key}: ${value}`)
-                              .join(", ")
-                        : data.Title || "Không xác định"
-                );
-                console.log("Dữ liệu API (trước khi setFilms):", [...data.results]);
+                if (location.pathname !== "/search") {
+                    setTitle(
+                        typeof data.Title === "object"
+                            ? Object.entries(data.Title)
+                                  .map(([key, value]) => `${key}: ${value}`)
+                                  .join(", ")
+                            : data.Title || "Không xác định"
+                    );
+                }
+
                 setFilms(data.results || []);
                 setCurrentPage(data.page || 1);
                 setTotalPages(data.total_pages || 1);
@@ -64,12 +87,12 @@ const CategoryPage = () => {
                     setFilms([]);
                 }
             } finally {
-                setLoading(false);
+                setIsLoading(false);
             }
         };
 
         fetchData();
-    }, [location.search, type, genre_id, country_id, order_by, page]);
+    }, [location.pathname, location.search, type, genre_id, nation_id, director_id, actor_id, order_by, page, searchQuery]);
 
     const handlePageChange = (newPage) => {
         const searchParams = new URLSearchParams(location.search);

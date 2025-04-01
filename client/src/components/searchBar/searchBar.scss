@@ -1,0 +1,133 @@
+.search-component {
+    position: absolute;
+    width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng của .search-list-item */
+}
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.8rem; /* Giảm khoảng cách để phù hợp với chiều rộng */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    z-index: 1;
+    font-size: 1rem; /* Giảm kích thước icon để phù hợp với chiều cao */
+}
+
+.close-icon {
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2); /* Nền xám nhạt giống hình */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    z-index: 1;
+    transition: background-color 0.2s;
+}
+
+.close-icon:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.search-input {
+    width: 100%;
+    height: 2.4rem;
+    line-height: 2.8rem; /* Điều chỉnh line-height để khớp với height */
+    padding: 0.2rem 0.8rem 0.2rem 2.5rem; /* Giảm padding để tránh lệch */
+    background-color: hsla(0, 0%, 100%, 0.08); /* Nền trong suốt giống hình */
+    color: #fff;
+    font-size: 0.9em;
+    outline: none !important;
+    box-shadow: none !important;
+    border-radius: 0.4rem; /* Viền bo tròn giống hình */
+    border: 1px solid transparent; /* Thêm border trong suốt khi không focus */
+    transition: background-color 0.2s;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    background-color: hsla(0, 0%, 100%, 0.15); /* Hiệu ứng khi focus */
+    border: 1px solid #fff;
+}
+
+.search-input::placeholder {
+    color: #fff;
+}
+
+.suggest-search {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 360px;
+    background-color: rgba(15, 17, 26, 0.95); /* Nền tối giống hình */
+    border-radius: 8px;
+    margin-top: 5px;
+    box-shadow: 0 0 20px 20px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    max-height: 500px; /* Giới hạn chiều cao, cuộn nếu vượt quá */
+    overflow-y: auto;
+    padding: 20px;
+    display: flex; /* Sử dụng flex để sắp xếp các item */
+    flex-wrap: wrap; /* Cho phép các item xuống dòng */
+    gap: 12px 12px; /* Khoảng cách giữa các item */
+    box-sizing: border-box; /* Thêm dòng này */
+}
+
+.suggest-header {
+    width: 100%; /* Tiêu đề chiếm toàn bộ chiều rộng */
+    font-size: 0.9em;
+    color: #aaa;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.suggest-item-wrap {
+    width: 48%;
+    display: inline-block;
+}
+
+.suggest-item {
+    width: 100%; /* Mỗi item chiếm 50% chiều rộng để hiển thị 2 item trên 1 hàng */
+    box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+}
+
+.suggest-item-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.suggest-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.suggest-item-title {
+    font-size: 0.9em;
+}
+
+.none-results {
+    text-align: center;
+}
