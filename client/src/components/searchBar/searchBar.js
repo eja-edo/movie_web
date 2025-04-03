@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
 import "./searchBar.scss"; // You can create this file for styling
-import ngayCuaChoRung from "../../assets/ngay-cua-cho-rung.png"; // Import hình ảnh giả định
 import {Link, useNavigate} from "react-router-dom";
 
 const SearchComponent = ({onSearch}) => {

@@ -88,15 +88,16 @@ const MovieDetails = () => {
                             <div className="info-right">
                                 {/* Thể loại */}
                                 <p>
-                                    {/* <b>Thể loại:</b>{" "}
-                                    {movie.genres && movie.genres.length > 0
-                                        ? movie.genres.map((genre) => (
-                                              <span key={genre.genre_id} className="clickable" onClick={() => handleNavigate("genre", genre.genre_id)}>
-                                                  {genre.name}
-                                              </span>
-                                          ))
-                                        : "Chưa cập nhật"} */}
-                                    <b className="info-right_title">Thể loại:</b> {movie.genres ? movie.genres.join(", ") : "Chưa cập nhật"}
+                                    <b className="info-right_title">Thể loại:</b>{" "}
+                                    {Array.isArray(movie.genres) && movie.genres.length > 0
+                                        ? movie.genres
+                                              .map((genre) => (
+                                                  <span key={genre.genre_id} className="clickable" onClick={() => handleNavigate("genre", genre.genre_id)}>
+                                                      {genre.name}
+                                                  </span>
+                                              ))
+                                              .reduce((prev, curr) => [prev, ", ", curr])
+                                        : "Chưa cập nhật"}
                                 </p>
 
                                 {/* Quốc gia */}
