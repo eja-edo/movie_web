@@ -1,5 +1,5 @@
 #header {
-    height: 56px;
+    height: 62px;
     background: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.2));
     width: 100lvw;
     position: fixed;
@@ -19,15 +19,11 @@
         width: 96lvw;
         position: relative;
 
-        img {
-            height: 40px;
-            padding: 0px;
-        }
-
         ul {
             display: flex;
             list-style: none;
             height: 35px;
+            align-items: center;
             margin-top: 10px;
             padding: 0px;
 
@@ -103,15 +99,25 @@
         #ul_right {
             position: absolute;
             right: 0px;
+            display: flex;
+            align-items: center;
 
             li {
                 display: grid;
                 place-content: center;
-                padding: 10px;
+                padding: 5px;
+                margin-right: 10px;
             }
 
-            #look {
-                z-index: 3;
+            &:last-child {
+                margin-right: 0; /* Bỏ margin-right cho phần tử cuối cùng */
+            }
+
+            .search-list-item {
+                position: relative;
+                padding: 0;
+                width: 360px; /* Đặt chiều rộng cố định cho ô tìm kiếm */
+                height: 2.8rem; /* Đặt chiều cao cố định cho ô tìm kiếm */
             }
 
             #login {
@@ -147,42 +153,6 @@
                         &:hover {
                             background-color: gray;
                         }
-                    }
-                }
-            }
-
-            #search {
-                position: absolute;
-                border: none;
-                border-radius: 20px;
-                width: 0px;
-                right: 3px;
-                height: 30px;
-                // transform: translateX(250px);
-                transition: all 0.5s ease;
-                padding: 0px;
-                outline: 0;
-            }
-
-            #suggestSearch {
-                position: absolute;
-                background-color: #fff;
-                color: #000;
-                top: 40px;
-                right: 0px;
-                border-radius: 5px;
-                width: 250px;
-                display: none;
-                flex-direction: column;
-
-                span {
-                    padding-top: 5px;
-                    border-bottom: rgb(214, 212, 212) solid 1px;
-                    margin-bottom: 5px;
-
-                    i {
-                        margin-right: 3px;
-                        color: gray;
                     }
                 }
             }

@@ -92,19 +92,6 @@ if %errorLevel% neq 0 (
         powershell -Command "& {Invoke-WebRequest -Uri 'https://github.com/microsoftarchive/redis/releases/download/win-3.0.504/Redis-x64-3.0.504.msi' -OutFile 'Redis-x64-3.0.504.msi'}"
         start /wait msiexec /i Redis-x64-3.0.504.msi /qn
         del Redis-x64-3.0.504.msi
-        
-        :: Đợi Redis cài đặt xong
-        timeout /t 5 /nobreak >nul
-        
-        :: Kiểm tra lại sau khi cài đặt
-        netstat -ano | findstr ":6379" >nul
-        if %errorLevel% equ 0 (
-            echo Redis installed successfully!
-        ) else (
-            echo Redis installation failed. Please try again.
-            pause
-            exit /b 1
-        )
     ) else (
         echo Redis installation skipped.
         pause

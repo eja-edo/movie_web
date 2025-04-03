@@ -7,6 +7,7 @@ const FilmListColumn = ({films}) => {
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [liked, setLiked] = useState(Array(films.length).fill(false));
 
+    // console.log("Dữ liệu API (trong FilmListColumn):", films);
     const handleMouseEnter = (index) => {
         setHoveredIndex(index);
     };
@@ -25,7 +26,7 @@ const FilmListColumn = ({films}) => {
         <div className="film-list-container">
             {films.length > 0 ? (
                 films.map((item, index) => {
-                    const filmId = item.id || item.genre_id || item.nation_id || `${index}`;
+                    const filmId = item.movie_id || `${index}`;
                     const filmTitle = item.title || "Không có tiêu đề";
                     const filmPoster = item.poster_url ? `${process.env.REACT_APP_API_URL}${item.poster_url}` : "/default-poster.jpg";
                     const filmTrailer = item.trailer_url ? `${process.env.REACT_APP_API_URL}${item.trailer_url}` : null;
