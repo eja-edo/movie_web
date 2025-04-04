@@ -4,15 +4,15 @@ import "./film.scss";
 import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayList.js";
 import FilmList from "../../components/FilmList/FilmList.js";
 import movieAPI from "../../services/movieAPI.js";
+import VideoPlayer from "../../components/VideoPlayer.js";
 
 function Film() {
   const navigate = useNavigate();
   const { id1, id2 } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [data, setData] = useState("");
-
-  const [films, setFilms] = useState(null);
+  const [data, setData] = useState(null);
+  const [films, setFilms] = useState([]);
 
   useEffect(() => {
     if (!id1 || !id2) {
@@ -26,13 +26,8 @@ function Film() {
       setIsLoading(true);
       setError(null);
       try {
-        const [videoData] = await Promise.all([
-          movieAPI.getVideoData(id1, id2, navigate),
-        ]);
-
-        if (isMounted) {
-          setData(videoData);
-        }
+        const videoData = await movieAPI.getVideoData(id1, id2, navigate);
+        if (isMounted) setData(videoData);
       } catch (err) {
         if (isMounted) setError("Lỗi khi tải dữ liệu phim.");
         console.error("Lỗi tải dữ liệu:", err);
@@ -42,7 +37,6 @@ function Film() {
     };
 
     fetchData();
-
     return () => {
       isMounted = false;
     };
@@ -63,37 +57,39 @@ function Film() {
     };
 
     fetchFilmList();
-
     return () => {
       isMounted = false;
     };
   }, []);
 
+  const handleTapClick = (episodeId) => {
+    navigate(`/film/${id1}/${episodeId}`);
+  };
+
   const handleMotaClick = () => {
     console.log("Xem thêm thông tin về phim:", data?.title);
   };
 
+  if (isLoading) return <div>Đang tải dữ liệu phim...</div>;
+  if (error) return <div>{error}</div>;
+
+  const episode = data?.current_episode;
+
   return (
     <div id="container_film">
       <div id="film">
-        {/* Video Player */}
-
-        <video
-          src={process.env.REACT_APP_API_URL + data.current_episode.url_video}
-          controls
-          style={{
-            width: "98%",
-            boxSizing: "border-box",
-            borderRadius: "5px",
-            margin: "auto",
-          }}
-        />
+        {/* ✅ Video Player (MP4 + HLS) */}
+        {episode?.url_video ? (
+          <VideoPlayer
+            videoSrc={`${process.env.REACT_APP_API_URL}${episode.url_video}`}
+          />
+        ) : (
+          <p>Không có video để phát.</p>
+        )}
 
         {/* Thông tin phim */}
         <div id="ten">
-          <h2>
-            {data?.current_episode.movie_title || "Tên phim đang cập nhật"}
-          </h2>
+          <h2>{episode?.movie_title || "Tên phim đang cập nhật"}</h2>
         </div>
 
         <button onClick={handleMotaClick} id="mota">
@@ -101,7 +97,7 @@ function Film() {
         </button>
 
         <div id="thongtin">
-          {data?.current_episode.poster_url && (
+          {data?.poster_url && (
             <img
               src={`${process.env.REACT_APP_API_URL}${data.poster_url.replace(
                 /\\/g,
@@ -111,7 +107,7 @@ function Film() {
               className="banner"
             />
           )}
-          <p>{data?.current_episode.description || "Chưa có mô tả"}</p>
+          <p>{episode?.description || "Chưa có mô tả"}</p>
         </div>
 
         {/* Danh sách tập phim */}
@@ -125,10 +121,10 @@ function Film() {
               return (
                 <button
                   key={ep.episode_id}
-                  // onClick={() => handleTapClick(ep.episode_id)}
+                  onClick={() => handleTapClick(ep.episode_id)}
                   style={{
                     background: isActive ? "#FFE792" : "#ddd",
-                    color: isActive ? "#333" : "#333",
+                    color: "#333",
                     fontWeight: isActive ? "bold" : "normal",
                     margin: "5px",
                     padding: "8px",

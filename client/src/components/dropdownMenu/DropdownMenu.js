@@ -30,11 +30,11 @@ function DropdownMenu({apiEndpoint, type, onClose}) {
                 // Lấy các query params hiện tại
                 const searchParams = new URLSearchParams(location.search);
 
-                // Xóa `genre_id` hoặc `country_id` cũ (để tránh bị lỗi khi chọn thể loại & quốc gia cùng lúc)
+                // Xóa `genre_id` hoặc `nation_id` cũ (để tránh bị lỗi khi chọn thể loại & quốc gia cùng lúc)
                 searchParams.delete("genre_id");
-                searchParams.delete("country_id");
+                searchParams.delete("nation_id");
 
-                // Thêm `genre_id` hoặc `country_id` mới
+                // Thêm `genre_id` hoặc `nation_id` mới
                 searchParams.set(`${type}_id`, itemId);
 
                 const queryString = searchParams.toString(); // Chuyển thành chuỗi URL
