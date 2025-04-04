@@ -12,3 +12,4 @@ redis==5.0.8
 channels-redis==4.2.0
 daphne==4.1.2
 pycryptodome==3.19.1
+selenium==4.0.0

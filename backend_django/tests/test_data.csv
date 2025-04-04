@@ -1,0 +1,18 @@
+username,email,password1,password2,expected_result
+,,,,Vui lòng nhập tên đăng nhập
+test_user2,,Securepassword123!,Securepassword123!,Vui lòng nhập email
+test_user3,test3@example,securepassword,securepassword,Email phải có dạng abc@gmail.com
+test_user4,test4@example.com,short,short,Mật khẩu phải có ít nhất 8 ký tự
+test_user5,test5@example.com,secure@1Password,wrongpassword,Mật khẩu không khớp
+test_user6,test6@example.com,secure,secure,Mật khẩu phải có ít nhất 8 ký tự
+test_user7,test7@example.com,Securepassword123!,,Vui lòng nhập lại mật khẩu
+test_user8,test8@example.com,,securepassword,Vui lòng nhập mật khẩu
+test_user9,test9@example.com,securepassword123!,securepassword123!,Mật khẩu phải chứa ít nhất 1 chữ hoa
+test_user10,test10@example.com,12345678,12345678,Mật khẩu phải chứa ít nhất 1 chữ thường
+test_user11,test11@example.com,abcdefgh,abcdefgh,Mật khẩu phải chứa ít nhất 1 chữ hoa
+test_user12,test12@example.com,Abcd1234,Abcd1234,Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt
+test_user13,test13@example.com,Securepassword,Securepassword,Mật khẩu phải chứa ít nhất 1 số
+test_user14,test14@example.com,Securepassword123!,,Vui lòng nhập lại mật khẩu
+test_user1,test1@example.com,Securepassword123!,Securepassword123!,Username already exists
+test_user16,test1@example.com,Securepassword123!,Securepassword123!,Email already exists
+test_user17,test17@example.com,Securepassword123!,Securepassword123!,Vui lòng kiểm tra email của bạn để xác nhận tài khoản!
