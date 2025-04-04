@@ -23,5 +23,7 @@ urlpatterns =[
 
     path('register/', views.register, name='register'),
     path('activate/<uidb64>/<token>/', views.activate_account, name='activate'),
-    
+
+    path('wishlist/add/', views.add_to_wishlist, name='add_to_wishlist'),
+    path('wishlist/', views.get_wishlist, name='get_wishlist'),
 ]

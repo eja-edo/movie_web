@@ -37,3 +37,13 @@ class Watchlists(models.Model):
         managed = False
         db_table = 'watchlists'
 
+class Wishlist(models.Model):
+    wishlist_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, models.DO_NOTHING)
+    movie = models.ForeignKey('movies.Movies', models.DO_NOTHING)
+    created_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'wishlist'
+        unique_together = (('user', 'movie'),)

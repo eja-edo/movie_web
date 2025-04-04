@@ -127,3 +127,5 @@ class DetailSerializer(serializers.ModelSerializer):
 
     def get_directors(self, obj):
         return [{"director_id": item.director.director_id, "name": item.director.name} for item in obj.moviedirectors_set.all()]  # Lấy danh sách đạo diễn
+
+

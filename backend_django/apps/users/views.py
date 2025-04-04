@@ -28,6 +28,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from django.http import JsonResponse
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 @csrf_exempt
@@ -229,13 +231,14 @@ def register(request):
             return JsonResponse({'message': 'Email already exists'}, status=400)
 
         serializer = RegisterSerializer(data=data)
+
         if serializer.is_valid():
             user = serializer.save()
 
             # Gửi email xác thực
             current_site = get_current_site(request)
             mail_subject = 'Activate your account'
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            uid = urlsafe_base64_encode(force_bytes(user.pk))  # Lấy uid từ user
             token = default_token_generator.make_token(user)
             message = render_to_string('acc_active_email.html', {
                 'user': user,
@@ -251,29 +254,57 @@ def register(request):
             email.attach_alternative(message, "text/html")
             email.send()
 
-            return JsonResponse(
-                {'message': 'Please confirm your email address to complete the registration'},
-                status=status.HTTP_201_CREATED
-            )
+            # 🔹 **Tạo JWT token**
+            refresh = RefreshToken.for_user(user)  # Tạo token làm mới
+            access = refresh.access_token  # Token truy cập
+
+            # Trả về uid thay cho websocket_key
+            return JsonResponse({
+                'message': 'Vui lòng kiểm tra email của bạn để xác nhận tài khoản!',
+                'uid': uid,  # Thay websocket_key bằng uid
+                'refresh': str(refresh),  # ✅ Trả về token làm mới
+                'access': str(access)     # ✅ Trả về token truy cập
+            }, status=status.HTTP_201_CREATED)
 
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def activate_account(request, uidb64, token):
     try:
-        # Giải mã user ID từ chuỗi uidb64
+        # Giải mã UID từ Base64
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
-    # Kiểm tra token hợp lệ
     if user is not None and default_token_generator.check_token(user, token):
-        user.is_active = True  # Kích hoạt tài khoản
+        # Kích hoạt tài khoản
+        user.is_active = True
         user.save()
-        return HttpResponse("Your account has been activated! You can now log in.")  
+        
+        # Gửi thông báo qua WebSocket nếu tài khoản được kích hoạt
+        channel_layer = get_channel_layer()
+        try:
+            # Gửi thông báo đến group WebSocket với key là uid
+            async_to_sync(channel_layer.group_send)(
+                uidb64,  # Sử dụng UID thay vì user.id
+                {
+                    "type": "email_verified",
+                    "message": "Email đã được xác nhận thành công!"
+                }
+            )
+            print(f"Đã gửi thông báo xác nhận email tới nhóm: email_verification_{uid}")  # Debug
+            
+        except Exception as e:
+            print(f"❌ Lỗi khi gửi WebSocket: {e}")
+        
+        return JsonResponse({
+            'message': 'Email đã được xác nhận thành công!'
+        })
     else:
-        return HttpResponse("Activation link is invalid!", status=400)
+        return JsonResponse({
+            'message': 'Link xác nhận không hợp lệ hoặc đã hết hạn!'
+        }, status=400)
 
 
 from django.core.mail import send_mail
@@ -286,3 +317,81 @@ def send_test_email():
     recipient_list = ["duyanhsadg@example.com"]  # Thay bằng email người nhận
 
     send_mail(subject, message, from_email, recipient_list)
+
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+from .models import Wishlist
+from .serializers import WishlistSerializer
+from apps.movies.models import Movies
+from django.utils import timezone
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_to_wishlist(request):
+    try:
+        data = json.loads(request.body)
+        movie_id = data.get('movie_id')
+        if not movie_id:
+            return Response({'error': 'movie_id là bắt buộc'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            movie = Movies.objects.get(pk=movie_id)
+        except Movies.DoesNotExist:
+            return Response({'error': 'Phim không tồn tại'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Tạo data để serializer
+        data = {
+            'movie': movie.movie_id,
+            'user': request.user.id
+        }
+        
+        serializer = WishlistSerializer(data=data, context={'request': request})
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+from .serializers import WishlistMovieSerializer
+from django.core.paginator import Paginator
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_wishlist(request):
+    try:
+        # Lấy query parameters
+        page = request.query_params.get('page', 1)
+        page_size = request.query_params.get('page_size', 20)
+        
+        # Query và phân trang
+        wishlist_items = Wishlist.objects.filter(
+            user=request.user
+        ).select_related('movie').order_by('-created_at')
+        
+        paginator = Paginator(wishlist_items, page_size)
+        page_obj = paginator.get_page(page)
+        
+        # Serialize dữ liệu
+        serializer = WishlistMovieSerializer(page_obj, many=True)
+        
+        # Chỉ lấy danh sách movie từ kết quả
+        movies_data = [item['movie'] for item in serializer.data]
+        
+        return Response({
+            'success': True,
+            'page': page_obj.number,
+            'total_pages': paginator.num_pages,
+            'total_items': paginator.count,
+            'data': movies_data  # Chỉ trả về data movie
+        })
+        
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=500)

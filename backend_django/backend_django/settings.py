@@ -84,6 +84,7 @@ CHANNEL_LAYERS = {
 
 ASGI_APPLICATION = "backend_django.asgi.application"
 
+DEFAULT_PAGE_SIZE = 10
 
 AUTHENTICATION_BACKENDS = [
 
