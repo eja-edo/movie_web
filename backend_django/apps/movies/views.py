@@ -51,11 +51,30 @@ def normalize_string(s):
     s = s.title()
     return s
 
-def get_thinhhanh_10(request):
-    movies = Movies.objects.order_by('views')[:10]
-    serializer = MovieSerializer(movies , many = True)
-    return JsonResponse(serializer.data , safe = False)
+# def get_thinhhanh_10(request):
+#     movies = Movies.objects.order_by('views')[:10]
+#     serializer = MovieSerializer(movies , many = True)
+#     return JsonResponse(serializer.data , safe = False)
 
+from django.db.models import Count, F, FloatField, ExpressionWrapper
+
+def get_thinhhanh_10(request):
+    # Tính toán lượt xem trung bình cho mỗi bộ phim
+    movies = Movies.objects.annotate(
+        episodes_count=Count('episodes'),  # Sửa từ 'episode_set' thành 'episodes' (related_name mặc định)
+        average_views=ExpressionWrapper(
+            F('views') / F('episodes_count'), 
+            output_field=FloatField()
+        )
+    ).filter(episodes_count__gt=0)  # Chỉ lấy những bộ phim có ít nhất một tập phim
+    
+    # Lấy 10 bộ phim có lượt xem trung bình cao nhất
+    top_movies = movies.order_by('-average_views')[:10]
+
+    # Chuyển đổi dữ liệu thành JSON sử dụng MovieSerializer
+    serializer = MovieSerializer(top_movies, many=True)
+    
+    return JsonResponse(serializer.data, safe=False)
 
 def get_phimhot_10(request):
     movies = Movies.objects.all()[:10]
@@ -132,30 +151,60 @@ def get_movie_details(request, movie_id):
     return JsonResponse(serializer.data, safe=False)
 
 #Tìm kiếm phim
+from django.db.models import Q, Case, When, Value, IntegerField
+
+
 def search_movies(request):
     query = request.GET.get('q', '').strip()
     
     if not query:
         return JsonResponse({'error': 'No search query provided'}, status=400)
 
-    # Lấy danh sách tất cả phim
-    movies = Movies.objects.all()
-
-    # Nếu query quá ngắn, chỉ tìm kiếm đơn giản
+    # Nếu query quá ngắn, chỉ tìm kiếm đơn giản với ưu tiên title trước
     if len(query) < 3:
-        matched_movies = movies.filter(
+        matched_movies = Movies.objects.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query)
-        ).distinct()[:10]
+        ).annotate(
+            match_priority=Case(
+                When(title__icontains=query, then=Value(1)),
+                default=Value(2),
+                output_field=IntegerField()
+            )
+        ).order_by('match_priority')[:10]
+        
         serializer = SearchSerializer(matched_movies, many=True)
         return JsonResponse({"movies": serializer.data}, safe=False)
 
-    # Danh sách tất cả thông tin cần fuzzy search
+    # Tìm kiếm chính xác trước
+    exact_matches = Movies.objects.filter(title__iexact=query)
+    if exact_matches.exists():
+        serializer = SearchSerializer(exact_matches, many=True)
+        return JsonResponse({"movies": serializer.data}, safe=False)
+
+    # Tìm kiếm gần đúng với title trước
+    title_matches = Movies.objects.filter(title__icontains=query)
+    
+    # Nếu có kết quả từ title thì ưu tiên trả về
+    if title_matches.exists():
+        # Sắp xếp theo độ tương đồng với title
+        title_matches = sorted(
+            title_matches,
+            key=lambda x: fuzz.ratio(query.lower(), x.title.lower()),
+            reverse=True
+        )[:10]
+        serializer = SearchSerializer(title_matches, many=True)
+        return JsonResponse({"movies": serializer.data}, safe=False)
+
+    # Nếu không có kết quả từ title, thực hiện tìm kiếm mở rộng
+    movies = Movies.objects.all()
+    
+    # Tạo danh sách dữ liệu để fuzzy search
     movie_data = [
         (
             movie.movie_id, 
             movie.title, 
-            movie.description, 
+            movie.description,
             ', '.join([genre.genre.name for genre in movie.moviegenres_set.all()]),
             ', '.join([actor.actor.name for actor in movie.movieactors_set.all()]),
             ', '.join([director.director.name for director in movie.moviedirectors_set.all()])
@@ -168,12 +217,18 @@ def search_movies(request):
         for _, title, description, genres, actors, directors in movie_data
     ]
 
-    # Lọc danh sách phim có độ tương thích cao nhất (tối đa 10 kết quả)
-    fuzzy_results = process.extractBests(query, combined_data, scorer=fuzz.token_set_ratio, score_cutoff=50, limit=10)
+    # Thực hiện fuzzy search và ưu tiên kết quả có title khớp trước
+    fuzzy_results = process.extractBests(
+        query, 
+        combined_data, 
+        scorer=fuzz.token_set_ratio, 
+        score_cutoff=50, 
+        limit=20
+    )
     
     if not fuzzy_results:
         # Nếu không có kết quả fuzzy, tìm kiếm đơn giản
-        matched_movies = movies.filter(
+        matched_movies = Movies.objects.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query) |
             Q(moviegenres__genre__name__icontains=query) |
@@ -181,25 +236,38 @@ def search_movies(request):
             Q(moviedirectors__director__name__icontains=query)
         ).distinct()[:10]
     else:
-        # Xử lý kết quả fuzzy
+        # Xử lý kết quả fuzzy và ưu tiên title
         try:
-            # Cách 1: Nếu kết quả là (text, score, index)
             matched_indices = [result[2] for result in fuzzy_results]
         except IndexError:
             try:
-                # Cách 2: Nếu kết quả là (text, score)
                 matched_indices = [combined_data.index(result[0]) for result in fuzzy_results]
             except ValueError:
                 matched_indices = []
 
-        matched_movie_ids = [movie_data[idx][0] for idx in matched_indices]
-        matched_movies = movies.filter(movie_id__in=matched_movie_ids)
+        # Tạo dictionary để lưu điểm số và ưu tiên title
+        movie_scores = {}
+        for idx in matched_indices:
+            movie_id = movie_data[idx][0]
+            title_score = fuzz.ratio(query.lower(), movie_data[idx][1].lower())
+            overall_score = fuzzy_results[matched_indices.index(idx)][1] if len(fuzzy_results[0]) > 1 else 0
+            
+            # Ưu tiên title score cao hơn
+            combined_score = title_score * 2 + overall_score
+            movie_scores[movie_id] = combined_score
+
+        # Sắp xếp theo điểm số
+        sorted_movie_ids = sorted(movie_scores.keys(), key=lambda x: movie_scores[x], reverse=True)
+        matched_movies = Movies.objects.filter(movie_id__in=sorted_movie_ids[:10])
+        
+        # Đảm bảo thứ tự như đã sắp xếp
+        order = Case(*[When(movie_id=movie_id, then=pos) for pos, movie_id in enumerate(sorted_movie_ids[:10])])
+        matched_movies = matched_movies.order_by(order)
 
     serializer = SearchSerializer(matched_movies, many=True)
     return JsonResponse({"movies": serializer.data}, safe=False)
 
 
-    
 def search_full_movies(request):
     query = request.GET.get('q', '').strip()
     page = int(request.GET.get('page', 1))  # Mặc định lấy trang 1
@@ -208,24 +276,66 @@ def search_full_movies(request):
     if not query:
         return JsonResponse({'error': 'No search query provided'}, status=400)
 
-    movies = Movies.objects.all()
+    # 1. Tìm kiếm chính xác trước
+    exact_matches = Movies.objects.filter(title__iexact=query)
+    if exact_matches.exists():
+        paginator = Paginator(exact_matches, per_page)
+        current_page = paginator.page(page)
+        serializer = MovieSerializer(current_page, many=True)
+        return JsonResponse({
+            "total_pages": paginator.num_pages,
+            "total_videos": paginator.count,
+            "page": current_page.number,
+            "Title": {"Kết quả hiển thị theo từ khóa": query},
+            "results": serializer.data
+        }, safe=False)
 
-    # Nếu query quá ngắn, bỏ qua fuzzy search
+    # 2. Tìm kiếm gần đúng trong title
+    title_matches = Movies.objects.filter(title__icontains=query)
+    if title_matches.exists():
+        # Sắp xếp theo độ tương đồng với title
+        sorted_matches = sorted(
+            title_matches,
+            key=lambda x: fuzz.ratio(query.lower(), x.title.lower()),
+            reverse=True
+        )
+        # Tạo paginator từ danh sách đã sắp xếp
+        paginator = Paginator(sorted_matches, per_page)
+        current_page = paginator.page(page)
+        serializer = MovieSerializer(current_page, many=True)
+        return JsonResponse({
+            "total_pages": paginator.num_pages,
+            "total_videos": paginator.count,
+            "page": current_page.number,
+            "Title": {"Kết quả hiển thị theo từ khóa": query},
+            "results": serializer.data
+        }, safe=False)
+
+    # 3. Nếu query ngắn (<3 ký tự), chỉ tìm trong title và description
     if len(query) < 3:
-        matched_movies = movies.filter(
+        matched_movies = Movies.objects.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query)
-        ).distinct()
+        ).annotate(
+            match_priority=Case(
+                When(title__icontains=query, then=Value(1)),
+                default=Value(2),
+                output_field=IntegerField()
+            )
+        ).order_by('match_priority')
     else:
+        # 4. Tìm kiếm mở rộng với fuzzy search
+        movies = Movies.objects.all()
+        
         # Chuẩn bị dữ liệu cho fuzzy search
         movie_data = [
             (
                 movie.movie_id, 
                 movie.title, 
-                movie.description, 
-                ', '.join([genre.genre.name for genre in movie.moviegenres_set.all()]),  
-                ', '.join([actor.actor.name for actor in movie.movieactors_set.all()]),  
-                ', '.join([director.director.name for director in movie.moviedirectors_set.all()])  
+                movie.description,
+                ', '.join([genre.genre.name for genre in movie.moviegenres_set.all()]),
+                ', '.join([actor.actor.name for actor in movie.movieactors_set.all()]),
+                ', '.join([director.director.name for director in movie.moviedirectors_set.all()])
             ) for movie in movies
         ]
 
@@ -234,32 +344,45 @@ def search_full_movies(request):
             for _, title, description, genres, actors, directors in movie_data
         ]
 
-        # Fuzzy search với token_set_ratio để phù hợp với cụm từ dài
+        # Fuzzy search với ưu tiên title
         fuzzy_results = process.extractBests(
             query, 
             combined_data, 
             scorer=fuzz.token_set_ratio, 
-            score_cutoff=50,  # Giảm ngưỡng để tăng khả năng tìm thấy
+            score_cutoff=50,
             limit=100
         )
 
-        # Xử lý cả hai định dạng kết quả
-        matched_indices = []
+        # Xử lý kết quả và tính điểm ưu tiên
+        movie_scores = {}
         for result in fuzzy_results:
-            if len(result) == 3:  # (text, score, index)
-                matched_indices.append(result[2])
-            else:  # (text, score)
-                try:
-                    matched_indices.append(combined_data.index(result[0]))
-                except ValueError:
-                    continue
+            try:
+                if len(result) == 3:  # (text, score, index)
+                    idx = result[2]
+                else:  # (text, score)
+                    idx = combined_data.index(result[0])
+                
+                movie_id = movie_data[idx][0]
+                title_score = fuzz.ratio(query.lower(), movie_data[idx][1].lower())
+                overall_score = result[1] if len(result) > 1 else 0
+                
+                # Ưu tiên title score cao hơn
+                combined_score = title_score * 2 + overall_score
+                movie_scores[movie_id] = combined_score
+            except (IndexError, ValueError):
+                continue
 
-        matched_movie_ids = [movie_data[idx][0] for idx in matched_indices]
-        matched_movies = movies.filter(movie_id__in=matched_movie_ids)
-
-        # Fallback nếu fuzzy search không có kết quả
-        if not matched_movies:
-            matched_movies = movies.filter(
+        if movie_scores:
+            # Sắp xếp theo điểm số
+            sorted_movie_ids = sorted(movie_scores.keys(), key=lambda x: movie_scores[x], reverse=True)
+            matched_movies = Movies.objects.filter(movie_id__in=sorted_movie_ids)
+            
+            # Đảm bảo thứ tự như đã sắp xếp
+            order = Case(*[When(movie_id=movie_id, then=pos) for pos, movie_id in enumerate(sorted_movie_ids)])
+            matched_movies = matched_movies.order_by(order)
+        else:
+            # Fallback nếu fuzzy search không có kết quả
+            matched_movies = Movies.objects.filter(
                 Q(title__icontains=query) |
                 Q(description__icontains=query) |
                 Q(moviegenres__genre__name__icontains=query) |
@@ -278,12 +401,11 @@ def search_full_movies(request):
 
     return JsonResponse({
         "total_pages": paginator.num_pages,
-        "total_videos": paginator.count,  # Sửa lại để hiển thị tổng số kết quả
+        "total_videos": paginator.count,
         "page": current_page.number,
         "Title": {"Kết quả hiển thị theo từ khóa": query},
         "results": serializer.data
     }, safe=False)
-
     
 #Phân trang theo thể loại
 def get_movies_by_genre(request):
@@ -454,4 +576,33 @@ def get_movies_by_director(request):
         "Title": {"Đạo diễn": director_name},  # Đảm bảo đây là chuỗi hợp lệ
         "results": serializer.data
     }, json_dumps_params={'ensure_ascii': False}, safe=False)
+
+
+from apps.users.models import Reviews
+from apps.users.serializers import ReviewSerializer
+
+# GET - Không cần xác thực
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_movie_reviews(request, movie_id):
+    reviews = Reviews.objects.filter(movie_id=movie_id)
+    serializer = ReviewSerializer(reviews, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def increase_movie_views(request, movie_id):
+    try:
+        # Lấy đối tượng movie từ cơ sở dữ liệu
+        movie = Movies.objects.get(movie_id=movie_id)
+        
+        # Tăng số lượt xem
+        movie.views = (movie.views or 0) + 1  # Nếu movie.views là None thì sử dụng 0
+        movie.save()
+
+        return Response({"message": "Lượt xem của phim đã được tăng lên."}, status=status.HTTP_200_OK)
+    
+    except Movies.DoesNotExist:
+        return Response({"error": "Phim không tồn tại."}, status=status.HTTP_404_NOT_FOUND)
+
 

@@ -16,16 +16,18 @@ class ProfileUser(models.Model):
         db_table = 'profile_user'
 
 class Reviews(models.Model):
-    movie = models.ForeignKey('movies.Movies', models.DO_NOTHING)  # The composite primary key (movie_id, user_id) found, that is not supported. The first column is selected.
-    user = models.ForeignKey(ProfileUser, models.DO_NOTHING)
+    review_id = models.AutoField(primary_key=True)
+    movie = models.ForeignKey('movies.Movies', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
     rating = models.FloatField(blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
-    create_at = models.DateTimeField(blank=True, null=True)
+    create_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
         db_table = 'reviews'
         unique_together = (('movie', 'user'),)
+
 
 class Watchlists(models.Model):
     view_id = models.AutoField(primary_key=True)

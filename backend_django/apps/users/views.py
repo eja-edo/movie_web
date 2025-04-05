@@ -395,3 +395,53 @@ def get_wishlist(request):
             'success': False,
             'error': str(e)
         }, status=500)
+
+from .models import Reviews
+from .serializers import ReviewSerializer
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_movie_review(request, movie_id):
+    user = request.user
+    rating = request.data.get('rating')
+    comment = request.data.get('comment')
+
+    try:
+        review = Reviews.objects.get(movie_id=movie_id, user=user)
+        # Nếu review đã tồn tại
+        if str(review.rating) == str(rating) and review.comment == comment:
+            return Response({
+                "message": "Bạn đã review phim này với nội dung tương tự rồi."
+            }, status=status.HTTP_200_OK)
+        # Cập nhật nội dung mới
+        review.rating = rating
+        review.comment = comment
+        review.save()
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except Reviews.DoesNotExist:
+        # Nếu chưa có review nào → tạo mới
+        data = {
+            'movie': movie_id,
+            'user': user.id,
+            'rating': rating,
+            'comment': comment,
+        }
+        serializer = ReviewSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_movie_review(request, movie_id):
+    user = request.user
+    try:
+        review = Reviews.objects.get(movie_id=movie_id, user=user)
+        review.delete()
+        return Response({"message": "Review đã được xóa thành công."}, status=status.HTTP_200_OK)
+    except Reviews.DoesNotExist:
+        return Response({"error": "Review không tồn tại hoặc không thuộc về bạn."}, status=status.HTTP_404_NOT_FOUND)
