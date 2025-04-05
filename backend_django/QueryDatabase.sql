@@ -152,9 +152,10 @@ CREATE TABLE profile_user (
 
 -- Bảng đánh giá phim
 CREATE TABLE reviews (
+	review_id serial primary key,
     movie_id INT,
     user_id INT,
-    PRIMARY KEY(movie_id, user_id),
+    unique(movie_id, user_id),
     rating FLOAT CHECK(rating >= 0 AND rating <= 5),
     comment TEXT,
     create_at TIMESTAMP DEFAULT NOW(),

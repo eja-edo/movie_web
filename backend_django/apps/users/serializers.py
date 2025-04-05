@@ -73,3 +73,16 @@ class WishlistMovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
         fields = ['movie']  # Chỉ bao gồm trường movie
+
+from .models import Reviews
+
+class ReviewSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = Reviews
+        fields = ['review_id', 'movie', 'rating', 'comment', 'create_at', 'username', 'user']
+        extra_kwargs = {
+            'user': {'write_only': True},  # không hiện user id khi GET
+        }
+
