@@ -578,17 +578,23 @@ def get_movies_by_director(request):
     }, json_dumps_params={'ensure_ascii': False}, safe=False)
 
 
+from rest_framework.pagination import PageNumberPagination
 from apps.users.models import Reviews
 from apps.users.serializers import ReviewSerializer
 
-# GET - Không cần xác thực
+class ReviewPagination(PageNumberPagination):
+    page_size = 10  # Số lượng review mỗi trang
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_movie_reviews(request, movie_id):
-    reviews = Reviews.objects.filter(movie_id=movie_id)
-    serializer = ReviewSerializer(reviews, many=True)
-    return Response(serializer.data)
-
+    reviews = Reviews.objects.filter(movie_id=movie_id).order_by('-create_at')
+    paginator = ReviewPagination()
+    result_page = paginator.paginate_queryset(reviews, request)
+    serializer = ReviewSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 @api_view(['POST'])
 def increase_movie_views(request, movie_id):

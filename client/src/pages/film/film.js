@@ -28,7 +28,10 @@ function Film() {
       setError(null);
       try {
         const videoData = await movieAPI.getVideoData(id1, id2, navigate);
-        if (isMounted) setData(videoData);
+        if (isMounted) {
+          console.log("Dữ liệu video:", videoData);
+          setData(videoData);
+        }
       } catch (err) {
         if (isMounted) setError("Lỗi khi tải dữ liệu phim.");
         console.error("Lỗi tải dữ liệu:", err);
