@@ -30,6 +30,7 @@ from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from django.http import JsonResponse
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from apps.movies.models import Movies
 
 
 @csrf_exempt
@@ -451,3 +452,13 @@ def delete_movie_review(request, movie_id):
         return Response({"message": "Review đã được xóa thành công."}, status=status.HTTP_200_OK)
     except Reviews.DoesNotExist:
         return Response({"error": "Review không tồn tại hoặc không thuộc về bạn."}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_movie_reviews(request, movie_id):
+    try:
+        reviews = Reviews.objects.filter(movie_id=movie_id).order_by('-create_at')
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

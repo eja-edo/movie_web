@@ -27,7 +27,6 @@ class Reviews(models.Model):
     class Meta:
         managed = False
         db_table = 'reviews'
-        unique_together = (('movie', 'user'),)
 
 
 class Watchlists(models.Model):
