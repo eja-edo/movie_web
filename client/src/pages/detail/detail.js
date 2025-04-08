@@ -82,8 +82,8 @@ const MovieDetails = () => {
             />
             <h1>{movie.title}</h1>
 
-            <a href="#">Xem ngay</a>
-            <button>Tập phim</button>
+            {/* <a href="#">Xem ngay</a>
+            <button>Tập phim</button> */}
 
             <div id="infoMovie">
               <div className="info-left">
