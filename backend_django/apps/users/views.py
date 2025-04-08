@@ -17,7 +17,7 @@ from rest_framework.response import Response
 import requests
 from rest_framework import generics, status
 from django.utils.decorators import method_decorator
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.hashers import make_password
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
@@ -402,37 +402,43 @@ from .serializers import ReviewSerializer
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_movie_review(request, movie_id):
-    user = request.user
-    rating = request.data.get('rating')
-    comment = request.data.get('comment')
-
     try:
-        review = Reviews.objects.get(movie_id=movie_id, user=user)
-        # Nếu review đã tồn tại
-        if str(review.rating) == str(rating) and review.comment == comment:
-            return Response({
-                "message": "Bạn đã review phim này với nội dung tương tự rồi."
-            }, status=status.HTTP_200_OK)
-        # Cập nhật nội dung mới
-        review.rating = rating
-        review.comment = comment
-        review.save()
-        serializer = ReviewSerializer(review)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    except Reviews.DoesNotExist:
-        # Nếu chưa có review nào → tạo mới
-        data = {
-            'movie': movie_id,
-            'user': user.id,
-            'rating': rating,
-            'comment': comment,
-        }
-        serializer = ReviewSerializer(data=data)
+        print(f"Processing review for movie_id: {movie_id}")
+        print(f"Request data: {request.data}")
+        
+        user = request.user
+        movie = Movies.objects.get(movie_id=movie_id)
+        print(f"Found movie: {movie.title}")
+        
+        # Try to get existing review
+        try:
+            review = Reviews.objects.get(movie=movie, user=user)
+            print(f"Found existing review: {review.review_id}")
+            serializer = ReviewSerializer(review, data=request.data, partial=True, context={'request': request})
+        except Reviews.DoesNotExist:
+            print("No existing review found, creating new one")
+            data = {
+                'rating': request.data.get('rating'),
+                'comment': request.data.get('comment')
+            }
+            print(f"New review data: {data}")
+            serializer = ReviewSerializer(data=data, context={'request': request, 'movie_id': movie_id})
+            
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            print("Serializer is valid")
+            review = serializer.save()
+            print(f"Review saved with ID: {review.review_id}")
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        print(f"Serializer errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Movies.DoesNotExist:
+        print(f"Movie with ID {movie_id} not found")
+        return Response({'error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        import traceback
+        print(f"Error in add_movie_review: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['DELETE'])

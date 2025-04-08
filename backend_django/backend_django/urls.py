@@ -29,6 +29,6 @@ urlpatterns = [
     path('api/people/', include('apps.people.urls')),
     path('api/piomotions/', include('apps.piomotions.urls')),
     path('api/core/', include('apps.core.urls')),
-
+    path('api/comments/', include('apps.comments.urls')),
     
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
