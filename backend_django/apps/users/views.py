@@ -429,6 +429,16 @@ def add_movie_review(request, movie_id):
             print("Serializer is valid")
             review = serializer.save()
             print(f"Review saved with ID: {review.review_id}")
+            
+            # Calculate new average rating
+            reviews = Reviews.objects.filter(movie=movie)
+            total_rating = sum(review.rating for review in reviews)
+            average_rating = total_rating / reviews.count()
+            
+            # Update movie rating
+            movie.rating = average_rating
+            movie.save()
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
         print(f"Serializer errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
