@@ -5,6 +5,7 @@ import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayL
 import FilmList from "../../components/FilmList/FilmList.js";
 import movieAPI from "../../services/movieAPI.js";
 import VideoPlayer from "../../components/VideoPlayer.js";
+import Comment from "../../components/comment/comment";
 
 function Film() {
   const navigate = useNavigate();
@@ -147,17 +148,7 @@ function Film() {
         </fieldset>
 
         {/* Bình luận */}
-        <p>Bình luận</p>
-        <div id="binh_luan">
-          <div id="nhap_bl">
-            <i className="fa-solid fa-user"></i>{" "}
-            <textarea
-              name="comment"
-              id="comment"
-              placeholder="Thêm bình luận..."
-            />
-          </div>
-        </div>
+        <Comment episode_id={id2} />
 
         {/* Phim đề cử */}
         <div className="container_display">

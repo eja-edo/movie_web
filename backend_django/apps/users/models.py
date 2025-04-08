@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from apps.movies.models import Movies, Episodes
+from django.db.models.deletion import DO_NOTHING
 
 # Create your models here.
 class ProfileUser(models.Model):
@@ -17,16 +18,15 @@ class ProfileUser(models.Model):
 
 class Reviews(models.Model):
     review_id = models.AutoField(primary_key=True)
-    movie = models.ForeignKey('movies.Movies', models.DO_NOTHING, blank=True, null=True)
-    user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
-    rating = models.FloatField(blank=True, null=True)
-    comment = models.TextField(blank=True, null=True)
+    movie = models.ForeignKey('movies.Movies', models.DO_NOTHING, db_column='movie_id')
+    user = models.ForeignKey(User, models.DO_NOTHING, db_column='user_id')
+    rating = models.FloatField()
+    comment = models.TextField()
     create_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
         db_table = 'reviews'
-        unique_together = (('movie', 'user'),)
 
 
 class Watchlists(models.Model):

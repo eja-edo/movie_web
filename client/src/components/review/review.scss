@@ -1,0 +1,174 @@
+.review-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+
+  h2 {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .loading,
+  .error,
+  .no-reviews {
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .error {
+    color: #ff4444;
+  }
+
+  .reviews-list {
+    margin-bottom: 2rem;
+
+    .review-item {
+      background: #2a2a2a;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+
+      .review-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+
+        .username {
+          color: #fff;
+          font-weight: bold;
+        }
+
+        .rating {
+          display: flex;
+          gap: 0.25rem;
+          color: #ffd700;
+
+          .star {
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+
+            &.filled {
+              color: #ffd700;
+            }
+
+            &:not(.filled) {
+              color: #666;
+            }
+          }
+        }
+      }
+
+      .comment {
+        color: #ddd;
+        line-height: 1.5;
+      }
+
+      .date {
+        color: #888;
+        font-size: 0.9rem;
+        display: block;
+        margin-top: 0.5rem;
+      }
+    }
+  }
+
+  .review-form {
+    background: #2a2a2a;
+    padding: 1rem;
+    border-radius: 8px;
+
+    .rating-input {
+      margin-bottom: 1rem;
+
+      label {
+        color: #fff;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      .stars {
+        display: flex;
+        gap: 0.5rem;
+
+        button {
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+
+          &:hover {
+            transform: scale(1.2);
+          }
+
+          &.star {
+            font-size: 1.5rem;
+            color: #666;
+            transition: color 0.2s ease;
+
+            &:hover {
+              color: #ffd700;
+            }
+
+            &.filled {
+              color: #ffd700;
+            }
+          }
+        }
+      }
+    }
+
+    .comment-input {
+      margin-bottom: 1rem;
+
+      label {
+        color: #fff;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 0.5rem;
+        background: #1a1a1a;
+        border: 1px solid #444;
+        border-radius: 4px;
+        color: #fff;
+        margin-bottom: 1rem;
+        resize: vertical;
+
+        &:focus {
+          outline: none;
+          border-color: #666;
+        }
+      }
+    }
+
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #0056b3;
+      }
+
+      &:disabled {
+        background: #444;
+        cursor: not-allowed;
+      }
+    }
+  }
+} 
+textarea#comment {
+  width: 98%;
+}
