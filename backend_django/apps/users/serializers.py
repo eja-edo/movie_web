@@ -81,7 +81,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reviews
-        fields = ['review_id', 'movie', 'rating', 'comment', 'create_at', 'username', 'user']
+        fields = ['review_id', 'movie_id', 'rating', 'comment', 'create_at', 'username', 'user']
         extra_kwargs = {
             'user': {'write_only': True},  # không hiện user id khi GET
         }

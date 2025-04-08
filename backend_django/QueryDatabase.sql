@@ -145,7 +145,7 @@ CREATE TABLE profile_user (
     DateOfBirth DATE,
     sex VARCHAR(10),
     country VARCHAR(30),
-    idNumber CHAR(15),
+    numberPhone CHAR(15),
     url_img VARCHAR(255),
     FOREIGN KEY (id) REFERENCES auth_user(id) ON DELETE CASCADE
 );

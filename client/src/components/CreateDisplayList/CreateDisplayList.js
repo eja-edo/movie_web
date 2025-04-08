@@ -132,13 +132,11 @@ const CreateDisplayList = memo((films) => {
       div.style.transition = "all 300ms ease";
       console.log(index * 16 - 11.25 + trans + thickness);
       if (index * 16 - 11.25 < -trans - thicknessInLvw) {
-        div.style.transform = `translateX(${
-          trans - (index * 16 - 11.25) - thicknessInLvw + 2
-        }lvw)`;
+        div.style.transform = `translateX(${trans - (index * 16 - 11.25) - thicknessInLvw + 2
+          }lvw)`;
       } else if (index * 16 + 26.25 > -trans + 100) {
-        div.style.transform = `translateX(-${
-          index * 16 + 26.25 - (-trans + 100) + thicknessInLvw + 2
-        }lvw)`;
+        div.style.transform = `translateX(-${index * 16 + 26.25 - (-trans + 100) + thicknessInLvw + 2
+          }lvw)`;
       }
       const handleMouseEnter = () => {
         clearTimeout(timeoutId);

@@ -13,8 +13,8 @@ function Login() {
   const navigate = useNavigate();
   const [activeForm, setActiveForm] = useState("login");
   const [formData, setFormData] = useState({
-    username: "",
-    email: "",
+    username_or_email: "",
+    password: "",
   });
 
   const handleChange = (event) => {
@@ -33,7 +33,7 @@ function Login() {
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({
-      username: formData.username,
+      username_or_email: formData.username_or_email,
       password: formData.password,
     });
 
@@ -47,17 +47,17 @@ function Login() {
     fetch(`${process.env.REACT_APP_API_URL}/api/user/login/`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
+        console.log(`${formName} với ${formData.username_or_email}`);
         if (result && result.access && result.refresh) {
           localStorage.setItem("accessToken", result.access);
           localStorage.setItem("refreshToken", result.refresh);
           setLogin(true);
         } else {
-          console.error("cannot get api");
+          setMessage("Đăng nhập thất bại! Vui lòng kiểm tra lại tên đăng nhập và mật khẩu.");
         }
       })
       .catch((error) => console.error(error));
-    console.log(`${formName} với ${formData.username}`);
+
   };
 
   const handleFacebookLogin = () => {
@@ -122,10 +122,8 @@ function Login() {
           if (response.ok) {
             const result = await response.json();
             const safeUserData = {
-              userId: result.id,
               username: result.username,
-              email: result.email,
-              url_avt: result.url_avt,
+              img_url: result.img_url,
               login: true,
             };
             localStorage.setItem("user", JSON.stringify(safeUserData));
@@ -326,21 +324,21 @@ function Login() {
             <input
               type="text"
               className={`input ${message && message.includes("tên đăng nhập") ? 'error' : ''}`}
-              placeholder="Tên đăng nhập"
-              id="username"
-              name="username"
+              placeholder="Tên đăng nhập hoặc email"
+              id="username_or_email"
+              name="username_or_email"
               //required
               onChange={(e) => {
                 handleChange(e);
                 setMessage("");
               }}
-              onKeyDown={(e) => handleKeyDown(e, 'username', 'password')}
+              onKeyDown={(e) => handleKeyDown(e, 'username_or_email', 'password')}
               style={{ fontFamily: "Poppins" }}
             />
             <input
               type="password"
               className={`input ${message && message.includes("mật khẩu") ? 'error' : ''}`}
-              placeholder="Password"
+              placeholder="mật khẩu"
               id="password"
               name="password"
               //required

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from . import views
-from .views import  UserDetailView , logoutView
+from .views import  UserDetailView , logoutView, UploadProfileImageView, ChangeUsernameView, ChangePasswordView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -29,5 +29,10 @@ urlpatterns =[
 
     path('movies/<int:movie_id>/reviews/add/', views.add_movie_review, name='add_movie_review'),
     path('movies/<int:movie_id>/reviews/delete/', views.delete_movie_review, name='delete_movie_review'),
+
+    path('update-profile/', views.update_profile, name='update_profile'),
+    path('upload-profile-image/', UploadProfileImageView.as_view(), name='upload-profile-image'),
+    path('change-username/', ChangeUsernameView.as_view(), name='change-username'),
+    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 
 ]
