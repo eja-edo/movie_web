@@ -88,7 +88,23 @@ const MovieDetails = () => {
             <div id="infoMovie">
               <div className="info-left">
                 <div className="ratings">
-                  <span className="stars">★★★★★</span> ({movie.rating})
+                  <span className="stars">
+                    {Array(5)
+                      .fill(0)
+                      .map((_, index) => (
+                        <span
+                          key={index}
+                          className={
+                            index < Math.round(movie.rating)
+                              ? "star-filled"
+                              : "star-empty"
+                          }
+                        >
+                          ★
+                        </span>
+                      ))}
+                  </span>{" "}
+                  ({movie.rating?.toFixed(1) || "0.0"}/5.0)
                 </div>
                 <p>{`${movie.release_date} | ${movie.runtime} phút | ${movie.views} lượt xem`}</p>
                 <p id="description">{movie.description || "Chưa có mô tả"}</p>
