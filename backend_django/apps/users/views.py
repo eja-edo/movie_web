@@ -17,7 +17,7 @@ from rest_framework.response import Response
 import requests
 from rest_framework import generics, status
 from django.utils.decorators import method_decorator
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 from django.contrib.auth.hashers import make_password
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
@@ -30,17 +30,31 @@ from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from django.http import JsonResponse
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from apps.movies.models import Movies
 
 
 @csrf_exempt
 def loginPost(request):
     if request.method == 'POST':
         body_data = json.loads(request.body)
-        user_name = body_data.get('username')
+        user_input = body_data.get('username_or_email')  # Có thể là username hoặc email
         password = body_data.get('password')
-        user = authenticate(username=user_name, password=password)
-        if user is not None:
+        
+        # Kiểm tra nếu input là email hay username
+        if '@' in user_input:
+            # Nếu là email, tìm kiếm người dùng theo email
+            try:
+                user = User.objects.get(email=user_input)
+            except User.DoesNotExist:
+                user = None
+        else:
+            # Nếu không phải email, coi như là username và tìm kiếm theo username
+            user = User.objects.filter(username=user_input).first()
+        
+        # Xác thực người dùng với password
+        if user is not None and user.check_password(password):
+            # Đặt backend mặc định
+            user.backend = 'django.contrib.auth.backends.ModelBackend'  # Chỉ định backend mặc định
+            # Đăng nhập người dùng
             login(request, user)
             refresh = RefreshToken.for_user(user)
             return JsonResponse({
@@ -52,7 +66,6 @@ def loginPost(request):
             return JsonResponse({'message': 'Invalid credentials'}, status=401)
     else:
         return JsonResponse({'message': 'Method not allowed'}, status=405)
-
 # # Create your views here.
 # @csrf_exempt
 # def FacebookLoginToken(request):
@@ -169,13 +182,18 @@ class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        serializer = UserSerializer(request.user)
-        user = serializer.data
-        url_avt = ProfileUser.objects.filter(id = user['id']).first()
-        if url_avt is not None:
-            url_avt = url_avt.get('url_img')
-        user['url_avt'] = url_avt
-        user.pop('id')
+        # Lấy thông tin người dùng từ request.user
+        user = {
+            'username': request.user.username,  # Chỉ lấy username
+        }
+
+        # Lấy thông tin ảnh đại diện từ ProfileUser
+        profile = ProfileUser.objects.filter(id=request.user).first()
+        if profile is not None:
+            user['img_url'] = profile.url_img  # Lấy url_img từ ProfileUser
+        else:
+            user['img_url'] = None  # Nếu không có profile, set img_url = None
+
         return Response(user)
 
 class logoutView(APIView):
@@ -403,53 +421,39 @@ from .serializers import ReviewSerializer
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_movie_review(request, movie_id):
+    user = request.user
+    rating = request.data.get('rating')
+    comment = request.data.get('comment')
+
     try:
-        print(f"Processing review for movie_id: {movie_id}")
-        print(f"Request data: {request.data}")
-        
-        user = request.user
-        movie = Movies.objects.get(movie_id=movie_id)
-        print(f"Found movie: {movie.title}")
-        
-        # Try to get existing review
-        try:
-            review = Reviews.objects.get(movie=movie, user=user)
-            print(f"Found existing review: {review.review_id}")
-            serializer = ReviewSerializer(review, data=request.data, partial=True, context={'request': request})
-        except Reviews.DoesNotExist:
-            print("No existing review found, creating new one")
-            data = {
-                'rating': request.data.get('rating'),
-                'comment': request.data.get('comment')
-            }
-            print(f"New review data: {data}")
-            serializer = ReviewSerializer(data=data, context={'request': request, 'movie_id': movie_id})
-            
+        review = Reviews.objects.get(movie_id=movie_id, user=user)
+        # Nếu review đã tồn tại
+        if str(review.rating) == str(rating) and review.comment == comment:
+            return Response({
+                "message": "Bạn đã review phim này với nội dung tương tự rồi."
+            }, status=status.HTTP_200_OK)
+        # Cập nhật nội dung mới
+        review.rating = rating
+        review.comment = comment
+        review.save()
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except Reviews.DoesNotExist:
+        # Nếu chưa có review nào → tạo mới
+        data = {
+            'movie': movie_id,
+            'user': user.id,
+            'rating': rating,
+            'comment': comment,
+        }
+        serializer = ReviewSerializer(data=data)
         if serializer.is_valid():
-            print("Serializer is valid")
-            review = serializer.save()
-            print(f"Review saved with ID: {review.review_id}")
-            
-            # Calculate new average rating
-            reviews = Reviews.objects.filter(movie=movie)
-            total_rating = sum(review.rating for review in reviews)
-            average_rating = total_rating / reviews.count()
-            
-            # Update movie rating
-            movie.rating = average_rating
-            movie.save()
-            
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        print(f"Serializer errors: {serializer.errors}")
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Movies.DoesNotExist:
-        print(f"Movie with ID {movie_id} not found")
-        return Response({'error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        import traceback
-        print(f"Error in add_movie_review: {str(e)}")
-        print(f"Traceback: {traceback.format_exc()}")
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['DELETE'])
@@ -463,12 +467,145 @@ def delete_movie_review(request, movie_id):
     except Reviews.DoesNotExist:
         return Response({"error": "Review không tồn tại hoặc không thuộc về bạn."}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def get_movie_reviews(request, movie_id):
+
+from django.utils.dateparse import parse_date
+from .models import ProfileUser
+
+VALID_SEX = ["Nam", "Nữ", "Khác"]
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    user = request.user
+    data = request.data
+
     try:
-        reviews = Reviews.objects.filter(movie_id=movie_id).order_by('-create_at')
-        serializer = ReviewSerializer(reviews, many=True)
-        return Response(serializer.data)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        auth_user = User.objects.get(pk=user.id)
+    except User.DoesNotExist:
+        return Response({"error": "User không tồn tại."}, status=status.HTTP_404_NOT_FOUND)
+
+    # Cập nhật first_name và last_name nếu có
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+
+    if first_name is not None:
+        auth_user.first_name = first_name.strip()
+
+    if last_name is not None:
+        auth_user.last_name = last_name.strip()
+
+    auth_user.save()
+
+    try:
+        profile, created = ProfileUser.objects.get_or_create(id=auth_user)
+    except Exception:
+        return Response({"error": "Lỗi khi tạo/lấy hồ sơ người dùng."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # Cập nhật các trường profile
+    dateofbirth_raw = data.get('dateofbirth')
+    if dateofbirth_raw:
+        dateofbirth = parse_date(dateofbirth_raw)
+        if not dateofbirth:
+            return Response({"error": "Ngày sinh không hợp lệ. Định dạng đúng: YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+        profile.dateofbirth = dateofbirth
+
+    sex = data.get('sex')
+    if sex and sex not in VALID_SEX:
+        return Response({"error": "Giới tính không hợp lệ. Chỉ chấp nhận: Nam, Nữ, Khác."}, status=status.HTTP_400_BAD_REQUEST)
+    if sex:
+        profile.sex = sex
+
+    country = data.get('country')
+    if country:
+        profile.country = country.strip()
+
+    idnumber = data.get('idnumber')
+    if idnumber:
+        if len(idnumber) > 15:
+            return Response({"error": "CMND/CCCD quá dài (tối đa 15 ký tự)."}, status=status.HTTP_400_BAD_REQUEST)
+        profile.idnumber = idnumber.strip()
+
+    try:
+        profile.save()
+    except Exception:
+        return Response({"error": "Lỗi khi lưu hồ sơ."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response({"message": "Cập nhật thành công."}, status=status.HTTP_200_OK)
+
+
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
+
+
+class UploadProfileImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+
+        image_file = request.FILES.get('image')
+        if not image_file:
+            return Response({"error": "Không có ảnh nào được gửi."}, status=400)
+
+        # Tạo thư mục lưu ảnh: media/profile_images/username/
+        folder_path = os.path.join('profile_images')
+
+        # Lưu ảnh với tên file là username.jpg (hoặc .png, tùy thuộc vào định dạng của ảnh)
+        file_extension = image_file.name.split('.')[-1]  # Lấy phần mở rộng của file
+        file_name = f"{user.username}.{file_extension}"
+        file_path = default_storage.save(os.path.join(folder_path, file_name), ContentFile(image_file.read()))
+        image_url = default_storage.url(file_path)
+
+        # Cập nhật đường dẫn ảnh vào ProfileUser
+        profile, created = ProfileUser.objects.get_or_create(id=user)
+        profile.url_img = image_url
+        profile.save()
+
+        return Response({"message": "Tải ảnh thành công", "image_url": image_url})
+
+
+class ChangeUsernameView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        current_password = request.data.get('password')
+        new_username = request.data.get('new_username')
+
+        # Kiểm tra mật khẩu
+        if not user.check_password(current_password):
+            return Response({'message': 'Mật khẩu không đúng'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Kiểm tra xem username mới đã tồn tại chưa
+        from django.contrib.auth.models import User
+        if User.objects.filter(username=new_username).exists():
+            return Response({'message': 'Tên đăng nhập đã tồn tại'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Cập nhật username
+        user.username = new_username
+        user.save()
+
+        return Response({'message': 'Đổi tên đăng nhập thành công', 'new_username': new_username}, status=status.HTTP_200_OK)
+
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+
+        if not old_password or not new_password:
+            return Response({'message': 'Vui lòng cung cấp đầy đủ mật khẩu cũ và mới'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Kiểm tra mật khẩu cũ
+        if not user.check_password(old_password):
+            return Response({'message': 'Mật khẩu cũ không đúng'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Cập nhật mật khẩu mới
+        user.set_password(new_password)
+        user.save()
+
+        return Response({'message': 'Đổi mật khẩu thành công'}, status=status.HTTP_200_OK)
