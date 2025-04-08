@@ -75,14 +75,34 @@ class WishlistMovieSerializer(serializers.ModelSerializer):
         fields = ['movie']  # Chỉ bao gồm trường movie
 
 from .models import Reviews
-
 class ReviewSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
+    movie_id = serializers.IntegerField(source='movie.movie_id', read_only=True)
 
     class Meta:
         model = Reviews
-        fields = ['review_id', 'movie', 'rating', 'comment', 'create_at', 'username', 'user']
-        extra_kwargs = {
-            'user': {'write_only': True},  # không hiện user id khi GET
-        }
+        fields = ['review_id', 'movie_id', 'rating', 'comment', 'create_at', 'username']
+        read_only_fields = ['review_id', 'movie_id', 'create_at', 'username']
 
+    def create(self, validated_data):
+        user = self.context['request'].user
+        movie_id = self.context['movie_id']
+        
+        try:
+            movie = Movies.objects.get(movie_id=movie_id)
+        except Movies.DoesNotExist:
+            raise serializers.ValidationError("Movie not found")
+        
+        review = Reviews.objects.create(
+            user=user,
+            movie=movie,
+            rating=validated_data['rating'],
+            comment=validated_data['comment']
+        )
+        return review
+
+    def update(self, instance, validated_data):
+        instance.rating = validated_data.get('rating', instance.rating)
+        instance.comment = validated_data.get('comment', instance.comment)
+        instance.save()
+        return instance
