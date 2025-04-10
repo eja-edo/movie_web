@@ -376,6 +376,28 @@ def add_to_wishlist(request):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def remove_from_wishlist(request):
+    try:
+        data = json.loads(request.body)
+        movie_id = data.get('movie_id')
+        if not movie_id:
+            return Response({'error': 'movie_id là bắt buộc'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            wishlist_item = Wishlist.objects.get(movie_id=movie_id, user=request.user)
+        except Wishlist.DoesNotExist:
+            return Response({'error': 'Phim không có trong danh sách yêu thích'}, status=status.HTTP_404_NOT_FOUND)
+
+        wishlist_item.delete()
+        return Response({'message': 'Đã xóa khỏi danh sách yêu thích'}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 from .serializers import WishlistMovieSerializer
 from django.core.paginator import Paginator
 
@@ -415,6 +437,9 @@ def get_wishlist(request):
             'error': str(e)
         }, status=500)
 
+
+
+from django.db.models import Avg
 from .models import Reviews
 from .serializers import ReviewSerializer
 
@@ -426,6 +451,7 @@ def add_movie_review(request, movie_id):
     comment = request.data.get('comment')
 
     try:
+
         # Kiểm tra xem movie_id có tồn tại không
         from apps.movies.models import Movies
         try:
@@ -460,6 +486,7 @@ def add_movie_review(request, movie_id):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
