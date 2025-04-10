@@ -14,6 +14,8 @@ function Nav() {
   const [suggestSearch, setSuggest] = useState(null);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+
   const handleMenuToggle = () => {
     setShowMenu(!showMenu);
   };
@@ -22,6 +24,21 @@ function Nav() {
     setImg(JSON.parse(localStorage.getItem("user"))?.img_url || null);
     console.log(avt);
   }, [navigate]);
+
+  // Kiểm tra xem URL hiện tại có chứa genre_id hoặc nation_id không
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const genreId = searchParams.get("genre_id");
+    const nationId = searchParams.get("nation_id");
+
+    if (genreId) {
+      setActiveDropdown("genre");
+    } else if (nationId) {
+      setActiveDropdown("nation");
+    } else {
+      setActiveDropdown(null);
+    }
+  }, [location.search]);
 
   const handleLogout = () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -67,6 +84,11 @@ function Nav() {
   // Hàm kiểm tra xem đường dẫn hiện tại có khớp với đường dẫn của menu item không
   const isActivePath = (path) => {
     return location.pathname === path;
+  };
+
+  // Hàm kiểm tra xem dropdown có đang active không
+  const isDropdownActive = (type) => {
+    return activeDropdown === type;
   };
 
   return (
@@ -184,7 +206,11 @@ function Nav() {
             onMouseEnter={() => setIsDropdownVisible(true)}
             onMouseLeave={() => setIsDropdownVisible(false)}
           >
-            <a target="main" rel="noopener noreferrer">
+            <a
+              target="main"
+              rel="noopener noreferrer"
+              className={isDropdownActive("genre") ? "active" : ""}
+            >
               Thể loại
             </a>
 
@@ -202,7 +228,11 @@ function Nav() {
             onMouseEnter={() => setIsDropdownVisible(true)}
             onMouseLeave={() => setIsDropdownVisible(false)}
           >
-            <a target="main" rel="noopener noreferrer">
+            <a
+              target="main"
+              rel="noopener noreferrer"
+              className={isDropdownActive("nation") ? "active" : ""}
+            >
               Quốc gia
             </a>
 
