@@ -7,8 +7,13 @@ function NewsScrip() {
   const [newsList, setNewsList] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/news/get-news/")
-      .then((response) => response.json())
+    fetch("http://127.0.0.1:8000/api/news/get-news/")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP status ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log("📌 News fetched:", data);
         setNewsList(data.news);
