@@ -78,6 +78,7 @@ from .models import Reviews
 
 class ReviewSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
+    movie_id = serializers.IntegerField(source='movie.movie_id', read_only=True)
 
     class Meta:
         model = Reviews

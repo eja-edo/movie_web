@@ -146,15 +146,15 @@ SOCIALACCOUNT_PROVIDERS['facebook']['APP'] = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Đảm bảo nó ở đầu danh sách
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-  
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-   'corsheaders.middleware.CorsMiddleware',
+
     "allauth.account.middleware.AccountMiddleware",
     # 'utils.id_encryption_middleware.IDEncryptionMiddleware',
 ]
@@ -284,7 +284,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES':[
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ]
 }
 
@@ -378,3 +378,27 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'duyanhsadg@gmail.com'  # Thay bằng Gmail của bạn
 EMAIL_HOST_PASSWORD =  config('EMAIL_HOST_PASSWORD') # Mã App Password đã tạo
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True  # Chỉ dùng trong môi trường development
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'credentials',
+]

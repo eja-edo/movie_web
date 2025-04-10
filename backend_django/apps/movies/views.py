@@ -40,6 +40,11 @@ from django.db.models import Q
 
 import base64
 
+from rest_framework.pagination import PageNumberPagination
+from apps.users.models import Reviews
+from apps.users.serializers import ReviewSerializer
+from apps.users.views import add_movie_review
+
 # Create your views here.
 def normalize_string(s):
     # Chuyển đổi về chữ thường
@@ -577,10 +582,6 @@ def get_movies_by_director(request):
         "results": serializer.data
     }, json_dumps_params={'ensure_ascii': False}, safe=False)
 
-
-from rest_framework.pagination import PageNumberPagination
-from apps.users.models import Reviews
-from apps.users.serializers import ReviewSerializer
 
 class ReviewPagination(PageNumberPagination):
     page_size = 10  # Số lượng review mỗi trang

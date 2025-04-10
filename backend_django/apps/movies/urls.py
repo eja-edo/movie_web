@@ -29,6 +29,9 @@ urlpatterns =[
 
     path('<int:movie_id>/reviews/', views.get_movie_reviews, name='get_movie_reviews'),
 
+    path('<int:movie_id>/reviews/add/', views.add_movie_review, name='add_movie_review'),
+    
+
     path('<int:movie_id>/increase-views/', views.increase_movie_views, name='increase_movie_views'),
 
 ]

@@ -17,7 +17,7 @@ from rest_framework.response import Response
 import requests
 from rest_framework import generics, status
 from django.utils.decorators import method_decorator
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.hashers import make_password
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
@@ -451,48 +451,41 @@ def add_movie_review(request, movie_id):
     comment = request.data.get('comment')
 
     try:
-        review = Reviews.objects.get(movie_id=movie_id, user=user)
-        if str(review.rating) == str(rating) and review.comment == comment:
-            return Response({
-                "message": "Bạn đã review phim này với nội dung tương tự rồi.",
-                "average_rating": Movies.objects.filter(movie_id=movie_id).values_list('rating', flat=True).first()
-            }, status=status.HTTP_200_OK)
-        
-        # Cập nhật nội dung mới
-        review.rating = rating
-        review.comment = comment
-        review.save()
 
-    except Reviews.DoesNotExist:
-        # Nếu chưa có review nào → tạo mới
-        data = {
-            'movie': movie_id,
-            'user': user.id,
-            'rating': rating,
-            'comment': comment,
-        }
-        serializer = ReviewSerializer(data=data)
-        if serializer.is_valid():
+        # Kiểm tra xem movie_id có tồn tại không
+        from apps.movies.models import Movies
+        try:
+            movie = Movies.objects.get(pk=movie_id)
+        except Movies.DoesNotExist:
+            return Response({"error": "Phim không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
 
-            serializer.save()
+        try:
+            review = Reviews.objects.get(movie_id=movie_id, user=user)
+            # Nếu review đã tồn tại
+            if str(review.rating) == str(rating) and review.comment == comment:
+                return Response({
+                    "message": "Bạn đã review phim này với nội dung tương tự rồi."
+                }, status=status.HTTP_200_OK)
+            # Cập nhật nội dung mới
+            review.rating = rating
+            review.comment = comment
+            review.save()
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Reviews.DoesNotExist:
+            # Nếu chưa có review nào → tạo mới
+            review = Reviews.objects.create(
+                movie=movie,
+                user=user,
+                rating=rating,
+                comment=comment
+            )
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # Tính lại rating trung bình và cập nhật Movies
-    average_rating = Reviews.objects.filter(movie_id=movie_id).aggregate(avg_rating=Avg('rating'))['avg_rating']
-    average_rating = round(average_rating, 2) if average_rating else 0.0
-
-    Movies.objects.filter(movie_id=movie_id).update(rating=average_rating)
-
-    # Trả về review mới cùng rating trung bình
-    review = Reviews.objects.get(movie_id=movie_id, user=user)
-    serializer = ReviewSerializer(review)
-    return Response({
-        "review": serializer.data,
-        "average_rating": average_rating
-    }, status=status.HTTP_200_OK)
-
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['DELETE'])
@@ -506,6 +499,46 @@ def delete_movie_review(request, movie_id):
     except Reviews.DoesNotExist:
         return Response({"error": "Review không tồn tại hoặc không thuộc về bạn."}, status=status.HTTP_404_NOT_FOUND)
 
+@api_view(['GET'])
+def get_movie_reviews(request, movie_id):
+    try:
+        # Lấy tham số phân trang
+        page = request.query_params.get('page', 1)
+        page_size = request.query_params.get('page_size', 5)
+        
+        # Lấy tất cả reviews của phim
+        reviews = Reviews.objects.filter(movie_id=movie_id).select_related('user').order_by('-create_at')
+        
+        # Phân trang
+        paginator = Paginator(reviews, page_size)
+        page_obj = paginator.get_page(page)
+        
+        # Serialize dữ liệu
+        serializer = ReviewSerializer(page_obj, many=True)
+        
+        # Tạo URL cho trang tiếp theo và trang trước
+        next_page = None
+        if page_obj.has_next():
+            next_page = f"{request.build_absolute_uri().split('?')[0]}?page={page_obj.next_page_number()}&page_size={page_size}"
+            
+        previous_page = None
+        if page_obj.has_previous():
+            previous_page = f"{request.build_absolute_uri().split('?')[0]}?page={page_obj.previous_page_number()}&page_size={page_size}"
+        
+        # Log để debug
+        print(f"Found {paginator.count} reviews for movie {movie_id}")
+        print(f"Current page: {page}, Page size: {page_size}")
+        print(f"Results: {serializer.data}")
+        
+        return Response({
+            'count': paginator.count,
+            'next': next_page,
+            'previous': previous_page,
+            'results': serializer.data
+        })
+    except Exception as e:
+        print(f"Error in get_movie_reviews: {str(e)}")  # Log lỗi
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 from django.utils.dateparse import parse_date
 from .models import ProfileUser
