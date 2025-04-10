@@ -39,6 +39,27 @@
             color: #fff;
             padding: 0px;
             margin: 0px;
+            transition: color 0.3s ease;
+            
+            &:hover {
+                color: #15ff08;
+            }
+            
+            &.active {
+                color: #15ff08;
+                font-weight: 500;
+                position: relative;
+                
+                &:after {
+                    content: '';
+                    position: absolute;
+                    bottom: -5px;
+                    left: 0;
+                    width: 100%;
+                    height: 2px;
+                    background-color: #15ff08;
+                }
+            }
         }
 
         #ul_left {
