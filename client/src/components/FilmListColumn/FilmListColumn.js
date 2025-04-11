@@ -4,7 +4,7 @@ import {Link, useNavigate} from "react-router-dom"; // Sử dụng Link thay vì
 import {FaHeart, FaRegHeart, FaTimes} from "react-icons/fa";
 import {addToWishlist, removeFromWishlist} from "../../services/movieAPI";
 
-const FilmListColumn = ({films, isMyList = false, onRemove}) => {
+const FilmListColumn = ({films, isMyList = false}) => {
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [liked, setLiked] = useState(Array(films.length).fill(false));
     const [movieList, setMovieList] = useState(films);
@@ -77,7 +77,15 @@ const FilmListColumn = ({films, isMyList = false, onRemove}) => {
                                         {liked[index] ? <FaHeart /> : <FaRegHeart />}
                                     </div>
                                 ) : (
-                                    <div className="film-close-icon" onClick={(e) => handleRemoveFromWishlist(filmId, index, e)}>
+                                    <div
+                                        className="film-close-icon"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            // e.stopPropagation();
+                                            removeFromWishlist(filmId, navigate);
+                                            setMovieList((prev) => prev.filter((film) => film.movie_id !== filmId));
+                                        }}
+                                    >
                                         <FaTimes />
                                     </div>
                                 )}
