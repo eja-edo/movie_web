@@ -1,9 +1,13 @@
-#category_page {
+#category_page__container {
+    width: 100lvw;
+    height: auto;
+    position: relative;
+}
+
+.category_page {
     height: auto;
     width: 94%;
-    padding-top: 60px;
-    position: relative;
-
+    margin: 0 auto;
     .pagination_container {
         position: relative;
         margin-top: 50px;
@@ -13,10 +17,10 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin: 20px 30px;
+        margin: 20px 0;
     }
 }
 
-.showdisplay_wrapper {
+.showdisplay__wrapper {
     padding-top: 60px;
 }

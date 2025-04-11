@@ -16,7 +16,7 @@ const CategoryPage = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     const location = useLocation();
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
     const genre_id = searchParams.get("genre_id");
@@ -44,7 +44,10 @@ const CategoryPage = () => {
 
                 // Xử lý trường hợp tìm kiếm
                 if (location.pathname === "/search" && searchQuery) {
-                    apiUrl += `search_full_movies/?q=${encodeURIComponent(searchQuery)}`;
+                    const url = new URL(`${process.env.REACT_APP_API_URL}/api/movies/search_full_movies/`);
+                    url.searchParams.append("q", searchQuery);
+                    url.searchParams.append("page", page);
+                    apiUrl = url.toString();
                     setTitle(`Kết quả tìm kiếm cho: "${searchQuery}"`);
                 } else {
                     // Xác định loại dữ liệu cần lấy dựa trên `type`
@@ -64,9 +67,12 @@ const CategoryPage = () => {
                     apiUrl = url.toString();
                 }
 
+                console.log("Current page:", page);
+                console.log("Fetching data from:", apiUrl);
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
                 const data = await response.json();
+                console.log("Received data:", data);
 
                 if (location.pathname !== "/search") {
                     setTitle(
@@ -78,10 +84,17 @@ const CategoryPage = () => {
                     );
                 }
 
-                setFilms(data.results || []);
-                setCurrentPage(data.page || 1);
+                // Đảm bảo cập nhật state với dữ liệu mới
+                if (data.results) {
+                    console.log("Updating films with new data:", data.results);
+                    setFilms([...data.results]); // Tạo một mảng mới để đảm bảo React nhận ra sự thay đổi
+                } else {
+                    setFilms([]);
+                }
+                setCurrentPage(parseInt(page) || 1);
                 setTotalPages(data.total_pages || 1);
             } catch (error) {
+                console.error("Error fetching data:", error);
                 if (error.name !== "AbortError") {
                     setError(error.message);
                     setFilms([]);
@@ -95,25 +108,32 @@ const CategoryPage = () => {
     }, [location.pathname, location.search, type, genre_id, nation_id, director_id, actor_id, order_by, page, searchQuery]);
 
     const handlePageChange = (newPage) => {
-        const searchParams = new URLSearchParams(location.search);
-        searchParams.set("page", newPage);
-        navigate(`${location.pathname}?${searchParams.toString()}`);
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set("page", newPage);
+        setSearchParams(newSearchParams);
     };
+
+    // Thêm useEffect để theo dõi sự thay đổi của films
+    useEffect(() => {
+        console.log("Films state updated:", films);
+    }, [films]);
 
     return (
         <>
-            <div className="showdisplay_wrapper">
-                <ShowDisplay />
-            </div>
-
-            <div id="category_page">
-                <div className="category_page__header">
-                    <h2 className="category_page__title">{title || "Đang tải..."}</h2>
-                    <SortDropdown options={sortOptions} />
+            <div id="category_page__container">
+                <div className="showdisplay__wrapper">
+                    <ShowDisplay />
                 </div>
-                <div className="listFilm">{loading ? <p>Loading...</p> : error ? <p>{error}</p> : films.length ? <FilmListColumn films={films} /> : <p>Không có phim nào được tìm thấy.</p>}</div>
-                <div className="pagination_container">
-                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+
+                <div className="category_page">
+                    <div className="category_page__header">
+                        <h2 className="category_page__title">{title || "Đang tải..."}</h2>
+                        <SortDropdown options={sortOptions} />
+                    </div>
+                    <div className="listFilm">{loading ? <p>Loading...</p> : error ? <p>{error}</p> : films.length ? <FilmListColumn films={films} /> : <p>Không có phim nào được tìm thấy.</p>}</div>
+                    <div className="pagination_container">
+                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                    </div>
                 </div>
             </div>
         </>
