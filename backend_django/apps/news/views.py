@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from pathlib import Path
 from django.conf import settings
 # Create your views here.
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .models import News
 import re
 import os
