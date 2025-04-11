@@ -104,3 +104,23 @@
         text-shadow: 0 0 5px rgba(233, 30, 99, 0.5);
     }
 }
+
+.film-close-icon {
+    position: absolute;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #000;
+    background-color: #bcb8b7;
+    padding: 5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 0.4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.film-close-icon:hover {
+    background-color: #fff;
+}

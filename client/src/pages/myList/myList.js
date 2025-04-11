@@ -5,6 +5,7 @@ import Pagination from "../../components/pagination/pagination";
 import FilmListColumn from "../../components/FilmListColumn/FilmListColumn";
 import {useLocation, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {FaHeart, FaPlus, FaClock, FaUser, FaSignOutAlt} from "react-icons/fa";
+import {getWishlist} from "../../services/movieAPI";
 
 const MyListPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,35 +25,40 @@ const MyListPage = () => {
         navigate(`${location.pathname}?${searchParams.toString()}`);
     };
 
-    useEffect(() => {
-        // Giả lập gọi API
-        fetch("https://api.example.com/mylist")
-            .then((res) => res.json())
-            .then((data) => {
-                console.log("Dữ liệu API:", data);
-                setFilms(data); // Cập nhật danh sách phim
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Lỗi khi lấy dữ liệu:", error);
-                setError("Lỗi tải danh sách phim.");
-                setLoading(false);
-            });
-    }, []);
+    const fetchWishlist = async () => {
+        try {
+            setLoading(true);
+            const data = await getWishlist(navigate);
+            if (data) {
+                setFilms(data.data);
+                setTotalPages(data.total_pages);
+                setCurrentPage(data.page);
+            }
+        } catch (error) {
+            console.error("Error fetching wishlist:", error);
+            setError("Lỗi khi tải danh sách phim yêu thích.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    // if (films.length === 0) {
-    //     return (
-    //         <div id="mylist_page" className="empty_list">
-    //             <img src={`${process.env.REACT_APP_API_URL}/static_sv/assets//img/img_duong/dsyt.png`} style={{width: "100%", height: "auto"}} />
-    //             <div className="no-data-container">
-    //                 <p>Bạn chưa có bộ phim yêu thích nào!</p>
-    //                 <button className="explore_button" onClick={() => navigate("/")}>
-    //                     Khám phá thêm
-    //                 </button>
-    //             </div>
-    //         </div>
-    //     );
-    // }
+    useEffect(() => {
+        if (selectedTab === "Danh sách yêu thích") {
+            fetchWishlist();
+        }
+    }, [selectedTab, navigate]);
+
+    const handleRemoveMovie = (movieId) => {
+        setFilms((prevFilms) => prevFilms.filter((film) => film.movie_id !== movieId));
+    };
+
+    if (loading) {
+        return <div className="container">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="container">{error}</div>;
+    }
 
     return (
         <div className="container">
@@ -85,14 +91,7 @@ const MyListPage = () => {
                     {selectedTab === "Danh sách yêu thích" && (
                         <div className="film_list">
                             {films.length > 0 ? (
-                                films.map((film, index) => (
-                                    <div key={index} className="film_item">
-                                        <img src={film.image} alt={film.title} />
-                                        <h3>{film.title}</h3>
-                                        <p>⭐ {film.rating}</p>
-                                        <p>👁️ {film.views} lượt xem</p>
-                                    </div>
-                                ))
+                                <FilmListColumn films={films} isMyList={true} onRemove={handleRemoveMovie} />
                             ) : (
                                 <div className="no-data-container">
                                     <p>Bạn chưa có bộ phim yêu thích nào!</p>

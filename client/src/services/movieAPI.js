@@ -325,4 +325,40 @@ export const removeFromWishlist = async (movieId, navigate) => {
         throw error;
     }
 };
+
+export const getWishlist = async (navigate) => {
+    try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+            navigate("/login");
+            return;
+        }
+
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/wishlist/`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                const refreshResult = await checkRefreshToken(navigate);
+                if (refreshResult) {
+                    return getWishlist(navigate);
+                }
+                return;
+            }
+            throw new Error("Failed to fetch wishlist");
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching wishlist:", error);
+        throw error;
+    }
+};
+
 export default movieAPI;
