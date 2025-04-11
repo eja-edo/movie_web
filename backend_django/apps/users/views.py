@@ -473,7 +473,9 @@ def add_movie_review(request, movie_id):
         }
         serializer = ReviewSerializer(data=data)
         if serializer.is_valid():
+
             serializer.save()
+
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -490,6 +492,7 @@ def add_movie_review(request, movie_id):
         "review": serializer.data,
         "average_rating": average_rating
     }, status=status.HTTP_200_OK)
+
 
 
 @api_view(['DELETE'])

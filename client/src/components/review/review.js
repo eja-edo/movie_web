@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./review.scss";
 
 const Review = ({ movie_id }) => {
@@ -8,7 +9,9 @@ const Review = ({ movie_id }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [hover, setHover] = useState(0);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const token = localStorage.getItem("accessToken");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (movie_id) {
@@ -37,7 +40,7 @@ const Review = ({ movie_id }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!token) {
-      alert("Vui lòng đăng nhập để đánh giá");
+      setShowLoginPrompt(true);
       return;
     }
 
@@ -59,7 +62,8 @@ const Review = ({ movie_id }) => {
 
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error("Vui lòng đăng nhập để đánh giá");
+          setShowLoginPrompt(true);
+          return;
         }
         throw new Error("Failed to add review");
       }
@@ -71,6 +75,10 @@ const Review = ({ movie_id }) => {
     } catch (error) {
       setError(error.message);
     }
+  };
+
+  const handleLogin = () => {
+    navigate("/login");
   };
 
   if (loading) return <div className="review-section">Loading reviews...</div>;
@@ -139,6 +147,26 @@ const Review = ({ movie_id }) => {
           Gửi đánh giá
         </button>
       </form>
+
+      {showLoginPrompt && (
+        <div className="login-prompt-modal">
+          <div className="modal-content">
+            <h3>Vui lòng đăng nhập</h3>
+            <p>Bạn cần đăng nhập để có thể đánh giá phim.</p>
+            <div className="modal-buttons">
+              <button
+                className="cancel-button"
+                onClick={() => setShowLoginPrompt(false)}
+              >
+                Hủy
+              </button>
+              <button className="login-button" onClick={handleLogin}>
+                Đăng nhập
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
