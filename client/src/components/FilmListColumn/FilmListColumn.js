@@ -1,14 +1,18 @@
 import React, {useState, useEffect} from "react";
 import "./FilmListColumn.scss";
 import {Link, useNavigate} from "react-router-dom"; // Sử dụng Link thay vì thẻ a
-import {FaHeart, FaRegHeart} from "react-icons/fa";
+import {FaHeart, FaRegHeart, FaTimes} from "react-icons/fa";
 import {addToWishlist, removeFromWishlist} from "../../services/movieAPI";
 
-const FilmListColumn = ({films}) => {
+const FilmListColumn = ({films, isMyList = false, onRemove}) => {
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [liked, setLiked] = useState(Array(films.length).fill(false));
-    const [wishlistStatus, setWishlistStatus] = useState({});
+    const [movieList, setMovieList] = useState(films);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setMovieList(films);
+    }, [films]);
 
     // console.log("Dữ liệu API (trong FilmListColumn):", films);
     const handleMouseEnter = (index) => {
@@ -29,10 +33,10 @@ const FilmListColumn = ({films}) => {
         e.stopPropagation();
         try {
             if (isLiked) {
-                // Nếu đang thích, gọi API để thêm vào wishlist
-                await addToWishlist(movieId, navigate, true);
+                // gọi API để thêm vào wishlist
+                await addToWishlist(movieId, navigate);
             } else {
-                // Nếu chưa thích, gọi API để bỏ tym
+                // gọi API để bỏ tym
                 await removeFromWishlist(movieId, navigate);
             }
         } catch (error) {
@@ -47,8 +51,8 @@ const FilmListColumn = ({films}) => {
 
     return (
         <div className="film-list-container">
-            {films.length > 0 ? (
-                films.map((item, index) => {
+            {movieList.length > 0 ? (
+                movieList.map((item, index) => {
                     const filmId = item.movie_id || `${index}`;
                     const filmTitle = item.title || "Không có tiêu đề";
                     const filmPoster = item.poster_url ? `${process.env.REACT_APP_API_URL}${item.poster_url}` : "/default-poster.jpg";
@@ -59,18 +63,24 @@ const FilmListColumn = ({films}) => {
                             <div className="film-thumbnail">
                                 <img src={filmPoster} alt={filmTitle} />
                                 {filmTrailer && hoveredIndex === index && <video loop autoPlay muted src={filmTrailer} style={{display: "block"}} />}
-                                <div
-                                    className={`film-like-icon ${liked[index] ? "liked" : ""}`}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        const newLikedStatus = !liked[index];
-                                        handleWishlistClick(filmId, e, newLikedStatus);
-                                        console.log("Liked status:", newLikedStatus);
-                                        toggleLike(index);
-                                    }}
-                                >
-                                    {liked[index] ? <FaHeart /> : <FaRegHeart />}
-                                </div>
+
+                                {!isMyList ? (
+                                    <div
+                                        className={`film-like-icon ${liked[index] ? "liked" : ""}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            const newLikedStatus = !liked[index];
+                                            handleWishlistClick(filmId, e, newLikedStatus);
+                                            toggleLike(index);
+                                        }}
+                                    >
+                                        {liked[index] ? <FaHeart /> : <FaRegHeart />}
+                                    </div>
+                                ) : (
+                                    <div className="film-close-icon" onClick={(e) => handleRemoveFromWishlist(filmId, index, e)}>
+                                        <FaTimes />
+                                    </div>
+                                )}
                             </div>
 
                             <div className="film-info">
