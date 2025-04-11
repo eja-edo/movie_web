@@ -30,7 +30,7 @@ const MyListPage = () => {
             setLoading(true);
             const data = await getWishlist(navigate);
             if (data) {
-                setFilms(data.data);
+                setFilms(data.data.reverse());
                 setTotalPages(data.total_pages);
                 setCurrentPage(data.page);
             }
@@ -47,10 +47,6 @@ const MyListPage = () => {
             fetchWishlist();
         }
     }, [selectedTab, navigate]);
-
-    const handleRemoveMovie = (movieId) => {
-        setFilms((prevFilms) => prevFilms.filter((film) => film.movie_id !== movieId));
-    };
 
     if (loading) {
         return <div className="container">Loading...</div>;
@@ -91,7 +87,7 @@ const MyListPage = () => {
                     {selectedTab === "Danh sách yêu thích" && (
                         <div className="film_list">
                             {films.length > 0 ? (
-                                <FilmListColumn films={films} isMyList={true} onRemove={handleRemoveMovie} />
+                                <FilmListColumn films={films} isMyList={true} />
                             ) : (
                                 <div className="no-data-container">
                                     <p>Bạn chưa có bộ phim yêu thích nào!</p>
