@@ -33,6 +33,10 @@ function DropdownMenu({apiEndpoint, type, onClose}) {
                 // Xóa `genre_id` hoặc `nation_id` cũ (để tránh bị lỗi khi chọn thể loại & quốc gia cùng lúc)
                 searchParams.delete("genre_id");
                 searchParams.delete("nation_id");
+                searchParams.delete("director_id");
+                searchParams.delete("actor_id");
+                searchParams.delete("q");
+                searchParams.delete("page");
 
                 // Thêm `genre_id` hoặc `nation_id` mới
                 searchParams.set(`${type}_id`, itemId);
