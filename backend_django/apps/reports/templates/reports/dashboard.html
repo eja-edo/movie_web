@@ -1,0 +1,126 @@
+{% extends "reports/base.html" %}
+
+{% block title %}Tổng quan - Báo cáo{% endblock %}
+{% block header %}Tổng quan{% endblock %}
+
+{% block content %}
+<div class="report-section">
+    <h2>Tổng quan</h2>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Tổng số phim</h5>
+                    <p class="card-text display-4">{{ total_movies }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Tổng số tập phim</h5>
+                    <p class="card-text display-4">{{ total_episodes }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Tổng số bình luận</h5>
+                    <p class="card-text display-4">{{ total_comments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="report-section">
+    <h2>Phim nổi bật</h2>
+    
+    <div class="row">
+        {% if top_movie_by_views %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Phim có lượt xem cao nhất</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ top_movie_by_views.title }}</h6>
+                    <p class="card-text">{{ top_movie_by_views.views }} lượt xem</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if top_movie_by_rating %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Phim có đánh giá cao nhất</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ top_movie_by_rating.title }}</h6>
+                    <p class="card-text">{{ top_movie_by_rating.rating }} điểm</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if latest_movie %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Phim mới nhất</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ latest_movie.title }}</h6>
+                    <p class="card-text">{{ latest_movie.release_date|date:"d/m/Y" }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="report-section">
+    <h2>Phim theo tháng</h2>
+    
+    <canvas id="moviesChart" width="400" height="200"></canvas>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('moviesChart').getContext('2d');
+        var labels = [
+            {% for item in movies_by_month %}
+                "{{ item.month|date:'m/Y' }}",
+            {% endfor %}
+        ];
+        var data = [
+            {% for item in movies_by_month %}
+                {{ item.count }},
+            {% endfor %}
+        ];
+        
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số lượng phim',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,227 @@
+{% extends "reports/base.html" %}
+
+{% block title %}Thống kê phim - Báo cáo{% endblock %}
+{% block header %}Thống kê phim{% endblock %}
+
+{% block content %}
+<div class="report-section">
+    <h2>Tổng quan</h2>
+    
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <h5 class="card-title">Tổng số phim</h5>
+            <p class="card-text display-4">{{ total_movies }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="report-section">
+    <h2>Top 10 phim có lượt xem cao nhất</h2>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Phim</th>
+                <th>Lượt xem</th>
+                <th>Đánh giá</th>
+                <th>Ngày phát hành</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in top_movies_by_views %}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.views }}</td>
+                <td>{{ movie.rating }}</td>
+                <td>{{ movie.release_date|date:"d/m/Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="report-section">
+    <h2>Top 10 phim có đánh giá cao nhất</h2>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Phim</th>
+                <th>Đánh giá</th>
+                <th>Lượt xem</th>
+                <th>Ngày phát hành</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in top_movies_by_rating %}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.rating }}</td>
+                <td>{{ movie.views }}</td>
+                <td>{{ movie.release_date|date:"d/m/Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="report-section">
+            <h2>Phim theo quốc gia</h2>
+            
+            <canvas id="nationChart" width="400" height="300"></canvas>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="report-section">
+            <h2>Phim theo độc quyền</h2>
+            
+            <canvas id="monopolyChart" width="400" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="report-section">
+    <h2>Phim theo năm phát hành</h2>
+    
+    <canvas id="yearChart" width="400" height="200"></canvas>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Biểu đồ phim theo quốc gia
+        var ctxNation = document.getElementById('nationChart').getContext('2d');
+        var nationLabels = [
+            {% for item in movies_by_nation %}
+                "{{ item.nation__name|default:'Không xác định' }}",
+            {% endfor %}
+        ];
+        var nationData = [
+            {% for item in movies_by_nation %}
+                {{ item.count }},
+            {% endfor %}
+        ];
+        
+        var nationChart = new Chart(ctxNation, {
+            type: 'pie',
+            data: {
+                labels: nationLabels,
+                datasets: [{
+                    data: nationData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(199, 199, 199, 0.2)',
+                        'rgba(83, 102, 255, 0.2)',
+                        'rgba(40, 159, 64, 0.2)',
+                        'rgba(210, 199, 199, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(199, 199, 199, 1)',
+                        'rgba(83, 102, 255, 1)',
+                        'rgba(40, 159, 64, 1)',
+                        'rgba(210, 199, 199, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+        
+        // Biểu đồ phim theo độc quyền
+        var ctxMonopoly = document.getElementById('monopolyChart').getContext('2d');
+        var monopolyLabels = [
+            {% for item in movies_by_monopoly %}
+                "{{ item.monopoly__name|default:'Không xác định' }}",
+            {% endfor %}
+        ];
+        var monopolyData = [
+            {% for item in movies_by_monopoly %}
+                {{ item.count }},
+            {% endfor %}
+        ];
+        
+        var monopolyChart = new Chart(ctxMonopoly, {
+            type: 'doughnut',
+            data: {
+                labels: monopolyLabels,
+                datasets: [{
+                    data: monopolyData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+        
+        // Biểu đồ phim theo năm
+        var ctxYear = document.getElementById('yearChart').getContext('2d');
+        var yearLabels = [
+            {% for item in movies_by_year %}
+                "{{ item.year|date:'Y' }}",
+            {% endfor %}
+        ];
+        var yearData = [
+            {% for item in movies_by_year %}
+                {{ item.count }},
+            {% endfor %}
+        ];
+        
+        var yearChart = new Chart(ctxYear, {
+            type: 'bar',
+            data: {
+                labels: yearLabels,
+                datasets: [{
+                    label: 'Số lượng phim',
+                    data: yearData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

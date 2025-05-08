@@ -37,7 +37,7 @@ function NewsScrip() {
             onClick={() => handleClick(news.id)}
           >
             <div className="img">
-              <img src={news.image_url} alt={news.title} />
+              <img src={`${process.env.REACT_APP_API_URL}/${news.image_url}`} alt={news.title} />
             </div>
             <div>
               <header>

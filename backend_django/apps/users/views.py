@@ -591,11 +591,11 @@ def update_profile(request):
     if country:
         profile.country = country.strip()
 
-    idnumber = data.get('idnumber')
-    if idnumber:
-        if len(idnumber) > 15:
-            return Response({"error": "CMND/CCCD quá dài (tối đa 15 ký tự)."}, status=status.HTTP_400_BAD_REQUEST)
-        profile.idnumber = idnumber.strip()
+    numberphone = data.get('numberphone')
+    if numberphone:
+        if len(numberphone) > 15:
+            return Response({"error": "Số điện thoại quá dài (tối đa 15 ký tự)."}, status=status.HTTP_400_BAD_REQUEST)
+        profile.numberphone = numberphone.strip()
 
     try:
         profile.save()

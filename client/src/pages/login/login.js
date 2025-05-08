@@ -61,47 +61,84 @@ function Login() {
   };
 
   const handleFacebookLogin = () => {
+    if (!window.FB) {
+      console.error('Facebook SDK not loaded');
+      return;
+    }
+
     window.FB.login(
       (response) => {
-        if (response.authResponse) {
-          // Đăng nhập thành công
-          console.log(response);
-          fetch(
-            `${process.env.REACT_APP_API_URL}/api/user/facebook/login/token/`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                accessToken: response.authResponse.accessToken,
-              }),
-            }
-          )
-            .then((response) => {
-              if (response.ok) {
-                return response.json();
-              } else {
-                console.error("error!");
-              }
-            })
-            .then((data) => {
-              console.log(data);
-              // Xử lý response từ backend (lưu token, ...)
-              localStorage.setItem("accessToken", data.access);
-              localStorage.setItem("refreshToken", data.refresh);
-              setLogin(true);
-            })
-            .catch((error) => console.error("Lỗi:", error));
-        } else {
-          // Người dùng không cho phép hoặc có lỗi xảy ra
-          console.log("Đăng nhập thất bại!");
+        try {
+          if (response.authResponse) {
+            // Login successful
+            console.log('Facebook login successful', response);
+
+            // Send token to backend
+            sendTokenToBackend(response.authResponse.accessToken)
+              .then(data => {
+                handleLoginSuccess(data);
+              })
+              .catch(error => {
+                handleLoginError(error);
+              });
+          } else {
+            // User cancelled login or didn't authorize
+            console.log('Facebook login cancelled or not authorized');
+            // You might want to show a user-friendly message here
+          }
+        } catch (error) {
+          console.error('Error processing Facebook login:', error);
+          handleLoginError(error);
         }
+      },
+      {
+        scope: '', // Request additional permissions
+        return_scopes: true
       }
-      // { scope: 'email' }
     );
   };
 
+  // Helper function to send token to backend
+  const sendTokenToBackend = async (accessToken) => {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/api/user/facebook/login/token/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ accessToken }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Failed to authenticate with backend');
+    }
+
+    return response.json();
+  };
+
+  // Handle successful login
+  const handleLoginSuccess = (data) => {
+    console.log('Backend authentication successful', data);
+
+    // Store tokens securely (consider using httpOnly cookies instead)
+    localStorage.setItem("accessToken", data.access);
+    localStorage.setItem("refreshToken", data.refresh);
+
+    // Update app state
+    setLogin(true);
+
+    // Optional: Redirect user or perform other actions
+  };
+
+  // Handle login errors
+  const handleLoginError = (error) => {
+    console.error('Login error:', error);
+    // Show user-friendly error message
+    // setErrorState(error.message || 'Login failed. Please try again.');
+  };
   useEffect(() => {
     if (login) {
       const fetchinfouser = async () => {

@@ -1,0 +1,28 @@
+{% extends "admin/movies/reports/base_report.html" %}
+
+{% block report_content %}
+<div class="report-section">
+    <h2>Đạo diễn làm nhiều phim nhất</h2>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Đạo diễn</th>
+                <th>Số phim đã làm</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for director in top_directors %}
+            <tr>
+                <td>{{ director.director__name }}</td>
+                <td>{{ director.count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

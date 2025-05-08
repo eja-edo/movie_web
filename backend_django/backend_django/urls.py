@@ -19,8 +19,18 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Import các handler lỗi
+from .views import bad_request, permission_denied, page_not_found, server_error
+
+# Đăng ký các handler lỗi
+handler400 = bad_request
+handler403 = permission_denied
+handler404 = page_not_found
+handler500 = server_error
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('reports/', include('apps.reports.urls')),
     path('api/service/', include('apps.service.urls')),
     path('api/user/',include('apps.users.urls')),
     path('api/accounts/', include('allauth.urls')),
@@ -29,4 +39,9 @@ urlpatterns = [
     path('api/people/', include('apps.people.urls')),
     path('api/piomotions/', include('apps.piomotions.urls')),
     path('api/core/', include('apps.core.urls')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+
+# Thêm cấu hình cho media và static files
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

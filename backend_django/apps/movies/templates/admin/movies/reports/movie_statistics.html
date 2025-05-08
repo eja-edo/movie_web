@@ -1,0 +1,145 @@
+{% extends "admin/movies/reports/base_report.html" %}
+
+{% block report_content %}
+<div class="report-section">
+    <h2>Tổng quan</h2>
+    
+    <div class="report-stat">
+        <span class="report-stat-value">{{ total_movies }}</span>
+        <span class="report-stat-label">Tổng số phim</span>
+    </div>
+</div>
+
+<div class="report-section">
+    <h2>Top 10 phim có lượt xem cao nhất</h2>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Phim</th>
+                <th>Lượt xem</th>
+                <th>Đánh giá</th>
+                <th>Ngày phát hành</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in top_movies_by_views %}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.views }}</td>
+                <td>{{ movie.rating }}</td>
+                <td>{{ movie.release_date|date:"d/m/Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="report-section">
+    <h2>Top 10 phim có đánh giá cao nhất</h2>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Phim</th>
+                <th>Đánh giá</th>
+                <th>Lượt xem</th>
+                <th>Ngày phát hành</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in top_movies_by_rating %}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.rating }}</td>
+                <td>{{ movie.views }}</td>
+                <td>{{ movie.release_date|date:"d/m/Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="report-section">
+    <h2>Phim theo quốc gia</h2>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Quốc gia</th>
+                <th>Số lượng phim</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in movies_by_nation %}
+            <tr>
+                <td>{{ item.nation__name|default:"Không xác định" }}</td>
+                <td>{{ item.count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="report-section">
+    <h2>Phim theo độc quyền</h2>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Độc quyền</th>
+                <th>Số lượng phim</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in movies_by_monopoly %}
+            <tr>
+                <td>{{ item.monopoly__name|default:"Không xác định" }}</td>
+                <td>{{ item.count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="report-section">
+    <h2>Phim theo năm phát hành</h2>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Năm</th>
+                <th>Số lượng phim</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in movies_by_year %}
+            <tr>
+                <td>{{ item.year|date:"Y" }}</td>
+                <td>{{ item.count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

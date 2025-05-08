@@ -150,6 +150,10 @@ CREATE TABLE profile_user (
     FOREIGN KEY (id) REFERENCES auth_user(id) ON DELETE CASCADE
 );
 
+CREATE UNIQUE INDEX unique_non_null_numberPhone
+ON profile_user (numberPhone)
+WHERE numberPhone IS NOT NULL;
+
 -- Bảng đánh giá phim
 CREATE TABLE reviews (
 	review_id serial primary key,
@@ -238,4 +242,7 @@ CREATE TABLE news (
 --     FOREIGN KEY (user_id) REFERENCES auth_user(id),  -- Liên kết đến bảng người dùng
 --     CONSTRAINT check_title_length CHECK (length(title) > 0)  -- Ràng buộc tiêu đề không trống
 -- );
+
+
+
 

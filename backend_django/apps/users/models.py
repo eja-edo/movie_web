@@ -9,7 +9,7 @@ class ProfileUser(models.Model):
     dateofbirth = models.DateField(blank=True, null=True)
     sex = models.CharField(max_length=10, blank=True, null=True)
     country = models.CharField(max_length=30, blank=True, null=True)
-    idnumber = models.CharField(max_length=15, blank=True, null=True)
+    numberphone = models.CharField(unique=True, max_length=15, blank=True, null=True)
     url_img = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
@@ -31,7 +31,7 @@ class Reviews(models.Model):
 
 class Watchlists(models.Model):
     view_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(ProfileUser, models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
     movie = models.ForeignKey('movies.Movies', models.DO_NOTHING, blank=True, null=True)
     watch_at = models.DateTimeField(blank=True, null=True)
 

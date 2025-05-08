@@ -2,29 +2,42 @@ import { useEffect } from 'react';
 
 const FacebookSDK = () => {
     useEffect(() => {
-        // Tải script Facebook SDK một cách động
+        // Check if script is already loaded
+        if (document.getElementById('facebook-jssdk')) return;
+        if (window.FB) return;
+
+        // Load Facebook SDK dynamically
         const script = document.createElement('script');
-        script.src = `https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v17.0&appId=YOUR_FACEBOOK_APP_ID&autoLogAppEvents=1`;
+        script.id = 'facebook-jssdk';
+        script.src = `https://connect.facebook.net/vi_VN/sdk.js`;
         script.async = true;
         script.defer = true;
         script.crossOrigin = 'anonymous';
-        script.nonce = 'YOUR_NONCE'; // Thêm nonce nếu cần
+        // script.nonce = 'YOUR_NONCE'; // Uncomment if using CSP
+
+        // Initialize after load
+        window.fbAsyncInit = function () {
+            window.FB.init({
+                appId: process.env.REACT_APP_FACEBOOK_APP_ID || 'YOUR_FACEBOOK_APP_ID',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v22.0'
+            });
+        };
+
         document.head.appendChild(script);
 
-        // Khởi tạo SDK sau khi script được tải
-        script.onload = () => {
-            window.fbAsyncInit = function () {
-                window.FB.init({
-                    appId: '370600639113748',
-                    cookie: true,
-                    xfbml: true,
-                    version: 'v17.0',
-                });
-            };
+        // Cleanup
+        return () => {
+            if (document.getElementById('facebook-jssdk')) {
+                document.head.removeChild(script);
+            }
+            delete window.FB;
+            delete window.fbAsyncInit;
         };
     }, []);
 
-    return null; // Component này không render gì cả
+    return null;
 };
 
 export default FacebookSDK;

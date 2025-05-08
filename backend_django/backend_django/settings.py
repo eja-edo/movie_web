@@ -53,12 +53,13 @@ INSTALLED_APPS = [
     'apps.service',
     'apps.users',
     'apps.comments',
-  
+    'apps.reports',
+
     # Các ứng dụng bên ngoài
     'corsheaders',
     'rest_framework',
-    'rest_framework_simplejwt', 
-    'rest_framework.authtoken', 
+    'rest_framework_simplejwt',
+    'rest_framework.authtoken',
 
     'django.contrib.sites',
     'allauth',
@@ -66,7 +67,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'dj_rest_auth',
-    
+
     'rest_framework_simplejwt.token_blacklist',  # Giữ nếu cần chặn token
 ]
 
@@ -160,14 +161,14 @@ MIDDLEWARE = [
 ]
 
 # Cấu hình khóa mã hóa
-ENCRYPTION_KEY = config('ENCRYPTION_KEY') 
+ENCRYPTION_KEY = config('ENCRYPTION_KEY')
 
 ROOT_URLCONF = 'backend_django.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -269,7 +270,7 @@ CORS_ORIGIN_WHITELIST = [
       "http://127.0.0.1:5500",
       "http://127.0.0.1:3001",
       'http://localhost:3001',
-      'http://localhost:3000', 
+      'http://localhost:3000',
       'http://mycustomdomain.com',
       'http://smovie.com'
         # Thay thế bằng nguồn gốc frontend của bạn
@@ -291,10 +292,10 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3001',
     'http://127.0.0.1:5500',
-    'http://localhost:3001', 
+    'http://localhost:3001',
     'http://localhost:3000',
-    'http://mycustomdomain.com', 
-    'http://smovie.com', 
+    'http://mycustomdomain.com',
+    'http://smovie.com',
      # Thêm domain của frontend vào đâyz
     # Nếu bạn muốn cho phép tất cả các domain (không khuyến nghị):
     # CORS_ORIGIN_ALLOW_ALL = True
@@ -402,3 +403,6 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
     'credentials',
 ]
+
+# Django Admin settings
+# Các cài đặt cho Django Admin mặc định
