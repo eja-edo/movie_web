@@ -357,13 +357,14 @@ function Login() {
               {message}
             </div>
           )}
-          <form className="form" onSubmit={(e) => handleSubmit(e, "login")}>
+          <form className="form" onSubmit={(e) => handleSubmit(e, "login")} autoComplete="off">
             <input
               type="text"
               className={`input ${message && message.includes("tên đăng nhập") ? 'error' : ''}`}
               placeholder="Tên đăng nhập hoặc email"
               id="username_or_email"
               name="username_or_email"
+              autoComplete="off"
               //required
               onChange={(e) => {
                 handleChange(e);
@@ -378,6 +379,7 @@ function Login() {
               placeholder="mật khẩu"
               id="password"
               name="password"
+              autoComplete="new-password"
               //required
               onChange={(e) => {
                 handleChange(e);
@@ -460,13 +462,14 @@ function Login() {
               {verificationStatus}
             </div>
           )}
-          <form onSubmit={handleSubmitSignUp}>
+          <form onSubmit={handleSubmitSignUp} autoComplete="off">
             <input
               className={`input-su ${message && message.includes("tên đăng nhập") ? 'error' : ''}`}
               type="text"
               placeholder="Tên đăng nhập"
               id="signup-username"
               value={username}
+              autoComplete="off"
               onChange={(e) => {
                 setUsername(e.target.value);
                 setMessage("");
@@ -480,6 +483,7 @@ function Login() {
               placeholder="Email"
               id="signup-email"
               value={email}
+              autoComplete="off"
               onChange={(e) => {
                 setEmail(e.target.value);
                 setMessage("");
@@ -493,6 +497,7 @@ function Login() {
               placeholder="Mật khẩu"
               id="signup-password1"
               value={password1}
+              autoComplete="new-password"
               onChange={(e) => {
                 setPassword1(e.target.value);
                 setMessage("");
@@ -506,6 +511,7 @@ function Login() {
               placeholder="Nhập lại mật khẩu"
               id="signup-password2"
               value={password2}
+              autoComplete="new-password"
               onChange={(e) => {
                 setPassword2(e.target.value);
                 setMessage("");

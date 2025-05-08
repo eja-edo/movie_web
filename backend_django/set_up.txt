@@ -21,4 +21,4 @@ tải redis
 chạy setting môi trường $env:DJANGO_SETTINGS_MODULE="backend_django.settings"
 set ENCRYPTION_KEY=your-secret-key-32-bytes-long!!
 
-chạy server:daphne -b 0.0.0.0 -p 8000 bakend_django.asgi:application
+chạy server:daphne -b 0.0.0.0 -p 8000 backend_django.asgi:application
