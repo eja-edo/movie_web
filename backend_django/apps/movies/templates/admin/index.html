@@ -1,0 +1,59 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+<div id="content-main">
+    <div class="app-movies module">
+        <table>
+            <caption>
+                <a href="{% url 'admin:app_list' app_label='movies' %}" class="section">Báo cáo</a>
+            </caption>
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        <a href="{% url 'admin:movies_reports_dashboard' %}">Tổng quan</a>
+                    </th>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <a href="{% url 'admin:movies_reports_movie_statistics' %}">Thống kê phim</a>
+                    </th>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <a href="{% url 'admin:movies_reports_episode_statistics' %}">Thống kê tập phim</a>
+                    </th>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <a href="{% url 'admin:movies_reports_actor_statistics' %}">Thống kê diễn viên</a>
+                    </th>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <a href="{% url 'admin:movies_reports_director_statistics' %}">Thống kê đạo diễn</a>
+                    </th>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <a href="{% url 'admin:movies_reports_comment_statistics' %}">Thống kê bình luận</a>
+                    </th>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {{ block.super }}
+</div>
+{% endblock %}

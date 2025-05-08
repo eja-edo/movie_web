@@ -1,0 +1,71 @@
+{% extends "admin/movies/reports/base_report.html" %}
+
+{% block report_content %}
+<div class="report-section">
+    <h2>Tổng quan</h2>
+    
+    <div class="report-stat">
+        <span class="report-stat-value">{{ total_episodes }}</span>
+        <span class="report-stat-label">Tổng số tập phim</span>
+    </div>
+    
+    <div class="report-stat">
+        <span class="report-stat-value">{{ avg_episodes_per_movie.count__avg|floatformat:1 }}</span>
+        <span class="report-stat-label">Số tập trung bình mỗi phim</span>
+    </div>
+</div>
+
+<div class="report-section">
+    <h2>Phim có nhiều tập nhất</h2>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Phim</th>
+                <th>Số tập</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in movies_with_most_episodes %}
+            <tr>
+                <td>{{ item.movie__title }}</td>
+                <td>{{ item.count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="report-section">
+    <h2>Tập phim mới nhất</h2>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Tập phim</th>
+                <th>Phim</th>
+                <th>Ngày phát hành</th>
+                <th>Thời lượng (phút)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for episode in latest_episodes %}
+            <tr>
+                <td>{{ episode.episode_number }}</td>
+                <td>{{ episode.movie.title }}</td>
+                <td>{{ episode.release_date|date:"d/m/Y" }}</td>
+                <td>{{ episode.runtime }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

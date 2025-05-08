@@ -63,6 +63,7 @@ function NewsScrip() {
                   e.target.src = "/placeholder-image.jpg";
                 }}
               />
+
             </div>
             <div>
               <header>

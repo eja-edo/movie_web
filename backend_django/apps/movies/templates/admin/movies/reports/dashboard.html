@@ -1,0 +1,75 @@
+{% extends "admin/movies/reports/base_report.html" %}
+
+{% block report_content %}
+<div class="report-section">
+    <h2>Tổng quan</h2>
+    
+    <div class="report-stat">
+        <span class="report-stat-value">{{ total_movies }}</span>
+        <span class="report-stat-label">Tổng số phim</span>
+    </div>
+    
+    <div class="report-stat">
+        <span class="report-stat-value">{{ total_episodes }}</span>
+        <span class="report-stat-label">Tổng số tập phim</span>
+    </div>
+    
+    <div class="report-stat">
+        <span class="report-stat-value">{{ total_comments }}</span>
+        <span class="report-stat-label">Tổng số bình luận</span>
+    </div>
+</div>
+
+<div class="report-section">
+    <h2>Phim nổi bật</h2>
+    
+    {% if top_movie_by_views %}
+    <div class="report-stat">
+        <span class="report-stat-label">Phim có lượt xem cao nhất</span>
+        <span class="report-stat-value">{{ top_movie_by_views.title }}</span>
+        <span class="report-stat-label">{{ top_movie_by_views.views }} lượt xem</span>
+    </div>
+    {% endif %}
+    
+    {% if top_movie_by_rating %}
+    <div class="report-stat">
+        <span class="report-stat-label">Phim có đánh giá cao nhất</span>
+        <span class="report-stat-value">{{ top_movie_by_rating.title }}</span>
+        <span class="report-stat-label">{{ top_movie_by_rating.rating }} điểm</span>
+    </div>
+    {% endif %}
+    
+    {% if latest_movie %}
+    <div class="report-stat">
+        <span class="report-stat-label">Phim mới nhất</span>
+        <span class="report-stat-value">{{ latest_movie.title }}</span>
+        <span class="report-stat-label">{{ latest_movie.release_date|date:"d/m/Y" }}</span>
+    </div>
+    {% endif %}
+</div>
+
+<div class="report-section">
+    <h2>Phim theo tháng</h2>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Tháng</th>
+                <th>Số lượng phim</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in movies_by_month %}
+            <tr>
+                <td>{{ item.month|date:"m/Y" }}</td>
+                <td>{{ item.count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -10,6 +10,9 @@ class Actors(models.Model):
         managed = False
         db_table = 'actors'
 
+    def __str__(self):
+        return self.name if self.name else f"Actor {self.actor_id}"
+
 class Directors(models.Model):
     director_id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=100, blank=True, null=True)
@@ -18,3 +21,6 @@ class Directors(models.Model):
     class Meta:
         managed = False
         db_table = 'directors'
+
+    def __str__(self):
+        return self.name if self.name else f"Director {self.director_id}"

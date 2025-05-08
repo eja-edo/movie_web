@@ -1,0 +1,106 @@
+{% extends "reports/base.html" %}
+
+{% block title %}Thống kê tập phim - Báo cáo{% endblock %}
+{% block header %}Thống kê tập phim{% endblock %}
+
+{% block content %}
+<div class="report-section">
+    <h2>Tổng quan</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Tổng số tập phim</h5>
+                    <p class="card-text display-4">{{ total_episodes }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Số tập trung bình mỗi phim</h5>
+                    <p class="card-text display-4">{{ avg_episodes_per_movie.count__avg|floatformat:1 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="report-section">
+    <h2>Phim có nhiều tập nhất</h2>
+    
+    <canvas id="episodesChart" width="400" height="300"></canvas>
+</div>
+
+<div class="report-section">
+    <h2>Tập phim mới nhất</h2>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Tập phim</th>
+                <th>Phim</th>
+                <th>Ngày phát hành</th>
+                <th>Thời lượng (phút)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for episode in latest_episodes %}
+            <tr>
+                <td>{{ episode.episode_number }}</td>
+                <td>{{ episode.movie.title }}</td>
+                <td>{{ episode.release_date|date:"d/m/Y" }}</td>
+                <td>{{ episode.runtime }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Không có dữ liệu</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Biểu đồ phim có nhiều tập nhất
+        var ctx = document.getElementById('episodesChart').getContext('2d');
+        var labels = [
+            {% for item in movies_with_most_episodes %}
+                "{{ item.movie__title }}",
+            {% endfor %}
+        ];
+        var data = [
+            {% for item in movies_with_most_episodes %}
+                {{ item.count }},
+            {% endfor %}
+        ];
+        
+        var chart = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số tập',
+                    data: data,
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -2,6 +2,9 @@ from django.db import models
 from apps.core.models import Monopolys,Genres,Nations
 from apps.people.models import Actors,Directors
 # Create your models here.
+
+
+
 class Movies(models.Model):
     movie_id = models.AutoField(primary_key=True)
     title = models.CharField(unique=True, max_length=155, blank=True, null=True)
@@ -18,6 +21,9 @@ class Movies(models.Model):
     class Meta:
         managed = False
         db_table = 'movies'
+
+    def __str__(self):
+        return self.title if self.title else f"Movie {self.movie_id}"
 
 class Moviegenres(models.Model):
     mg_id = models.AutoField(primary_key=True)
@@ -63,6 +69,10 @@ class Episodes(models.Model):
         managed = False
         db_table = 'episodes'
         unique_together = (('movie', 'episode_number'),)
+
+    def __str__(self):
+        movie_title = self.movie.title if self.movie and self.movie.title else "Unknown Movie"
+        return f"{movie_title} - Tập {self.episode_number}" if self.episode_number else f"Episode {self.episode_id}"
 
 class Banners(models.Model):
     banner_id = models.AutoField(primary_key=True)
