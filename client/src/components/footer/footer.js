@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import "./footer.scss";
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa"; // Import icons
@@ -193,3 +194,4 @@ function FooterComponents() {
 }
 
 export default FooterComponents;
+

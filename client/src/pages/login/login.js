@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./login.scss"; // Import file CSS của bạn
 import { useNavigate } from "react-router-dom";
 
+
 function Login() {
   document.documentElement.style.setProperty(
     "--api-url",
@@ -15,14 +16,6 @@ function Login() {
     username_or_email: "",
     password: "",
   });
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password1, setPassword1] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [message, setMessage] = useState("");
-  const [verificationStatus, setVerificationStatus] = useState("");
-  const [websocket, setWebsocket] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (event) => {
     setFormData({
@@ -30,27 +23,12 @@ function Login() {
       [event.target.id]: event.target.value,
     });
   };
-
   const handleFormSwitch = (formName) => {
     setActiveForm(formName);
   };
 
-  // Thêm hàm handleSubmit thiếu trong code gốc
-  const handleSubmit = (e, formName) => {
-    e.preventDefault();
-    setMessage("");
-
-    // Validate inputs
-    if (!formData.username_or_email) {
-      setMessage("Vui lòng nhập tên đăng nhập hoặc email");
-      return;
-    }
-
-    if (!formData.password) {
-      setMessage("Vui lòng nhập mật khẩu");
-      return;
-    }
-
+  const handleSubmit = (event, formName) => {
+    event.preventDefault();
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -75,21 +53,16 @@ function Login() {
           localStorage.setItem("refreshToken", result.refresh);
           setLogin(true);
         } else {
-          setMessage(
-            "Đăng nhập thất bại! Vui lòng kiểm tra lại tên đăng nhập và mật khẩu."
-          );
+          setMessage("Đăng nhập thất bại! Vui lòng kiểm tra lại tên đăng nhập và mật khẩu.");
         }
       })
-      .catch((error) => {
-        console.error(error);
-        setMessage("Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại sau.");
-      });
+      .catch((error) => console.error(error));
+
   };
 
   const handleFacebookLogin = () => {
     if (!window.FB) {
-      console.error("Facebook SDK not loaded");
-      setMessage("Facebook SDK chưa được tải. Vui lòng thử lại sau.");
+      console.error('Facebook SDK not loaded');
       return;
     }
 
@@ -98,30 +71,29 @@ function Login() {
         try {
           if (response.authResponse) {
             // Login successful
-            console.log("Facebook login successful", response);
+            console.log('Facebook login successful', response);
 
             // Send token to backend
             sendTokenToBackend(response.authResponse.accessToken)
-              .then((data) => {
+              .then(data => {
                 handleLoginSuccess(data);
               })
-              .catch((error) => {
+              .catch(error => {
                 handleLoginError(error);
               });
           } else {
             // User cancelled login or didn't authorize
-            console.log("Facebook login cancelled or not authorized");
+            console.log('Facebook login cancelled or not authorized');
             // You might want to show a user-friendly message here
-            setMessage("Đăng nhập Facebook đã bị hủy hoặc không được phép.");
           }
         } catch (error) {
-          console.error("Error processing Facebook login:", error);
+          console.error('Error processing Facebook login:', error);
           handleLoginError(error);
         }
       },
       {
-        scope: "email,public_profile", // Request additional permissions
-        return_scopes: true,
+        scope: '', // Request additional permissions
+        return_scopes: true
       }
     );
   };
@@ -141,9 +113,7 @@ function Login() {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(
-        errorData.message || "Failed to authenticate with backend"
-      );
+      throw new Error(errorData.message || 'Failed to authenticate with backend');
     }
 
     return response.json();
@@ -151,7 +121,7 @@ function Login() {
 
   // Handle successful login
   const handleLoginSuccess = (data) => {
-    console.log("Backend authentication successful", data);
+    console.log('Backend authentication successful', data);
 
     // Store tokens securely (consider using httpOnly cookies instead)
     localStorage.setItem("accessToken", data.access);
@@ -165,11 +135,10 @@ function Login() {
 
   // Handle login errors
   const handleLoginError = (error) => {
-    console.error("Login error:", error);
+    console.error('Login error:', error);
     // Show user-friendly error message
-    setMessage(error.message || "Đăng nhập thất bại. Vui lòng thử lại.");
+    // setErrorState(error.message || 'Login failed. Please try again.');
   };
-
   useEffect(() => {
     if (login) {
       const fetchinfouser = async () => {
@@ -196,25 +165,27 @@ function Login() {
             };
             localStorage.setItem("user", JSON.stringify(safeUserData));
             navigate(-1);
-            console.log("Đăng nhập thành công!");
           } else if (response.status === 401) {
             console.error("error");
-            setMessage("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
-            setLogin(false);
           }
         } catch (error) {
           console.error("Error fetching :", error);
-          setLogin(false);
         }
       };
       fetchinfouser();
     }
-  }, [login, navigate]);
+  }, [login]);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password1, setPassword1] = useState("");
+  const [password2, setPassword2] = useState("");
+  const [message, setMessage] = useState("");
+  const [verificationStatus, setVerificationStatus] = useState("");
+  const [websocket, setWebsocket] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const connectWebSocket = (uid, token) => {
-    const ws = new WebSocket(
-      `ws://localhost:8000/ws/email-verification/${uid}/?token=${token}`
-    );
+    const ws = new WebSocket(`ws://localhost:8000/ws/email-verification/${uid}/?token=${token}`);
 
     ws.onopen = () => {
       console.log("WebSocket connected");
@@ -261,16 +232,7 @@ function Login() {
     // Kiểm tra từng trường dữ liệu, chỉ lấy lỗi đầu tiên
     const fields = ["username", "email", "password1", "password2"];
     for (let field of fields) {
-      let error = validateInput(
-        field,
-        field === "username"
-          ? username
-          : field === "email"
-          ? email
-          : field === "password1"
-          ? password1
-          : password2
-      );
+      let error = validateInput(field, eval(field)); // Kiểm tra lỗi
       if (error) {
         setMessage(error); // Chỉ lấy lỗi đầu tiên
         setIsLoading(false);
@@ -284,21 +246,18 @@ function Login() {
     const raw = JSON.stringify({
       username: username,
       password: password1,
-      email: email,
+      email: email
     });
 
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: raw,
-      redirect: "follow",
+      redirect: "follow"
     };
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/user/register/`,
-        requestOptions
-      );
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/register/`, requestOptions);
       const data = await response.json();
 
       if (response.ok) {
@@ -311,6 +270,7 @@ function Login() {
 
         setMessage("Vui lòng kiểm tra email của bạn để xác nhận tài khoản!");
         handleFormSwitch("emailVarification");
+
       } else {
         throw new Error(data.message || "Có lỗi xảy ra khi đăng ký");
       }
@@ -321,33 +281,31 @@ function Login() {
     }
   };
 
+
+
+
   const validateInput = (name, value) => {
     switch (name) {
-      case "username":
+      case 'username':
         if (!value) return "Vui lòng nhập tên đăng nhập";
         if (value.length < 8) return "Tên đăng nhập phải có ít nhất 8 ký tự";
         if (value.length > 20) return "Tên đăng nhập không được quá 20 ký tự";
-        if (!/^[a-zA-Z0-9_]+$/.test(value))
-          return "Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới";
+        if (!/^[a-zA-Z0-9_]+$/.test(value)) return "Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới";
         return "";
-      case "email":
+      case 'email':
         if (!value) return "Vui lòng nhập email";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
-          return "Email phải có dạng abc@gmail.com";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Email phải có dạng abc@gmail.com";
         return "";
-      case "password":
-      case "password1":
+      case 'password':
+      case 'password1':
         if (!value) return "Vui lòng nhập mật khẩu";
         if (value.length < 8) return "Mật khẩu phải có ít nhất 8 ký tự";
-        if (!/(?=.*[a-z])/.test(value))
-          return "Mật khẩu phải chứa ít nhất 1 chữ thường";
-        if (!/(?=.*[A-Z])/.test(value))
-          return "Mật khẩu phải chứa ít nhất 1 chữ hoa";
+        if (!/(?=.*[a-z])/.test(value)) return "Mật khẩu phải chứa ít nhất 1 chữ thường";
+        if (!/(?=.*[A-Z])/.test(value)) return "Mật khẩu phải chứa ít nhất 1 chữ hoa";
         if (!/(?=.*\d)/.test(value)) return "Mật khẩu phải chứa ít nhất 1 số";
-        if (!/(?=.*[!@#$%^&*(),.?":{}|<>])/.test(value))
-          return "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt";
+        if (!/(?=.*[!@#$%^&*(),.?":{}|<>])/.test(value)) return "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt";
         return "";
-      case "password2":
+      case 'password2':
         if (!value) return "Vui lòng nhập lại mật khẩu";
         if (value !== password1) return "Mật khẩu không khớp";
         return "";
@@ -357,7 +315,7 @@ function Login() {
   };
 
   const handleKeyDown = (e, inputName, nextInputId) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       const error = validateInput(inputName, e.target.value);
       if (error) {
@@ -368,8 +326,8 @@ function Login() {
 
       // Nếu là input cuối cùng thì submit form
       if (!nextInputId) {
-        if (activeForm === "login") {
-          handleSubmit(e, "login");
+        if (activeForm === 'login') {
+          handleSubmit(e, 'login');
         } else {
           handleSubmitSignUp(e);
         }
@@ -394,40 +352,40 @@ function Login() {
           <h2 className="heading" style={{ fontFamily: "Poppins" }}>
             Đăng nhập
           </h2>
-          {message && <div className="message-alert">{message}</div>}
-          <form className="form" onSubmit={(e) => handleSubmit(e, "login")}>
+          {message && (
+            <div className="message-alert">
+              {message}
+            </div>
+          )}
+          <form className="form" onSubmit={(e) => handleSubmit(e, "login")} autoComplete="off">
             <input
               type="text"
-              className={`input ${
-                message && message.includes("tên đăng nhập") ? "error" : ""
-              }`}
+              className={`input ${message && message.includes("tên đăng nhập") ? 'error' : ''}`}
               placeholder="Tên đăng nhập hoặc email"
               id="username_or_email"
               name="username_or_email"
+              autoComplete="off"
               //required
               onChange={(e) => {
                 handleChange(e);
                 setMessage("");
               }}
-              onKeyDown={(e) =>
-                handleKeyDown(e, "username_or_email", "password")
-              }
+              onKeyDown={(e) => handleKeyDown(e, 'username_or_email', 'password')}
               style={{ fontFamily: "Poppins" }}
             />
             <input
               type="password"
-              className={`input ${
-                message && message.includes("mật khẩu") ? "error" : ""
-              }`}
+              className={`input ${message && message.includes("mật khẩu") ? 'error' : ''}`}
               placeholder="mật khẩu"
               id="password"
               name="password"
+              autoComplete="new-password"
               //required
               onChange={(e) => {
                 handleChange(e);
                 setMessage("");
               }}
-              onKeyDown={(e) => handleKeyDown(e, "password", null)}
+              onKeyDown={(e) => handleKeyDown(e, 'password', null)}
               style={{ fontFamily: "Poppins" }}
             />
             <span className="forgot-password">
@@ -495,87 +453,77 @@ function Login() {
             Đăng ký tài khoản
           </h2>
           {message && (
-            <div
-              className={`message-alert ${verificationStatus ? "success" : ""}`}
-            >
+            <div className={`message-alert ${verificationStatus ? 'success' : ''}`}>
               {message}
             </div>
           )}
           {verificationStatus && (
-            <div className="message-alert success">{verificationStatus}</div>
+            <div className="message-alert success">
+              {verificationStatus}
+            </div>
           )}
-          <form onSubmit={handleSubmitSignUp}>
+          <form onSubmit={handleSubmitSignUp} autoComplete="off">
             <input
-              className={`input-su ${
-                message && message.includes("tên đăng nhập") ? "error" : ""
-              }`}
+              className={`input-su ${message && message.includes("tên đăng nhập") ? 'error' : ''}`}
               type="text"
               placeholder="Tên đăng nhập"
               id="signup-username"
               value={username}
+              autoComplete="off"
               onChange={(e) => {
                 setUsername(e.target.value);
                 setMessage("");
               }}
-              onKeyDown={(e) => handleKeyDown(e, "username", "signup-email")}
-              //required
+              onKeyDown={(e) => handleKeyDown(e, 'username', 'signup-email')}
+            //required
             />
             <input
-              className={`input-su ${
-                message && message.includes("email") ? "error" : ""
-              }`}
+              className={`input-su ${message && message.includes("email") ? 'error' : ''}`}
               type="text"
               placeholder="Email"
               id="signup-email"
               value={email}
+              autoComplete="off"
               onChange={(e) => {
                 setEmail(e.target.value);
                 setMessage("");
               }}
-              onKeyDown={(e) => handleKeyDown(e, "email", "signup-password1")}
-              //required
+              onKeyDown={(e) => handleKeyDown(e, 'email', 'signup-password1')}
+            //required
             />
             <input
-              className={`input-su ${
-                message &&
-                message.includes("mật khẩu") &&
-                !message.includes("lại")
-                  ? "error"
-                  : ""
-              }`}
+              className={`input-su ${message && message.includes("mật khẩu") && !message.includes("lại") ? 'error' : ''}`}
               type="password"
               placeholder="Mật khẩu"
               id="signup-password1"
               value={password1}
+              autoComplete="new-password"
               onChange={(e) => {
                 setPassword1(e.target.value);
                 setMessage("");
               }}
-              onKeyDown={(e) =>
-                handleKeyDown(e, "password1", "signup-password2")
-              }
-              //required
+              onKeyDown={(e) => handleKeyDown(e, 'password1', 'signup-password2')}
+            //required
             />
             <input
-              className={`input-su ${
-                message && message.includes("không khớp") ? "error" : ""
-              }`}
+              className={`input-su ${message && message.includes("không khớp") ? 'error' : ''}`}
               type="password"
               placeholder="Nhập lại mật khẩu"
               id="signup-password2"
               value={password2}
+              autoComplete="new-password"
               onChange={(e) => {
                 setPassword2(e.target.value);
                 setMessage("");
               }}
-              onKeyDown={(e) => handleKeyDown(e, "password2", null)}
-              //required
+              onKeyDown={(e) => handleKeyDown(e, 'password2', null)}
+            //required
             />
             <button
               id="su-dk"
               type="submit"
               disabled={isLoading}
-              className={isLoading ? "loading" : ""}
+              className={isLoading ? 'loading' : ''}
             >
               {isLoading ? (
                 <span className="loading-text">
@@ -583,7 +531,7 @@ function Login() {
                   Đang xử lý...
                 </span>
               ) : (
-                "Đăng ký"
+                'Đăng ký'
               )}
             </button>
           </form>
@@ -597,29 +545,25 @@ function Login() {
         </div>
 
         {/*Email Verification Form */}
-        <div
-          id="email-varification-form"
+        <div id="email-varification-form"
           style={{
             display: activeForm === "emailVarification" ? "block" : "none",
-          }}
-        >
-          <h2 className="heading" style={{ fontFamily: "Poppins" }}>
-            Xác minh email
-          </h2>
+          }}>
           {message && (
-            <div
-              className={`message-alert ${verificationStatus ? "success" : ""}`}
-            >
+            <div className={`message-alert ${verificationStatus ? 'success' : ''}`}>
               {message}
             </div>
           )}
           {verificationStatus && (
-            <div className="message-alert success">{verificationStatus}</div>
+            <div className="message-alert success">
+              {verificationStatus}
+            </div>
           )}
-          <button type="button" onClick={() => handleFormSwitch("login")}>
+          <button type="button">
             Để sau!
           </button>
         </div>
+
 
         {/* Forgot Password Form */}
         <div
@@ -629,18 +573,8 @@ function Login() {
           }}
         >
           <h2 className="heading">Quên mật khẩu</h2>
-          <p>Vui lòng nhập email của bạn để nhận hướng dẫn đặt lại mật khẩu.</p>
-          <form>
-            <input
-              type="email"
-              className="input"
-              placeholder="Email"
-              id="forgot-email"
-            />
-            <button type="submit">Gửi</button>
-          </form>
           <button type="button" onClick={() => handleFormSwitch("login")}>
-            Quay lại trang đăng nhập
+            Đăng nhập
           </button>
         </div>
       </div>

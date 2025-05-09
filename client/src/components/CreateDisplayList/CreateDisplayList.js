@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, memo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./CreateDisplayList.scss";
@@ -288,3 +289,4 @@ const CreateDisplayList = memo((films) => {
 });
 
 export default CreateDisplayList;
+

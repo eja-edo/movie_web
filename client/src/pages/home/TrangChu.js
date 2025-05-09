@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./trang_chu.scss";
@@ -356,3 +357,4 @@ function TrangChu() {
 }
 
 export default TrangChu;
+

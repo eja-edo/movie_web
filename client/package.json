@@ -43,7 +43,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://mycustomdomain.com",
+  "proxy": "https://smovie.fun",
   "devDependencies": {
     "sass": "^1.77.8"
   }
