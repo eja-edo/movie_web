@@ -1,6 +1,8 @@
+
 .search-component {
     position: absolute;
     width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng của .search-list-item */
+    z-index: 1000;
 }
 .search-container {
     position: relative;
@@ -9,12 +11,17 @@
 
 .search-icon {
     position: absolute;
-    left: 0.8rem; /* Giảm khoảng cách để phù hợp với chiều rộng */
+    left: 0.8rem;
     top: 50%;
     transform: translateY(-50%);
     color: #fff;
     z-index: 1;
-    font-size: 1rem; /* Giảm kích thước icon để phù hợp với chiều cao */
+    font-size: 1rem;
+
+    @media screen and (max-width: 900px) {
+        left: 0.5rem;
+        font-size: 0.9rem;
+    }
 }
 
 .close-icon {
@@ -23,7 +30,7 @@
     top: 50%;
     transform: translateY(-50%);
     color: #fff;
-    background-color: rgba(255, 255, 255, 0.2); /* Nền xám nhạt giống hình */
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -34,34 +41,59 @@
     cursor: pointer;
     z-index: 1;
     transition: background-color 0.2s;
+
+    @media screen and (max-width: 900px) {
+        right: 0.5rem;
+        width: 18px;
+        height: 18px;
+        font-size: 0.7rem;
+    }
 }
 
 .close-icon:hover {
     background-color: rgba(255, 255, 255, 0.3);
 }
+
 .search-input {
     width: 100%;
     height: 2.4rem;
-    line-height: 2.8rem; /* Điều chỉnh line-height để khớp với height */
-    padding: 0.2rem 0.8rem 0.2rem 2.5rem; /* Giảm padding để tránh lệch */
-    background-color: hsla(0, 0%, 100%, 0.08); /* Nền trong suốt giống hình */
+    line-height: 2.8rem;
+    padding: 0.2rem 0.8rem 0.2rem 2.5rem;
+    background-color: hsla(0, 0%, 100%, 0.08);
     color: #fff;
     font-size: 0.9em;
     outline: none !important;
     box-shadow: none !important;
-    border-radius: 0.4rem; /* Viền bo tròn giống hình */
-    border: 1px solid transparent; /* Thêm border trong suốt khi không focus */
+    border-radius: 0.4rem;
+    border: 1px solid transparent;
     transition: background-color 0.2s;
     box-sizing: border-box;
+
+    @media screen and (max-width: 900px) {
+        height: 2.2rem;
+        line-height: 2.2rem;
+        padding: 0.2rem 0.5rem 0.2rem 2rem;
+        font-size: 0.85em;
+    }
+
+    @media screen and (max-width: 480px) {
+        height: 2rem;
+        line-height: 2rem;
+        border-radius: 0.3rem;
+    }
 }
 
 .search-input:focus {
-    background-color: hsla(0, 0%, 100%, 0.15); /* Hiệu ứng khi focus */
+    background-color: hsla(0, 0%, 100%, 0.15);
     border: 1px solid #fff;
 }
 
 .search-input::placeholder {
     color: #fff;
+
+    @media screen and (max-width: 900px) {
+        font-size: 0.85em;
+    }
 }
 
 .suggest-search {
@@ -69,36 +101,72 @@
     top: 100%;
     left: 0;
     width: 360px;
-    background-color: rgba(15, 17, 26, 0.95); /* Nền tối giống hình */
+    background-color: rgba(15, 17, 26, 0.95);
     border-radius: 8px;
     margin-top: 5px;
     box-shadow: 0 0 20px 20px rgba(0, 0, 0, 0.1);
     z-index: 100;
-    max-height: 500px; /* Giới hạn chiều cao, cuộn nếu vượt quá */
+    max-height: 500px;
     overflow-y: auto;
     padding: 20px;
-    display: flex; /* Sử dụng flex để sắp xếp các item */
-    flex-wrap: wrap; /* Cho phép các item xuống dòng */
-    gap: 12px 12px; /* Khoảng cách giữa các item */
-    box-sizing: border-box; /* Thêm dòng này */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 12px;
+    box-sizing: border-box;
+
+    @media screen and (max-width: 1024px) {
+        width: 300px;
+    }
+
+    @media screen and (max-width: 900px) {
+        width: 250px;
+        padding: 15px;
+        gap: 10px;
+        right: 0;
+        left: auto;
+    }
+
+    @media screen and (max-width: 480px) {
+        position: fixed;
+        top: 62px;
+        left: 0;
+        right: 0;
+        width: 100lvw;
+        max-height: calc(100vh - 62px);
+        border-radius: 0;
+        margin-top: 0;
+    }
 }
 
 .suggest-header {
-    width: 100%; /* Tiêu đề chiếm toàn bộ chiều rộng */
+    width: 100%;
     font-size: 0.9em;
     color: #aaa;
     font-weight: 500;
     margin-bottom: 12px;
+
+    @media screen and (max-width: 900px) {
+        font-size: 0.85em;
+        margin-bottom: 10px;
+    }
 }
 
 .suggest-item-wrap {
     width: 48%;
     display: inline-block;
+
+    @media screen and (max-width: 900px) {
+        width: 100%;
+    }
+
+    @media screen and (max-width: 480px) {
+        width: 48%;
+    }
 }
 
 .suggest-item {
-    width: 100%; /* Mỗi item chiếm 50% chiều rộng để hiển thị 2 item trên 1 hàng */
-    box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -108,6 +176,10 @@
     color: white;
     transition: background-color 0.2s;
     border-radius: 4px;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
 }
 
 .suggest-item-image {
@@ -115,6 +187,7 @@
     height: auto;
     object-fit: cover;
     border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .suggest-item-content {
@@ -126,8 +199,26 @@
 
 .suggest-item-title {
     font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media screen and (max-width: 900px) {
+        font-size: 0.85em;
+    }
 }
 
 .none-results {
     text-align: center;
+    width: 100%;
+    padding: 15px 0;
+    color: #aaa;
 }
+
+.loading-spinner {
+    text-align: center;
+    width: 100%;
+    padding: 15px 0;
+    color: #aaa;
+}
+

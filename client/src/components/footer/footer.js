@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import "./footer.scss";
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa"; // Import icons
@@ -52,83 +53,139 @@ function FooterComponents() {
     <footer className="footer-container">
       <div className="footer-content">
         <div className="footer-nav">
+          {/* Cột 1: Trang chủ - Hiển thị trên mọi thiết bị */}
           <div className="nav-column">
             <h4>Trang chủ</h4>
             <ul>
-              <li>Phim</li>
-              <li>Devices</li>
-              <li>Pricing</li>
-              <li>FAQ</li>
+              <li>
+                <Link to="/">Phim</Link>
+              </li>
+              <li>
+                <Link to="/">Thiết bị</Link>
+              </li>
+              <li>
+                <Link to="/">Giá cả</Link>
+              </li>
+              <li>
+                <Link to="/">FAQ</Link>
+              </li>
             </ul>
           </div>
+
+          {/* Cột 2: Thể loại - Ẩn trên mobile */}
           <div className="nav-column">
             <h4>Thể loại</h4>
             <ul>
-              {genres.map((genre) => {
-                const searchParams = new URLSearchParams(); // Tạo query mới
-                searchParams.set("genre_id", genre.genre_id); // Thêm genre_id
-                return (
-                  <li key={`genre-${genre.genre_id}`}>
-                    <Link to={`/category/genre?${searchParams.toString()}`}>
-                      {genre.name}
-                    </Link>
-                  </li>
-                );
-              })}
+              {genres.length > 0 ? (
+                genres.slice(0, 3).map((genre) => {
+                  const searchParams = new URLSearchParams();
+                  searchParams.set("genre_id", genre.genre_id);
+                  return (
+                    <li key={`genre-${genre.genre_id}`}>
+                      <Link to={`/category/genre?${searchParams.toString()}`}>
+                        {genre.name}
+                      </Link>
+                    </li>
+                  );
+                })
+              ) : (
+                <li>Đang tải...</li>
+              )}
             </ul>
           </div>
+
+          {/* Cột 3: Quốc gia - Ẩn trên mobile */}
           <div className="nav-column">
             <h4>Quốc gia</h4>
             <ul>
-              {nations.map((nation) => {
-                const searchParams = new URLSearchParams(); // Tạo query mới
-                searchParams.set("nation_id", nation.nation_id); // Thêm nation_id
-                return (
-                  <li key={`nation-${nation.nation_id}`}>
-                    <Link to={`/category/nation?${searchParams.toString()}`}>
-                      {nation.name}
-                    </Link>
-                  </li>
-                );
-              })}
+              {nations.length > 0 ? (
+                nations.slice(0, 3).map((nation) => {
+                  const searchParams = new URLSearchParams();
+                  searchParams.set("nation_id", nation.nation_id);
+                  return (
+                    <li key={`nation-${nation.nation_id}`}>
+                      <Link to={`/category/nation?${searchParams.toString()}`}>
+                        {nation.name}
+                      </Link>
+                    </li>
+                  );
+                })
+              ) : (
+                <li>Đang tải...</li>
+              )}
             </ul>
           </div>
+
+          {/* Cột 4: Giới thiệu - Ẩn trên tablet và mobile */}
           <div className="nav-column">
             <h4>Giới thiệu</h4>
             <ul>
-              <li>Thông tin</li>
+              <li>
+                <Link to="/about">Thông tin</Link>
+              </li>
+              <li>
+                <Link to="/about">Về chúng tôi</Link>
+              </li>
             </ul>
           </div>
+
+          {/* Cột 5: Hỗ trợ khách hàng - Hiển thị trên mọi thiết bị */}
           <div className="nav-column">
             <h4>Hỗ trợ khách hàng</h4>
             <ul>
-              <li>Hotline: 0923012025</li>
-              <li>Email: smovie@gmail.com</li>
+              <li>
+                <a href="tel:0923012025">Hotline: 0923012025</a>
+              </li>
+              <li>
+                <a href="mailto:smovie@gmail.com">Email: smovie@gmail.com</a>
+              </li>
             </ul>
           </div>
+
+          {/* Cột 6: Liên lạc - Hiển thị trên mọi thiết bị */}
           <div className="nav-column">
             <h4>Liên lạc</h4>
             <div className="social-links">
-              <a href="#" className="social-icon">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+                aria-label="Facebook"
+              >
                 <FaFacebook />
               </a>
-              <a href="#" className="social-icon">
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+                aria-label="Twitter"
+              >
                 <FaTwitter />
               </a>
-              <a href="#" className="social-icon">
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+                aria-label="LinkedIn"
+              >
                 <FaLinkedin />
               </a>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Phần cuối footer - Đơn giản hóa trên mobile */}
       <div className="ft-cuoi">
         <div className="footer-bottom">
-          <p>@2025.Nhóm7D17CNPM4</p>
+          <p>© 2025 Nhóm7D17CNPM4</p>
           <div className="footer-links">
-            <a href="#">Điều khoản sử dụng</a>
-            <a href="#">Chính sách bảo mật</a>
-            <a href="#">Chính sách Cookie</a>
+            <Link to="/terms">Điều khoản sử dụng</Link>
+            <Link to="/privacy">Chính sách bảo mật</Link>
+            <Link to="/cookies">Chính sách Cookie</Link>
           </div>
         </div>
       </div>
@@ -137,3 +194,4 @@ function FooterComponents() {
 }
 
 export default FooterComponents;
+

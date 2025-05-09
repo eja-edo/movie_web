@@ -1,94 +1,239 @@
+
 .footer-container {
     background-color: #000;
     color: #fff;
-    padding: 20px;
+    padding: 20px 10px;
     width: 100%;
-    font-family: "Poppins";
+    font-family: "Poppins", sans-serif;
+    /* Đảm bảo footer là một phần của luồng trang */
+    position: relative;
+
+    @media (max-width: 768px) {
+        padding: 10px 5px;
+    }
 
     .footer-content {
         display: flex;
-       margin-left: 4%;
-       margin-right:4%;
+        margin-left: 4%;
+        margin-right: 4%;
+
+        @media (max-width: 768px) {
+            margin-left: 2%;
+            margin-right: 2%;
+        }
+
         .footer-nav {
-            display:contents;
-            flex-wrap:wrap;
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
             margin: auto;
             line-height: 1.5;
-            
+
+            @media (max-width: 768px) {
+                justify-content: space-between;
+            }
+
+            @media (max-width: 480px) {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+
             .nav-column {
                 flex: 1;
+                min-width: 150px;
                 margin: 1%;
+
+                @media (max-width: 768px) {
+                    flex-basis: 48%;
+                    margin-bottom: 20px;
+
+                    // Ẩn một số cột không quan trọng trên tablet
+                    &:nth-child(4) {
+                        display: none;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    flex-basis: 48%;
+                    margin-bottom: 10px;
+
+                    // Ẩn tất cả các cột trừ những cột quan trọng
+                    &:nth-child(2), &:nth-child(3), &:nth-child(4) {
+                        display: none;
+                    }
+
+                    // Chỉ hiển thị cột Trang chủ và Hỗ trợ khách hàng
+                    &:nth-child(1), &:nth-child(5) {
+                        display: block;
+                        flex-basis: 48%;
+                    }
+
+                    // Cột Liên lạc hiển thị ở dưới và căn giữa
+                    &:nth-child(6) {
+                        flex-basis: 100%;
+                        text-align: center;
+                        margin-top: 0;
+                        margin-bottom: 0;
+                    }
+                }
 
                 h4 {
                     margin-bottom: 10px;
+                    font-size: clamp(1rem, 2vw, 1.2rem);
+                    position: relative;
+
+                    @media (max-width: 480px) {
+                        padding-bottom: 5px;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                        font-size: 0.95rem;
+                        text-align: left;
+                    }
                 }
-                
 
                 ul {
                     list-style-type: none;
                     padding: 0;
-                
+
                     li {
-                        margin: 5px 0;
-                        transition: color 0.3s ease-in-out; // Hiệu ứng màu mượt hơn
+                        margin: 8px 0;
+                        transition: color 0.3s ease-in-out;
                         color: gray;
+                        font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+
+                        @media (max-width: 480px) {
+                            margin: 8px 0;
+                            font-size: 0.8rem;
+                        }
+
+                        a {
+                            color: gray;
+                            text-decoration: none;
+                            transition: color 0.3s ease-in-out;
+
+                            &:hover {
+                                color: white;
+                            }
+                        }
+
                         &:hover {
-                            color: white; // Chỉ thay đổi màu của li đang được hover
+                            color: white;
                         }
                     }
                 }
-                
             }
         }
     }
+
     .ft-cuoi {
-        
         width: 100%;
         position: relative;
         color: gray;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 0;
+        padding: 15px 0 5px;
         font-size: 0.7rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 20px;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        @media (max-width: 480px) {
+            margin-top: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-top: none;
+        }
     }
-    
+
     .footer-bottom {
         margin-left: 5%;
         display: flex;
         justify-content: space-between;
         width: 100%;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            margin-left: 0;
+            align-items: center;
+        }
+
+        p {
+            margin-bottom: 5px;
+
+            @media (max-width: 480px) {
+                font-size: 0.65rem;
+                margin-bottom: 2px;
+            }
+        }
     }
-    
+
     .footer-links {
         margin-right: 5%;
         display: flex;
         gap: 20px;
+
+        @media (max-width: 768px) {
+            margin-right: 0;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        @media (max-width: 480px) {
+            gap: 15px;
+
+            // Ẩn một số liên kết trên mobile
+            a:nth-child(3) {
+                display: none;
+            }
+        }
     }
-    
+
     .footer-links a {
         color: gray;
         text-decoration: none;
+        font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+
+        &:hover {
+            text-decoration: underline;
+            color: white;
+        }
     }
-    
-    .footer-links a:hover {
-        text-decoration: underline;
-    }
-    
 }
+
 .social-links {
     display: flex;
     justify-content: left;
     margin-bottom: 20px;
 
     a {
-      margin: 0 10px;
-      color: white;
-      font-size: 30px;
-      transition: color 0.3s;
-      
-      &:hover {
-        color: #89caff;
-      }
+        margin: 0 15px 0 0;
+        color: white;
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        transition: color 0.3s;
+
+        &:hover {
+            color: #89caff;
+        }
     }
+
+    @media (max-width: 480px) {
+        justify-content: center;
+        margin-top: 5px;
+        margin-bottom: 5px;
+
+        a {
+            margin: 0 12px;
+            font-size: 1.5rem;
+        }
+    }
+
 }

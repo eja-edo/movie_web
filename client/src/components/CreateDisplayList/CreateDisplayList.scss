@@ -1,3 +1,4 @@
+
 :root {
     --trans: 0px;
 }
@@ -5,10 +6,8 @@
 .display {
     position: relative;
     display: flex;
-    // margin: 3lvw;
     align-items: center;
     margin: 2lvw 0 2lvw 0;
-
 
     .next,
     .back {
@@ -30,13 +29,9 @@
         &.back {
             left: 2px;
         }
-
-
-
     }
 
     &:hover {
-
         // .next and .back classes inside the hovered parent
         >.next,
         >.back {
@@ -45,7 +40,6 @@
     }
 
     .video {
-
         all: unset;
         position: absolute;
         z-index: 3;
@@ -57,9 +51,17 @@
         border-radius: 5px;
         margin: auto;
 
+        @media screen and (max-width: 768px) {
+            width: 70vw; /* Tăng kích thước từ 60vw lên 70vw */
+            border-radius: 8px; /* Tăng bo góc */
+        }
+
+        @media screen and (max-width: 480px) {
+            width: 90vw; /* Tăng kích thước từ 80vw lên 90vw */
+            border-radius: 10px; /* Tăng bo góc */
+        }
 
         video {
-            // height: 216px;
             width: 100%;
             position: absolute;
             top: 0;
@@ -75,8 +77,43 @@
             background: linear-gradient(0deg, rgb(0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%);
             gap: 5px;
 
+            h2 {
+                font-size: clamp(0.9rem, 3vw, 1.2rem);
+                margin: 5px 10px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                @media screen and (max-width: 480px) {
+                    font-size: 1.1rem; /* Tăng kích thước font trên mobile */
+                    margin: 8px 12px; /* Tăng margin */
+                }
+            }
+
+            p {
+                font-size: clamp(0.7rem, 2vw, 0.9rem);
+                margin: 0 10px 5px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                line-clamp: 2; /* Thêm thuộc tính chuẩn */
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+
+                @media screen and (max-width: 480px) {
+                    font-size: 0.9rem; /* Tăng kích thước font trên mobile */
+                    margin: 0 12px 8px; /* Tăng margin */
+                    line-height: 1.4; /* Tăng line-height để dễ đọc */
+                }
+            }
+
             div {
                 display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+
+                @media screen and (max-width: 480px) {
+                    gap: 5px;
+                }
             }
 
             button {
@@ -87,17 +124,19 @@
                 width: 30%;
                 border: none;
 
+                @media screen and (max-width: 480px) {
+                    width: 48%; /* Tăng kích thước từ 45% lên 48% */
+                    margin: 3px auto;
+                }
+
                 .xem_ngay {
                     background-color: #fff;
                     color: #000;
-
                 }
-
 
                 div {
                     width: 100%;
                     padding: 7px;
-                    // height: 36px;
                     margin: 0 auto;
                     color: #fff;
                     border: 1px solid #fff;
@@ -105,17 +144,20 @@
                     background: none;
                     display: flex;
                     text-align: center;
-                    /* Căn giữa nội dung */
                     align-items: center;
-                    /* Căn dọc */
                     justify-content: center;
-                    /* Căn ngang */
                     gap: 5px;
+                    font-size: clamp(0.7rem, 2vw, 0.9rem);
 
                     * {
                         display: inline-block;
-                        /* Cho phép nằm ngang */
                         text-align: center;
+                    }
+
+                    @media screen and (max-width: 480px) {
+                        padding: 8px; /* Tăng padding từ 5px lên 8px */
+                        font-size: 0.9rem; /* Tăng kích thước font */
+                        gap: 8px; /* Tăng khoảng cách giữa icon và text */
                     }
                 }
 
@@ -123,18 +165,31 @@
                     color: #cda208;
                     border: 1px solid #cda208;
                 }
-
             }
         }
     }
 
     .frame {
-
         height: 100%;
         width: 100%;
         overflow: hidden;
 
+        /* Enable horizontal scrolling on mobile */
+        @media screen and (max-width: 768px) {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
+            scrollbar-width: none; /* Hide scrollbar on Firefox */
+            -ms-overflow-style: none; /* Hide scrollbar on IE/Edge */
 
+            /* Hide scrollbar on Chrome/Safari/WebKit browsers */
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            /* Đảm bảo nội dung vẫn hiển thị đầy đủ */
+            display: flex;
+            align-items: center;
+        }
 
         .display_list {
             position: relative;
@@ -144,25 +199,99 @@
             align-items: center;
             right: -2lvw;
 
+            /* Adjust for mobile scrolling */
+            @media screen and (max-width: 768px) {
+                /* Giữ nguyên transform và transition để đảm bảo hiển thị giống desktop */
+                /* Chỉ thêm width: max-content để cho phép cuộn ngang */
+                width: max-content; /* Allow content to determine width */
+            }
 
             .film-container {
                 display: grid;
                 place-content: center;
 
+                /* Adjust for mobile scrolling */
+                @media screen and (max-width: 768px) {
+                    flex: 0 0 auto; /* Prevent shrinking */
+                }
 
                 .img {
                     img {
                         width: 15lvw;
                         /*tỉ lệ 16:9*/
                         margin-right: 1lvw;
+                        border-radius: 4px;
+                        transition: transform 0.3s ease;
+
+                        @media screen and (max-width: 768px) {
+                            width: 28vw; /* Giữ kích thước như cũ */
+                            margin-right: 2vw;
+                            border-radius: 6px; /* Tăng bo góc */
+                        }
+
+                        @media screen and (max-width: 480px) {
+                            width: 42vw; /* Giữ kích thước như cũ */
+                            margin-right: 3vw;
+                            border-radius: 8px; /* Tăng bo góc */
+                        }
+
+                        &:hover {
+                            transform: scale(1.05);
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Thêm đổ bóng khi hover */
+                        }
+
+                        @media screen and (max-width: 480px) {
+                            &:hover {
+                                transform: scale(1.08); /* Tăng hiệu ứng scale trên mobile */
+                                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); /* Tăng đổ bóng */
+                            }
+                        }
                     }
-
                 }
-
-
-
             }
+        }
+    }
 
+    // Mobile-specific adjustments
+    @media screen and (max-width: 768px) {
+        /* Hiển thị nút điều hướng trên desktop */
+        .next, .back {
+            display: none;
+        }
+
+        &:hover {
+            .next, .back {
+                display: none; /* Ẩn nút trên mobile */
+            }
+        }
+
+        /* Add visual indicator for horizontal scrolling */
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+            100% { opacity: 0.3; }
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        /* Adjust the scroll indicator */
+        &::after {
+            bottom: -20px;
+            width: 40px;
+            height: 3px;
         }
     }
 

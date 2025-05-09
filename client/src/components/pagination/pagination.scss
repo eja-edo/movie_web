@@ -1,3 +1,4 @@
+
 // components/Pagination/pagination.scss
 .pagination {
     width: 100%;
@@ -5,9 +6,21 @@
     justify-content: flex-end;
     margin-top: 40px;
     padding: 10px;
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
+    position: relative; /* Thay đổi từ absolute thành relative */
+    margin-bottom: 20px; /* Thêm margin-bottom */
+
+    @media screen and (max-width: 768px) {
+        margin-top: 30px;
+        padding: 8px;
+        justify-content: center; /* Căn giữa trên tablet */
+    }
+
+    @media screen and (max-width: 480px) {
+        margin-top: 20px;
+        padding: 5px;
+        justify-content: center; /* Căn giữa trên mobile */
+        flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
+    }
 
     button {
         background-color: #333;
@@ -17,6 +30,17 @@
         margin: 0 2px;
         cursor: pointer;
         transition: background-color 0.3s;
+
+        @media screen and (max-width: 768px) {
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+
+        @media screen and (max-width: 480px) {
+            padding: 8px 12px;
+            margin: 0 1px;
+            font-size: 13px;
+        }
 
         &.active {
             background-color: #d6270f;
@@ -36,5 +60,11 @@
     span {
         color: #fff;
         padding: 5px 10px;
+
+        @media screen and (max-width: 480px) {
+            padding: 5px 8px;
+            font-size: 13px;
+        }
     }
 }
+

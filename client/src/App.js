@@ -1,3 +1,4 @@
+
 import React from "react";
 import "./App.css";
 
@@ -19,6 +20,9 @@ import NewsScrip from "./pages/news/newsScrip.js";
 import MyListPage from "./pages/myList/myList.js";
 
 function App() {
+  // Không cần state showFooter nữa vì Footer sẽ luôn hiển thị
+  // và là một phần của luồng trang
+
   return (
     <BrowserRouter>
       <Nav />{" "}
@@ -49,3 +53,4 @@ function App() {
 }
 
 export default App;
+
