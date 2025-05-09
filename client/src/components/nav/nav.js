@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import "./nav.scss";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -73,13 +72,10 @@ function Nav() {
       .catch((error) => console.error(error));
   };
 
-  const handleSearch = (a) => {
-    const input = a.nextElementSibling;
-    input.style.width = "300px";
-    input.style.padding = "3px";
-    a.style.color = "#000000";
-    input.focus();
-    document.getElementById("suggestSearch").style.display = "flex";
+  const handleSearch = () => {
+    // This function is now handled by the SearchBar component
+    // The SearchBar component manages its own state and functionality
+    console.log("Search initiated");
   };
   const [clickUser, setClickUser] = useState(false);
 
@@ -251,7 +247,12 @@ function Nav() {
         <img
           src={`${process.env.REACT_APP_API_URL}/static_sv/assets//img/img_duong/logoweb.png`}
           alt="Logo"
-          style={{ width: "9%", height: "auto", cursor: "pointer" }}
+          style={{
+            width: "8%",
+            height: "auto",
+            cursor: "pointer",
+            padding: "0",
+          }}
           onClick={() => {
             navigate("/TrangChu");
           }}
@@ -416,4 +417,3 @@ function Nav() {
 }
 
 export default Nav;
-

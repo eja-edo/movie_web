@@ -149,11 +149,12 @@
                 position: relative;
 
                 img {
-                    width: 32px;
-                    height: 32px;
+                    width: 30px; /* Slightly smaller */
+                    height: 30px; /* Slightly smaller */
                     border: #fff solid 1px;
                     border-radius: 100%;
                     margin: 0px;
+                    padding: 0; /* Remove padding */
                 }
 
                 ul {
@@ -360,7 +361,7 @@
             box-sizing: border-box;
 
             img {
-                height: 35px !important;
+                height: 100px !important;
             }
 
             #ul_right {
@@ -381,8 +382,9 @@
 
                 #login {
                     img {
-                        width: 28px;
-                        height: 28px;
+                        width: 26px; /* Slightly smaller */
+                        height: 26px; /* Slightly smaller */
+                        padding: 0; /* Remove padding */
                     }
 
                     ul {
