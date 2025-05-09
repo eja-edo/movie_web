@@ -4,19 +4,11 @@ import { Link, useNavigate } from "react-router-dom"; // Sử dụng Link thay v
 import { FaHeart, FaRegHeart, FaTimes } from "react-icons/fa";
 import { addToWishlist, removeFromWishlist } from "../../services/movieAPI";
 
-<<<<<<< HEAD
-const FilmListColumn = ({ films, isMyList = false, onRemove }) => {
+const FilmListColumn = ({ films, isMyList = false }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [liked, setLiked] = useState(Array(films.length).fill(false));
   const [movieList, setMovieList] = useState(films);
   const navigate = useNavigate();
-=======
-const FilmListColumn = ({films, isMyList = false}) => {
-    const [hoveredIndex, setHoveredIndex] = useState(null);
-    const [liked, setLiked] = useState(Array(films.length).fill(false));
-    const [movieList, setMovieList] = useState(films);
-    const navigate = useNavigate();
->>>>>>> 0823e9da42a1e6efebeb461357496f78d4698c93
 
   useEffect(() => {
     setMovieList(films);
@@ -90,33 +82,34 @@ const FilmListColumn = ({films, isMyList = false}) => {
                   />
                 )}
 
-
-                                {!isMyList ? (
-                                    <div
-                                        className={`film-like-icon ${liked[index] ? "liked" : ""}`}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            const newLikedStatus = !liked[index];
-                                            handleWishlistClick(filmId, e, newLikedStatus);
-                                            toggleLike(index);
-                                        }}
-                                    >
-                                        {liked[index] ? <FaHeart /> : <FaRegHeart />}
-                                    </div>
-                                ) : (
-                                    <div
-                                        className="film-close-icon"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            // e.stopPropagation();
-                                            removeFromWishlist(filmId, navigate);
-                                            setMovieList((prev) => prev.filter((film) => film.movie_id !== filmId));
-                                        }}
-                                    >
-                                        <FaTimes />
-                                    </div>
-                                )}
-                            </div>
+                {!isMyList ? (
+                  <div
+                    className={`film-like-icon ${liked[index] ? "liked" : ""}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const newLikedStatus = !liked[index];
+                      handleWishlistClick(filmId, e, newLikedStatus);
+                      toggleLike(index);
+                    }}
+                  >
+                    {liked[index] ? <FaHeart /> : <FaRegHeart />}
+                  </div>
+                ) : (
+                  <div
+                    className="film-close-icon"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      // e.stopPropagation();
+                      removeFromWishlist(filmId, navigate);
+                      setMovieList((prev) =>
+                        prev.filter((film) => film.movie_id !== filmId)
+                      );
+                    }}
+                  >
+                    <FaTimes />
+                  </div>
+                )}
+              </div>
 
               <div className="film-info">
                 <p className="film-id" style={{ display: "none" }}>
