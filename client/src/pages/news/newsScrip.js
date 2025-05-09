@@ -27,20 +27,31 @@ function NewsScrip() {
 
   // Hàm xử lý URL ảnh
   const getImageUrl = (imageUrl) => {
-    if (!imageUrl) return "/placeholder-image.jpg";
+    // Sử dụng biến môi trường thay vì URL cố định
+    const apiUrl = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+
+    if (!imageUrl || imageUrl.trim() === "") {
+      console.log("🚫 Empty image URL, using placeholder");
+      return "/placeholder-image.jpg";
+    }
 
     // Nếu URL đã bắt đầu bằng http hoặc https, trả về nguyên
     if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      console.log("✅ Using absolute URL:", imageUrl);
       return imageUrl;
     }
 
     // Nếu URL bắt đầu bằng /, thêm domain
     if (imageUrl.startsWith("/")) {
-      return `http://127.0.0.1:8000${imageUrl}`;
+      const fullUrl = `${apiUrl}${imageUrl}`;
+      console.log(`🔄 Converting relative URL: ${imageUrl} -> ${fullUrl}`);
+      return fullUrl;
     }
 
     // Trường hợp còn lại, thêm domain và /
-    return `http://127.0.0.1:8000/${imageUrl}`;
+    const fullUrl = `${apiUrl}/${imageUrl}`;
+    console.log(`🔄 Converting relative URL: ${imageUrl} -> ${fullUrl}`);
+    return fullUrl;
   };
 
   return (
@@ -59,11 +70,15 @@ function NewsScrip() {
                 src={getImageUrl(news.image_url)}
                 alt={news.title}
                 onError={(e) => {
-                  console.error("Error loading image:", news.image_url);
-                  e.target.src = "/placeholder-image.jpg";
+                  console.error("❌ Error loading image:", news.image_url);
+                  // Thử tải lại với đường dẫn tuyệt đối
+                  if (!e.target.src.includes("/placeholder-image.jpg")) {
+                    console.log("🔄 Trying placeholder image");
+                    e.target.src = "/placeholder-image.jpg";
+                  }
                 }}
+                loading="lazy"
               />
-
             </div>
             <div>
               <header>

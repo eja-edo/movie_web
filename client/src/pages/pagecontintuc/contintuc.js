@@ -27,10 +27,40 @@ const TTcon = () => {
         // Xử lý đường dẫn ảnh trong nội dung HTML
         let processedHtml = data;
 
-        // Xử lý các đường dẫn ảnh tương đối
+        // Xử lý các đường dẫn ảnh trong thẻ img
         processedHtml = processedHtml.replace(
-          /src="(?!http|https)([^"]+)"/g,
+          /<img[^>]+src="((?!http|https|\/\/|data:)[^"]+)"([^>]*)>/gi,
+          (match, path, rest) => {
+            // Xử lý đặc biệt cho smovie.com
+            if (path.includes("smovie.com")) {
+              const pathParts = path.split("smovie.com");
+              const relativePath = pathParts[pathParts.length - 1];
+              const newPath = `${apiUrl}${relativePath}`;
+              console.log(`🖼️ Fixing smovie.com path: ${path} -> ${newPath}`);
+              return `<img src="${newPath}"${rest} onerror="this.onerror=null; this.src='/placeholder-image.jpg';">`;
+            }
+
+            const newPath = path.startsWith("/")
+              ? `${apiUrl}${path}`
+              : `${apiUrl}/${path}`;
+            console.log(`🖼️ Updating image src: ${path} -> ${newPath}`);
+            return `<img src="${newPath}"${rest} onerror="this.onerror=null; this.src='/placeholder-image.jpg';">`;
+          }
+        );
+
+        // Xử lý các đường dẫn ảnh tương đối trong thuộc tính src
+        processedHtml = processedHtml.replace(
+          /src="(?!http|https|\/\/|data:)([^"]+)"/gi,
           (match, path) => {
+            // Xử lý đặc biệt cho smovie.com
+            if (path.includes("smovie.com")) {
+              const pathParts = path.split("smovie.com");
+              const relativePath = pathParts[pathParts.length - 1];
+              const newPath = `${apiUrl}${relativePath}`;
+              console.log(`🖼️ Fixing smovie.com path: ${path} -> ${newPath}`);
+              return `src="${newPath}"`;
+            }
+
             const newPath = path.startsWith("/")
               ? `${apiUrl}${path}`
               : `${apiUrl}/${path}`;
@@ -41,8 +71,19 @@ const TTcon = () => {
 
         // Xử lý các đường dẫn ảnh trong style
         processedHtml = processedHtml.replace(
-          /url\(['"]?(?!http|https)([^'"()]+)['"]?\)/g,
+          /url\(['"]?(?!http|https|\/\/|data:)([^'"()]+)['"]?\)/gi,
           (match, path) => {
+            // Xử lý đặc biệt cho smovie.com
+            if (path.includes("smovie.com")) {
+              const pathParts = path.split("smovie.com");
+              const relativePath = pathParts[pathParts.length - 1];
+              const newPath = `${apiUrl}${relativePath}`;
+              console.log(
+                `🖼️ Fixing smovie.com path in CSS: ${path} -> ${newPath}`
+              );
+              return `url("${newPath}")`;
+            }
+
             const newPath = path.startsWith("/")
               ? `${apiUrl}${path}`
               : `${apiUrl}/${path}`;
