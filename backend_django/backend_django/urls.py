@@ -29,8 +29,8 @@ handler404 = page_not_found
 handler500 = server_error
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('reports/', include('apps.reports.urls')),
+    path('api/admin/', admin.site.urls),
+    path('api/reports/', include('apps.reports.urls')),
     path('api/service/', include('apps.service.urls')),
     path('api/user/',include('apps.users.urls')),
     path('api/accounts/', include('allauth.urls')),

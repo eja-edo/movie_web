@@ -1,4 +1,3 @@
-
 #bannerQC {
     #qc {
         overflow: hidden;
@@ -7,7 +6,8 @@
         width: 100%;
 
         @media screen and (max-width: 768px) {
-            height: auto; /* Cho phép chiều cao tự điều chỉnh */
+            height: auto;
+            /* Cho phép chiều cao tự điều chỉnh */
         }
 
         #qc_video {
@@ -18,7 +18,8 @@
             width: 100%;
 
             @media screen and (max-width: 768px) {
-                height: auto; /* Cho phép chiều cao tự điều chỉnh */
+                height: auto;
+                /* Cho phép chiều cao tự điều chỉnh */
             }
         }
     }
@@ -29,7 +30,8 @@
         flex-shrink: 0;
 
         @media screen and (max-width: 768px) {
-            width: 100%; /* Sử dụng 100% thay vì 100vw trên mobile */
+            width: 100%;
+            /* Sử dụng 100% thay vì 100vw trên mobile */
         }
 
         video {
@@ -40,11 +42,14 @@
             object-fit: cover;
 
             @media screen and (max-width: 768px) {
-                width: 300%; /* Sử dụng 100% thay vì 100vw trên mobile */
-                height: auto; /* Cho phép chiều cao tự điều chỉnh */
-                max-height: 70vh; /* Giới hạn chiều cao tối đa */
+                width: 100%;
+                /* Sử dụng 100% thay vì 100vw trên mobile */
+                height: auto;
+                /* Cho phép chiều cao tự điều chỉnh */
+                max-height: 70vh;
+                /* Giới hạn chiều cao tối đa */
                 /* Căn giữa */
-               
+
 
                 // /* Nếu cần để full màn hình mobile, bỏ margin/padding */
                 // margin: 0;
@@ -57,15 +62,18 @@
         position: absolute;
         bottom: 0;
         background-image: linear-gradient(0deg, #111 0, rgba(17, 17, 17, 0) 82%);
-        height: 60%; /* Sử dụng % thay vì giá trị cố định */
+        height: 60%;
+        /* Sử dụng % thay vì giá trị cố định */
         width: 100%;
 
         @media screen and (max-width: 768px) {
-            height: 70%; /* Tăng độ cao gradient trên mobile */
+            height: 70%;
+            /* Tăng độ cao gradient trên mobile */
         }
 
         @media screen and (max-width: 480px) {
-            height: 80%; /* Tăng thêm độ cao gradient trên mobile nhỏ */
+            height: 80%;
+            /* Tăng thêm độ cao gradient trên mobile nhỏ */
         }
     }
 
@@ -132,9 +140,12 @@
         @media screen and (max-width: 480px) {
             gap: 10px;
             margin-top: 10px;
-            flex-direction: row; /* Giữ các nút trên cùng một hàng */
-            flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
-            justify-content: center; /* Căn giữa các nút */
+            flex-direction: row;
+            /* Giữ các nút trên cùng một hàng */
+            flex-wrap: wrap;
+            /* Cho phép xuống dòng nếu cần */
+            justify-content: center;
+            /* Căn giữa các nút */
         }
 
         button {
@@ -161,8 +172,10 @@
 
             @media screen and (max-width: 480px) {
                 padding: 8px 15px;
-                width: auto; /* Cho phép nút có kích thước tự nhiên */
-                min-width: 120px; /* Đặt chiều rộng tối thiểu */
+                width: auto;
+                /* Cho phép nút có kích thước tự nhiên */
+                min-width: 120px;
+                /* Đặt chiều rộng tối thiểu */
                 justify-content: center;
                 font-size: 0.9rem;
             }
@@ -201,8 +214,10 @@
 
             @media screen and (max-width: 480px) {
                 padding: 8px 15px;
-                width: auto; /* Cho phép nút có kích thước tự nhiên */
-                min-width: 120px; /* Đặt chiều rộng tối thiểu */
+                width: auto;
+                /* Cho phép nút có kích thước tự nhiên */
+                min-width: 120px;
+                /* Đặt chiều rộng tối thiểu */
                 justify-content: center;
                 font-size: 0.9rem;
             }
@@ -341,7 +356,8 @@
         margin-bottom: clamp(5px, 2vw, 10px);
 
         @media screen and (max-width: 480px) {
-            font-size: 1.4rem; /* Giảm kích thước font trên mobile */
+            font-size: 0.3rem;
+            /* Giảm kích thước font trên mobile */
             margin-bottom: 5px;
             padding: 0 5px;
         }
@@ -355,20 +371,23 @@
         margin: 0 auto 20px;
 
         @media screen and (max-width: 768px) {
+            display: none;
             width: 95%;
             margin-bottom: 15px;
         }
 
-        @media screen and (max-width: 480px) {
-            width: 95%;
-            margin-bottom: 10px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2; /* Giảm số dòng hiển thị */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            font-size: 0.9rem; /* Giảm kích thước font */
-            line-height: 1.4; /* Tăng line-height để dễ đọc */
-        }
+        // @media screen and (max-width: 480px) {
+        //     width: 95%;
+        //     margin-bottom: 10px;
+        //     display: -webkit-box;
+        //     -webkit-line-clamp: 2;
+        //     /* Giảm số dòng hiển thị */
+        //     -webkit-box-orient: vertical;
+        //     overflow: hidden;
+        //     font-size: 0.9rem;
+        //     /* Giảm kích thước font */
+        //     line-height: 1.4;
+        //     /* Tăng line-height để dễ đọc */
+        // }
     }
 }
-
