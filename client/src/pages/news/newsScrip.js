@@ -54,44 +54,58 @@ function NewsScrip() {
     return fullUrl;
   };
 
+  // Điều chỉnh độ dài nội dung dựa trên kích thước màn hình
+  const getContentPreview = (content) => {
+    // Kiểm tra kích thước màn hình
+    const isMobile = window.innerWidth <= 480;
+    const isSmallMobile = window.innerWidth <= 360;
+
+    // Điều chỉnh độ dài nội dung
+    const maxLength = isSmallMobile ? 120 : isMobile ? 150 : 200;
+
+    return content.length > maxLength
+      ? content.slice(0, maxLength) + "..."
+      : content;
+  };
+
   return (
     <div id="newsScrip">
       <h1 id="namett">Tin tức phim</h1>
 
       <div id="ListNews">
-        {newsList.map((news) => (
-          <article
-            className="itemNews"
-            key={news.id}
-            onClick={() => handleClick(news.id)}
-          >
-            <div className="img">
-              <img
-                src={getImageUrl(news.image_url)}
-                alt={news.title}
-                onError={(e) => {
-                  console.error("❌ Error loading image:", news.image_url);
-                  // Thử tải lại với đường dẫn tuyệt đối
-                  if (!e.target.src.includes("/placeholder-image.jpg")) {
-                    console.log("🔄 Trying placeholder image");
-                    e.target.src = "/placeholder-image.jpg";
-                  }
-                }}
-                loading="lazy"
-              />
-            </div>
-            <div>
-              <header>
-                <h1>{news.title}</h1>
-              </header>
-              <p>
-                {news.content.length > 200
-                  ? news.content.slice(0, 200) + "..."
-                  : news.content}
-              </p>
-            </div>
-          </article>
-        ))}
+        {newsList.length === 0 ? (
+          <div className="loading-message">Đang tải tin tức...</div>
+        ) : (
+          newsList.map((news) => (
+            <article
+              className="itemNews"
+              key={news.id}
+              onClick={() => handleClick(news.id)}
+            >
+              <div className="img">
+                <img
+                  src={getImageUrl(news.image_url)}
+                  alt={news.title}
+                  onError={(e) => {
+                    console.error("❌ Error loading image:", news.image_url);
+                    // Thử tải lại với đường dẫn tuyệt đối
+                    if (!e.target.src.includes("/placeholder-image.jpg")) {
+                      console.log("🔄 Trying placeholder image");
+                      e.target.src = "/placeholder-image.jpg";
+                    }
+                  }}
+                  loading="lazy"
+                />
+              </div>
+              <div>
+                <header>
+                  <h1>{news.title}</h1>
+                </header>
+                <p>{getContentPreview(news.content)}</p>
+              </div>
+            </article>
+          ))
+        )}
       </div>
     </div>
   );

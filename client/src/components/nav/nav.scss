@@ -19,6 +19,7 @@
         width: 96lvw;
         position: relative;
 
+
         ul {
             display: flex;
             list-style: none;
@@ -40,16 +41,17 @@
             padding: 0px;
             margin: 0px;
             transition: color 0.3s ease;
-            
+            cursor: pointer;
+
             &:hover {
                 color: #15ff08;
             }
-            
+
             &.active {
                 color: #15ff08;
                 font-weight: 500;
                 position: relative;
-                
+
                 &:after {
                     content: '';
                     position: absolute;
@@ -82,7 +84,6 @@
         /* Định dạng dropdown chung */
         .dropdown {
             position: relative;
-            /* Làm gốc để dropdown hiển thị theo vị trí */
         }
 
         /* Dropdown menu */
@@ -90,7 +91,6 @@
             position: absolute;
             top: 100%;
             left: 0;
-            /* Canh thẳng với phần tử cha */
             padding: 5px 0;
             list-style: none;
             min-width: 150px;
@@ -102,6 +102,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.2s ease, visibility 0.3s ease;
+            z-index: 1001;
         }
 
         .dropdown-menu li {
@@ -134,16 +135,13 @@
 
             &:last-child {
                 margin-right: 0;
-                /* Bỏ margin-right cho phần tử cuối cùng */
             }
 
             .search-list-item {
                 position: relative;
                 padding: 0;
                 width: 360px;
-                /* Đặt chiều rộng cố định cho ô tìm kiếm */
                 height: 2.8rem;
-                /* Đặt chiều cao cố định cho ô tìm kiếm */
             }
 
             #login {
@@ -168,6 +166,7 @@
                     height: auto;
                     padding: 10px;
                     top: 35px;
+                    z-index: 1002;
 
                     li {
                         padding: 10px;
@@ -187,36 +186,219 @@
 
         #min_menu {
             display: none;
+            z-index: 1001;
+
+            a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+
+                i {
+                    font-size: 1.2rem;
+                }
+            }
 
             ul {
-                height: 150px;
-                top: 50px;
-                position: absolute;
-                display: block;
-                left: -150px;
-                background-color: gray;
+                height: auto;
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+                top: 62px;
+                position: fixed;
+                display: flex;
+                flex-direction: column;
+                left: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.9);
                 transform: translateX(var(--next));
-                transition: all 1s ease;
-                border-radius: 10px;
+                transition: all 0.3s ease;
+                border-radius: 0;
+                width: 100%;
+                padding: 10px 0;
+                margin: 0;
 
                 li {
-                    margin: 5px;
+                    width: 100%;
+                    margin: 0;
+                    padding: 0;
+                    position: relative; /* Để định vị dropdown menu */
+                    flex-direction: column; /* Cho phép dropdown hiển thị bên dưới */
 
-                    &#min_menu li {
-                        margin: 0px;
-                        justify-content: left;
+                    a {
+                        width: 100%;
+                        padding: 15px 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-start;
+                        font-size: 1rem;
+
+                        i {
+                            margin-right: 10px;
+                        }
+
+                        &:hover {
+                            background-color: rgba(255, 255, 255, 0.1);
+                        }
+
+                        &.active {
+                            background-color: rgba(21, 255, 8, 0.1);
+
+                            &:after {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    /* Định dạng dropdown menu trong mobile */
+                    .dropdown-menu {
+                        position: relative;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        opacity: 1;
+                        visibility: visible;
+                        background-color: #333;
+                        box-shadow: none;
+                        border-top: 1px solid rgba(255, 255, 255, 0.1);
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                        padding: 0;
+                        margin: 0;
+                        max-height: 300px;
+                        overflow-y: auto;
+
+                        &.multi-column-dropdown {
+                            display: flex !important;
+                            flex-direction: column;
+                            grid-template-columns: 1fr !important;
+                            grid-auto-flow: row !important;
+                            grid-template-rows: auto !important;
+                        }
+
+                        li {
+                            padding: 0;
+                            border-bottom: none;
+
+                            a {
+                                padding: 12px 20px 12px 40px; /* Thêm padding-left để thụt vào */
+                                font-size: 0.95rem;
+
+                                &:hover {
+                                    background-color: rgba(255, 255, 255, 0.05);
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
 
+        /* Media queries for responsive design */
+        @media screen and (max-width: 1024px) {
+            width: 98lvw;
+
+            #ul_left {
+                li {
+                    padding: 8px;
+                }
+            }
+
+            #ul_right {
+                .search-list-item {
+                    width: 280px;
+                }
+            }
+        }
+
         @media screen and (max-width: 900px) {
-            // #ul_left {
-            //     display: none;
-            // }
+            #ul_left {
+                display: none;
+            }
 
             #min_menu {
                 display: inline;
+                order: 1;
+            }
+
+            img {
+                order: 2;
+                width: 9% !important;
+                height: auto !important;
+                margin: 0 auto;
+
+                @media screen and (max-width: 900px) {
+                    width: auto !important;
+                    height: 40px !important;
+                }
+            }
+
+            #ul_right {
+                order: 3;
+                position: relative;
+                right: 0;
+
+                .search-list-item {
+                    width: 360px;
+
+                    @media screen and (max-width: 900px) {
+                        width: 40px;
+                        overflow: hidden;
+                        transition: width 0.3s ease;
+
+                        &.expanded {
+                            width: 200px;
+                        }
+                    }
+                }
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            width: 100lvw;
+            padding: 0 10px;
+            box-sizing: border-box;
+
+            img {
+                height: 35px !important;
+            }
+
+            #ul_right {
+                li {
+                    margin-right: 5px;
+
+                    &:not(.search-list-item) {
+                        a {
+                            width: 35px;
+                            height: 35px;
+
+                            i {
+                                font-size: 1rem;
+                            }
+                        }
+                    }
+                }
+
+                #login {
+                    img {
+                        width: 28px;
+                        height: 28px;
+                    }
+
+                    ul {
+                        width: 150px;
+                        right: -50px;
+
+                        &:before {
+                            content: '';
+                            position: absolute;
+                            top: -10px;
+                            right: 55px;
+                            border-left: 10px solid transparent;
+                            border-right: 10px solid transparent;
+                            border-bottom: 10px solid #000000;
+                        }
+                    }
+                }
             }
         }
     }

@@ -6,8 +6,25 @@
     font-size: 16px;
     color: white;
 
+    @media screen and (max-width: 768px) {
+        font-size: 14px;
+        gap: 8px;
+    }
+
+    @media screen and (max-width: 480px) {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 5px;
+        font-size: 13px;
+        gap: 6px;
+    }
+
     &__label {
         font-weight: bold;
+
+        @media screen and (max-width: 480px) {
+            font-weight: normal;
+        }
     }
 
     &__select {
@@ -19,6 +36,18 @@
         font-size: 16px;
         cursor: pointer;
         transition: all 0.3s ease;
+
+        @media screen and (max-width: 768px) {
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+
+        @media screen and (max-width: 480px) {
+            padding: 5px 8px;
+            font-size: 13px;
+            flex-grow: 1; /* Cho phép select mở rộng để lấp đầy không gian */
+            max-width: 70%; /* Giới hạn chiều rộng tối đa */
+        }
 
         &:hover {
             background-color: #333;

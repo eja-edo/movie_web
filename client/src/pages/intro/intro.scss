@@ -13,6 +13,10 @@ body {
   margin: 0 auto;
   padding: 40px 20px;
   margin-top: 80px;
+  box-sizing: border-box; /* Ensure padding is included in width */
+
+  /* Add space at the bottom for better scrolling experience */
+  margin-bottom: 40px;
 }
 
 .intro-content {
@@ -37,7 +41,7 @@ body {
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease;
-  
+
   &:hover {
     transform: scale(1.02);
   }
@@ -59,7 +63,7 @@ body {
   padding: 30px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
@@ -74,7 +78,7 @@ body {
   color: #3498db;
   position: relative;
   padding-bottom: 10px;
-  
+
   &:after {
     content: '';
     position: absolute;
@@ -101,22 +105,29 @@ body {
   gap: 15px;
   margin: 30px 0;
   height: 400px;
-  
+
   .gallery-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    
+
     &:hover {
       transform: scale(1.03);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     }
-    
+
     &.main-img {
       grid-column: 1 / 2;
       grid-row: 1 / 3;
+    }
+  }
+
+  /* Center images on all screen sizes */
+  @media (max-width: 768px) {
+    .gallery-img {
+      object-position: center; /* Ensure images are centered */
     }
   }
 }
@@ -130,6 +141,16 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 25px;
   margin-top: 30px;
+  padding: 0 5px; /* Add slight padding */
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    padding: 0; /* Remove padding on mobile */
+  }
 }
 
 .feature-card {
@@ -138,10 +159,21 @@ body {
   padding: 25px;
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-10px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Add a subtle border on mobile for better definition */
+  @media (max-width: 480px) {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+
+    /* Reduce hover effect on mobile for better UX */
+    &:hover {
+      transform: translateY(-5px);
+    }
   }
 }
 
@@ -172,6 +204,14 @@ body {
   background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(46, 204, 113, 0.2));
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  /* Add a subtle border for better definition */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  /* Center the button on all screen sizes */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .cta-title {
@@ -191,12 +231,12 @@ body {
   border-radius: 50px;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
@@ -205,42 +245,144 @@ body {
 /* Responsive styles */
 @media (max-width: 768px) {
   .intro-container {
-    width: 95%;
-    padding: 20px 10px;
+    width: 92%;
+    padding: 20px 15px; /* Increased padding on sides */
+    margin-top: 90px; /* More space below nav */
   }
-  
+
+  .intro-content {
+    gap: 30px; /* Reduced gap between sections */
+  }
+
   .intro-title {
     font-size: 2rem;
+    padding: 0 10px; /* Add padding to title */
   }
-  
+
+  .intro-section {
+    padding: 25px 20px; /* Adjusted padding */
+  }
+
   .intro-gallery {
     height: 300px;
+    gap: 10px; /* Reduced gap */
   }
-  
+
   .features-grid {
     grid-template-columns: 1fr;
+    gap: 20px; /* Reduced gap */
   }
-  
+
+  .feature-card {
+    padding: 20px; /* Reduced padding */
+  }
+
+  .cta-section {
+    padding: 30px 20px; /* Reduced padding */
+    margin: 40px 0 30px; /* Adjusted margins */
+  }
+
   .cta-title {
     font-size: 1.7rem;
   }
 }
 
 @media (max-width: 480px) {
+  .intro-container {
+    width: 94%;
+    padding: 15px 12px; /* Adjusted padding */
+    margin-top: 75px; /* More space below nav */
+  }
+
+  .intro-content {
+    gap: 25px; /* Further reduced gap */
+  }
+
   .intro-title {
     font-size: 1.7rem;
+    margin-bottom: 5px;
   }
-  
+
+  .intro-section {
+    padding: 20px 15px; /* Reduced padding */
+    border-radius: 12px; /* Smaller border radius */
+  }
+
   .section-title {
     font-size: 1.5rem;
+    margin-bottom: 15px;
+
+    &:after {
+      width: 50px; /* Smaller underline */
+    }
   }
-  
+
+  .intro-text {
+    font-size: 1rem; /* Smaller text */
+    line-height: 1.6;
+  }
+
   .intro-gallery {
     height: 250px;
+    gap: 8px; /* Smaller gap */
+    margin: 20px 0; /* Reduced margin */
+
+    /* Improve gallery layout for mobile */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+
+    .gallery-img {
+      border-radius: 8px; /* Smaller border radius */
+
+      &.main-img {
+        grid-column: 1 / 3; /* Make main image span full width */
+        grid-row: 1 / 2;
+        height: 150px; /* Fixed height */
+      }
+    }
   }
-  
+
+  .features-grid {
+    gap: 15px; /* Smaller gap */
+    margin-top: 20px; /* Reduced margin */
+  }
+
+  .feature-card {
+    padding: 18px 15px; /* Reduced padding */
+    border-radius: 10px; /* Smaller border radius */
+  }
+
+  .feature-icon {
+    font-size: 2rem; /* Smaller icon */
+    margin-bottom: 10px; /* Reduced margin */
+  }
+
+  .feature-title {
+    font-size: 1.2rem; /* Smaller title */
+    margin-bottom: 10px; /* Reduced margin */
+  }
+
+  .feature-text {
+    font-size: 0.9rem; /* Smaller text */
+    line-height: 1.5;
+  }
+
+  .cta-section {
+    padding: 25px 15px; /* Reduced padding */
+    margin: 30px 0 20px; /* Adjusted margins */
+    border-radius: 12px; /* Smaller border radius */
+  }
+
+  .cta-title {
+    font-size: 1.5rem; /* Smaller title */
+    margin-bottom: 20px; /* Reduced margin */
+  }
+
   .cta-button {
     padding: 12px 25px;
     font-size: 1.1rem;
+    width: 80%; /* Make button wider */
+    max-width: 250px; /* But not too wide */
   }
 }

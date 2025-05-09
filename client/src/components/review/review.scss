@@ -1,14 +1,60 @@
 .review-section {
-  margin-top: 2rem;
-  padding: 1rem;
+  margin-top: 2.5rem;
+  padding: 1.2rem;
   background: #1a1a1a;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  @media screen and (max-width: 768px) {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  @media screen and (max-width: 480px) {
+    margin-top: 1.5rem;
+    padding: 0.9rem;
+    border-radius: 8px;
+  }
 
   h2 {
     color: #fff;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
     font-size: 1.5rem;
     text-align: left;
+    position: relative;
+    display: inline-block;
+
+    @media screen and (max-width: 768px) {
+      font-size: 1.4rem;
+      margin-bottom: 1.2rem;
+      text-align: center;
+      width: 100%;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, rgba(0,123,255,0), rgba(0,123,255,1), rgba(0,123,255,0));
+        border-radius: 3px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+
+      &::after {
+        width: 60px;
+        height: 2px;
+      }
+    }
   }
 
   .loading,
@@ -17,37 +63,74 @@
     color: #fff;
     text-align: center;
     padding: 1rem;
+
+    @media screen and (max-width: 480px) {
+      padding: 0.7rem;
+      font-size: 0.9rem;
+    }
   }
 
   .error {
     color: #ff4444;
   }
+
   textarea#comment {
     width: 98%;
-}
+
+    @media screen and (max-width: 480px) {
+      width: 96%;
+    }
+  }
   .review-form {
     background: #2a2a2a;
-    padding: 1rem;
-    border-radius: 8px;
+    padding: 1.2rem;
+    border-radius: 10px;
     margin-bottom: 2rem;
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 
-    
+    @media screen and (max-width: 768px) {
+      padding: 1rem;
+      margin-bottom: 1.8rem;
+      background: linear-gradient(145deg, #2a2a2a, #252525);
+    }
+
+    @media screen and (max-width: 480px) {
+      padding: 0.9rem;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #2a2a2a, #222222);
+    }
+
     .rating-input {
       margin-bottom: 1rem;
-    
+
+      @media screen and (max-width: 480px) {
+        margin-bottom: 0.8rem;
+      }
 
       label {
         color: #fff;
         display: block;
         margin-bottom: 0.5rem;
+
+        @media screen and (max-width: 480px) {
+          font-size: 0.9rem;
+          margin-bottom: 0.4rem;
+        }
       }
 
       .stars {
         display: flex;
         gap: 0.5rem;
+
+        @media screen and (max-width: 480px) {
+          justify-content: center;
+          gap: 0.4rem;
+        }
 
         button {
           background: none;
@@ -65,6 +148,14 @@
             color: #666;
             transition: color 0.2s ease;
 
+            @media screen and (max-width: 768px) {
+              font-size: 1.4rem;
+            }
+
+            @media screen and (max-width: 480px) {
+              font-size: 1.3rem;
+            }
+
             &:hover {
               color: #ffd700;
             }
@@ -80,10 +171,19 @@
     .comment-input {
       margin-bottom: 1rem;
 
+      @media screen and (max-width: 480px) {
+        margin-bottom: 0.8rem;
+      }
+
       label {
         color: #fff;
         display: block;
         margin-bottom: 0.5rem;
+
+        @media screen and (max-width: 480px) {
+          font-size: 0.9rem;
+          margin-bottom: 0.4rem;
+        }
       }
 
       textarea {
@@ -95,6 +195,16 @@
         border-radius: 4px;
         color: #fff;
         resize: vertical;
+
+        @media screen and (max-width: 768px) {
+          min-height: 80px;
+        }
+
+        @media screen and (max-width: 480px) {
+          min-height: 60px;
+          padding: 0.4rem;
+          font-size: 0.9rem;
+        }
 
         &:focus {
           outline: none;
@@ -112,6 +222,19 @@
       cursor: pointer;
       transition: background 0.2s;
 
+      @media screen and (max-width: 768px) {
+        padding: 0.4rem 0.9rem;
+      }
+
+      @media screen and (max-width: 480px) {
+        padding: 0.35rem 0.8rem;
+        font-size: 0.9rem;
+        display: block;
+        margin: 0 auto;
+        width: 80%;
+        max-width: 200px;
+      }
+
       &:hover {
         background: #0056b3;
       }
@@ -126,21 +249,91 @@
   .reviews-list {
     margin-bottom: 2rem;
 
+    @media screen and (max-width: 768px) {
+      margin-bottom: 1.5rem;
+    }
+
+    @media screen and (max-width: 480px) {
+      margin-bottom: 1.2rem;
+    }
+
     .review-item {
       background: #2a2a2a;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      @media screen and (max-width: 768px) {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(145deg, #2a2a2a, #252525);
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        padding: 0.9rem;
+        margin-bottom: 0.9rem;
+        border-radius: 8px;
+
+        &:hover {
+          transform: none;
+        }
+      }
 
       .review-header {
         display: flex;
         align-items: center;
         gap: 1rem;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.8rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 0.8rem;
+
+        @media screen and (max-width: 768px) {
+          padding-bottom: 0.7rem;
+          margin-bottom: 0.7rem;
+        }
+
+        @media screen and (max-width: 480px) {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.4rem;
+          padding-bottom: 0.6rem;
+          margin-bottom: 0.6rem;
+        }
 
         .username {
           color: #fff;
           font-weight: bold;
+          position: relative;
+
+          @media screen and (max-width: 768px) {
+            font-size: 1rem;
+
+            &::after {
+              content: '•';
+              margin-left: 0.5rem;
+              color: rgba(255, 255, 255, 0.3);
+            }
+          }
+
+          @media screen and (max-width: 480px) {
+            font-size: 0.95rem;
+
+            &::after {
+              display: none;
+            }
+          }
         }
 
         .rating {
@@ -148,12 +341,33 @@
           gap: 0.25rem;
           color: #ffd700;
 
+          @media screen and (max-width: 768px) {
+            margin-left: 0.5rem;
+          }
+
+          @media screen and (max-width: 480px) {
+            gap: 0.2rem;
+            margin-left: 0;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 3px 8px;
+            border-radius: 4px;
+          }
+
           .star {
             font-size: 1.2rem;
             transition: transform 0.2s ease;
 
+            @media screen and (max-width: 768px) {
+              font-size: 1.1rem;
+            }
+
+            @media screen and (max-width: 480px) {
+              font-size: 1rem;
+            }
+
             &.filled {
               color: #ffd700;
+              text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
             }
 
             &:not(.filled) {
@@ -166,13 +380,41 @@
       .comment {
         color: #ddd;
         line-height: 1.5;
+        padding: 0.2rem 0;
+
+        @media screen and (max-width: 768px) {
+          padding: 0.3rem 0.2rem;
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 6px;
+          margin-bottom: 0.5rem;
+        }
+
+        @media screen and (max-width: 480px) {
+          font-size: 0.9rem;
+          line-height: 1.4;
+          padding: 0.4rem 0.3rem;
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 4px;
+        }
       }
 
       .date {
         color: #888;
         font-size: 0.9rem;
         display: block;
-        margin-top: 0.5rem;
+        margin-top: 0.6rem;
+        text-align: right;
+        font-style: italic;
+
+        @media screen and (max-width: 768px) {
+          font-size: 0.85rem;
+          margin-top: 0.5rem;
+        }
+
+        @media screen and (max-width: 480px) {
+          font-size: 0.8rem;
+          margin-top: 0.4rem;
+        }
       }
     }
   }
@@ -182,10 +424,10 @@
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    margin: 1rem 0;
-    padding: 0.5rem;
+    margin: 1.5rem 0;
+    padding: 0.6rem;
     background: #2a2a2a;
-    border-radius: 4px;
+    border-radius: 8px;
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
@@ -193,39 +435,84 @@
     clear: both;
     position: relative;
     z-index: 1;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    @media screen and (max-width: 768px) {
+      gap: 0.4rem;
+      padding: 0.5rem;
+      margin: 1.2rem 0;
+      background: linear-gradient(145deg, #2a2a2a, #252525);
+      border-radius: 6px;
+    }
+
+    @media screen and (max-width: 480px) {
+      gap: 0.3rem;
+      padding: 0.4rem;
+      margin: 1rem 0;
+      font-size: 0.8rem;
+      width: 90%;
+      max-width: 300px;
+    }
 
     button {
       background: #3a3a3a;
       color: #fff;
       border: none;
       padding: 0.25rem 0.5rem;
-      border-radius: 3px;
+      border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s;
       font-size: 0.85rem;
-      min-width: 30px;
-      height: 30px;
+      min-width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+      @media screen and (max-width: 768px) {
+        min-width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+        background: linear-gradient(145deg, #3a3a3a, #333333);
+      }
+
+      @media screen and (max-width: 480px) {
+        min-width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+      }
 
       &:hover:not(:disabled) {
-        background: #4a4a4a;
-        transform: translateY(-1px);
+        background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
       }
 
       &:disabled {
         background: #2a2a2a;
         color: #666;
         cursor: not-allowed;
+        box-shadow: none;
       }
     }
 
     span {
       color: #ddd;
       padding: 0 0.5rem;
+      font-weight: 500;
+
+      @media screen and (max-width: 768px) {
+        padding: 0 0.4rem;
+      }
+
+      @media screen and (max-width: 480px) {
+        padding: 0 0.3rem;
+        font-size: 0.75rem;
+      }
     }
   }
 

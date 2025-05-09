@@ -3,13 +3,22 @@
         overflow: hidden;
         display: flex;
         position: relative;
+        width: 100%;
 
+        @media screen and (max-width: 768px) {
+            height: auto; /* Cho phép chiều cao tự điều chỉnh */
+        }
 
         #qc_video {
             display: flex;
             transform: translateX(0);
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             will-change: transform;
+            width: 100%;
+
+            @media screen and (max-width: 768px) {
+                height: auto; /* Cho phép chiều cao tự điều chỉnh */
+            }
         }
     }
 
@@ -18,22 +27,45 @@
         width: 100vw;
         flex-shrink: 0;
 
+        @media screen and (max-width: 768px) {
+            width: 100%; /* Sử dụng 100% thay vì 100vw trên mobile */
+        }
+
         video {
             width: 100vw;
             height: 100%;
             border-radius: 12px;
             position: sticky;
             object-fit: cover;
+
+            @media screen and (max-width: 768px) {
+                width: 300%; /* Sử dụng 100% thay vì 100vw trên mobile */
+                height: auto; /* Cho phép chiều cao tự điều chỉnh */
+                max-height: 70vh; /* Giới hạn chiều cao tối đa */
+                /* Căn giữa */
+               
+
+                // /* Nếu cần để full màn hình mobile, bỏ margin/padding */
+                // margin: 0;
+                // padding: 0;
+            }
         }
     }
 
     .bottom_backgroud {
-    
         position: absolute;
         bottom: 0;
         background-image: linear-gradient(0deg, #111 0, rgba(17, 17, 17, 0) 82%);
-        height: 1000px;
-        width: 100vw;
+        height: 60%; /* Sử dụng % thay vì giá trị cố định */
+        width: 100%;
+
+        @media screen and (max-width: 768px) {
+            height: 70%; /* Tăng độ cao gradient trên mobile */
+        }
+
+        @media screen and (max-width: 480px) {
+            height: 80%; /* Tăng thêm độ cao gradient trên mobile nhỏ */
+        }
     }
 
     .info {
@@ -41,11 +73,22 @@
         bottom: 0;
         color: #fff;
         width: 100%;
-        margin-bottom: 12%;
+        margin-bottom: 8%;
+        padding: 0 15px;
+        box-sizing: border-box;
+
+        @media screen and (max-width: 768px) {
+            margin-bottom: 5%;
+        }
+
+        @media screen and (max-width: 480px) {
+            margin-bottom: 3%;
+            padding: 0 10px;
+        }
     }
 
     #control {
-        background-color: rgba(17, 17, 17, 0.99); // Corrected value
+        background-color: rgba(17, 17, 17, 0.99);
         color: #fff;
         position: relative;
         width: 100%;
@@ -80,13 +123,26 @@
         gap: 20px;
         margin-top: 20px;
 
+        @media screen and (max-width: 768px) {
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        @media screen and (max-width: 480px) {
+            gap: 10px;
+            margin-top: 10px;
+            flex-direction: row; /* Giữ các nút trên cùng một hàng */
+            flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
+            justify-content: center; /* Căn giữa các nút */
+        }
+
         button {
             background: #e50914;
             color: white;
             border: none;
             padding: 15px 35px;
             border-radius: 5px;
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -97,6 +153,18 @@
             display: flex;
             align-items: center;
             gap: 10px;
+
+            @media screen and (max-width: 768px) {
+                padding: 12px 25px;
+            }
+
+            @media screen and (max-width: 480px) {
+                padding: 8px 15px;
+                width: auto; /* Cho phép nút có kích thước tự nhiên */
+                min-width: 120px; /* Đặt chiều rộng tối thiểu */
+                justify-content: center;
+                font-size: 0.9rem;
+            }
 
             &:hover {
                 background: #f40612;
@@ -117,7 +185,7 @@
             color: white;
             padding: 15px 35px;
             border-radius: 5px;
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: 'Poppins', sans-serif;
@@ -125,6 +193,18 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
+
+            @media screen and (max-width: 768px) {
+                padding: 12px 25px;
+            }
+
+            @media screen and (max-width: 480px) {
+                padding: 8px 15px;
+                width: auto; /* Cho phép nút có kích thước tự nhiên */
+                min-width: 120px; /* Đặt chiều rộng tối thiểu */
+                justify-content: center;
+                font-size: 0.9rem;
+            }
 
             i {
                 font-size: 1.2rem;
@@ -154,6 +234,14 @@
     width: 100%;
     margin-top: 30px;
 
+    @media screen and (max-width: 768px) {
+        margin-top: 20px;
+    }
+
+    @media screen and (max-width: 480px) {
+        margin-top: 15px;
+    }
+
     .control-button {
         position: absolute;
         top: 50%;
@@ -169,8 +257,26 @@
         cursor: pointer;
         transition: all 0.3s ease;
 
+        @media screen and (max-width: 768px) {
+            width: 40px;
+            height: 40px;
+        }
+
+        @media screen and (max-width: 480px) {
+            width: 30px;
+            height: 30px;
+        }
+
         svg {
             filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.3));
+
+            @media screen and (max-width: 768px) {
+                transform: scale(0.8);
+            }
+
+            @media screen and (max-width: 480px) {
+                transform: scale(0.6);
+            }
         }
 
         &:hover {
@@ -180,10 +286,26 @@
 
         &.left {
             left: 30px;
+
+            @media screen and (max-width: 768px) {
+                left: 20px;
+            }
+
+            @media screen and (max-width: 480px) {
+                left: 10px;
+            }
         }
 
         &.right {
             right: 30px;
+
+            @media screen and (max-width: 768px) {
+                right: 20px;
+            }
+
+            @media screen and (max-width: 480px) {
+                right: 10px;
+            }
         }
     }
 }
@@ -203,14 +325,48 @@
     width: 100%;
     z-index: 2;
 
+    @media screen and (max-width: 768px) {
+        bottom: 8%;
+    }
+
+    @media screen and (max-width: 480px) {
+        bottom: 5%;
+    }
+
     .banner_name {
         color: white;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        font-size: clamp(1.5rem, 5vw, 2.6rem);
+        margin-bottom: clamp(5px, 2vw, 10px);
+
+        @media screen and (max-width: 480px) {
+            font-size: 1.4rem; /* Giảm kích thước font trên mobile */
+            margin-bottom: 5px;
+            padding: 0 5px;
+        }
     }
 
     .banner_info {
         color: rgba(255, 255, 255, 0.9);
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        font-size: clamp(0.9rem, 3vw, 1.3rem);
+        width: 90%;
+        margin: 0 auto 20px;
+
+        @media screen and (max-width: 768px) {
+            width: 95%;
+            margin-bottom: 15px;
+        }
+
+        @media screen and (max-width: 480px) {
+            width: 95%;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Giảm số dòng hiển thị */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 0.9rem; /* Giảm kích thước font */
+            line-height: 1.4; /* Tăng line-height để dễ đọc */
+        }
     }
 }
-  

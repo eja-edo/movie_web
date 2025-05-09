@@ -1,8 +1,29 @@
 .film-list-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); // 4 phim trên một hàng
+    grid-template-columns: repeat(4, 1fr); // 4 phim trên một hàng mặc định
     gap: 20px;
-    padding: 20px 0;
+    padding: 20px 15px; /* Thêm padding trái phải 15px */
+
+    /* Tablet: 3 phim trên một hàng */
+    @media screen and (max-width: 1024px) {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        padding: 20px 12px; /* Thêm padding trái phải 12px */
+    }
+
+    /* Mobile lớn: 2 phim trên một hàng */
+    @media screen and (max-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 15px 10px; /* Thêm padding trái phải 10px */
+    }
+
+    /* Mobile nhỏ: 1 phim trên một hàng */
+    @media screen and (max-width: 480px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 10px 8px; /* Thêm padding trái phải 8px */
+    }
 }
 
 .film-card {
@@ -23,6 +44,19 @@
         .film-thumbnail video {
             display: block;
         }
+    }
+
+    /* Mobile styles */
+    @media screen and (max-width: 768px) {
+        border-radius: 8px;
+
+        &:hover {
+            transform: scale(1.03); /* Giảm hiệu ứng scale trên mobile */
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        border-radius: 6px;
     }
 }
 
@@ -57,12 +91,33 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+
+    @media screen and (max-width: 768px) {
+        padding: 8px 0;
+    }
+
+    @media screen and (max-width: 480px) {
+        padding: 6px 0;
+    }
 }
 
 .film-title {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media screen and (max-width: 768px) {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    @media screen and (max-width: 480px) {
+        font-size: 13px;
+        margin-bottom: 3px;
+    }
 }
 
 .film-meta {
@@ -70,13 +125,28 @@
         font-size: 14px;
         color: #bbb;
         margin: 2px 0;
-    }
-}
 
-.film-meta {
+        @media screen and (max-width: 768px) {
+            font-size: 12px;
+            margin: 1px 0;
+        }
+
+        @media screen and (max-width: 480px) {
+            font-size: 11px;
+        }
+    }
+
     display: flex;
     flex-direction: column;
     gap: 5px;
+
+    @media screen and (max-width: 768px) {
+        gap: 3px;
+    }
+
+    @media screen and (max-width: 480px) {
+        gap: 2px;
+    }
 }
 
 .film-rating-views,
@@ -85,6 +155,14 @@
     justify-content: space-between;
     font-size: 14px;
     color: #ccc;
+
+    @media screen and (max-width: 768px) {
+        font-size: 12px;
+    }
+
+    @media screen and (max-width: 480px) {
+        font-size: 11px;
+    }
 }
 
 .film-rating {
@@ -103,10 +181,21 @@
         color: #e91e63;
         text-shadow: 0 0 5px rgba(233, 30, 99, 0.5);
     }
+
+    @media screen and (max-width: 768px) {
+        font-size: 20px;
+        top: 8px;
+        right: 8px;
+    }
+
+    @media screen and (max-width: 480px) {
+        font-size: 18px;
+        top: 6px;
+        right: 6px;
+    }
 }
 
 .film-close-icon {
-    position: absolute;
     position: absolute;
     top: 5px;
     right: 5px;
@@ -119,6 +208,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    @media screen and (max-width: 768px) {
+        width: 14px;
+        height: 14px;
+        padding: 4px;
+    }
+
+    @media screen and (max-width: 480px) {
+        width: 12px;
+        height: 12px;
+        padding: 3px;
+        font-size: 10px;
+    }
 }
 
 .film-close-icon:hover {

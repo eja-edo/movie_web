@@ -15,6 +15,7 @@ function Nav() {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [mobileDropdownType, setMobileDropdownType] = useState(null); // Thêm state để theo dõi dropdown nào đang mở trên mobile
 
   const handleMenuToggle = () => {
     setShowMenu(!showMenu);
@@ -95,34 +96,28 @@ function Nav() {
     <div id="header">
       <div id="main_content_header">
         <div id="min_menu">
-          <a
-            style={{ marginLeft: 10, marginRight: 10 }}
-            onClick={handleMenuToggle}
-          >
+          <a onClick={handleMenuToggle}>
             <i
               className="fa-solid fa-bars"
-              style={{ display: showMenu ? "none" : "flex", marginLeft: 15 }}
+              style={{ display: showMenu ? "none" : "flex" }}
             ></i>
             <i
               className="fa-solid fa-x"
-              style={{ display: showMenu ? "flex" : "none", marginLeft: 15 }}
+              style={{ display: showMenu ? "flex" : "none" }}
             ></i>
           </a>
           {
             <ul
               style={{
-                transform: showMenu
-                  ? "translateX(150px)"
-                  : "translateX(-150px)",
+                transform: showMenu ? "translateX(0)" : "translateX(-100%)",
               }}
             >
               <li>
                 <a
                   onClick={() => {
                     navigate("/TrangChu");
+                    setShowMenu(false);
                   }}
-                  target="main"
-                  rel="noopener noreferrer"
                   className={isActivePath("/TrangChu") ? "active" : ""}
                 >
                   <i className="fa-solid fa-house"></i> Trang chủ
@@ -131,57 +126,130 @@ function Nav() {
               <li>
                 <a
                   onClick={() => {
-                    navigate("/TrangChu");
+                    // Nếu đang hiển thị dropdown này, đóng nó lại
+                    if (mobileDropdownType === "genre") {
+                      setMobileDropdownType(null);
+                    } else {
+                      // Ngược lại, hiển thị dropdown thể loại
+                      setMobileDropdownType("genre");
+                    }
                   }}
-                  target="main"
-                  rel="noopener noreferrer"
-                  className={isActivePath("/TrangChu") ? "active" : ""}
+                  className={mobileDropdownType === "genre" ? "active" : ""}
                 >
-                  Phim lẻ
+                  <i className="fa-solid fa-film"></i> Thể loại
+                  {mobileDropdownType !== "genre" ? (
+                    <i
+                      className="fa-solid fa-chevron-down"
+                      style={{ marginLeft: "5px" }}
+                    ></i>
+                  ) : (
+                    <i
+                      className="fa-solid fa-chevron-up"
+                      style={{ marginLeft: "5px" }}
+                    ></i>
+                  )}
                 </a>
+                {mobileDropdownType === "genre" && (
+                  <DropdownMenu
+                    apiEndpoint={`${process.env.REACT_APP_API_URL}/api/core/genres/`}
+                    type="genre"
+                    onClose={() => {
+                      setMobileDropdownType(null);
+                      setShowMenu(false); // Đóng menu mobile khi chọn xong
+                    }}
+                  />
+                )}
               </li>
               <li>
                 <a
                   onClick={() => {
-                    navigate("/TrangChu");
+                    // Nếu đang hiển thị dropdown này, đóng nó lại
+                    if (mobileDropdownType === "nation") {
+                      setMobileDropdownType(null);
+                    } else {
+                      // Ngược lại, hiển thị dropdown quốc gia
+                      setMobileDropdownType("nation");
+                    }
                   }}
-                  target="main"
-                  rel="noopener noreferrer"
-                  className={isActivePath("/TrangChu") ? "active" : ""}
+                  className={mobileDropdownType === "nation" ? "active" : ""}
                 >
-                  Mới thêm
+                  <i className="fa-solid fa-earth-americas"></i> Quốc gia
+                  {mobileDropdownType !== "nation" ? (
+                    <i
+                      className="fa-solid fa-chevron-down"
+                      style={{ marginLeft: "5px" }}
+                    ></i>
+                  ) : (
+                    <i
+                      className="fa-solid fa-chevron-up"
+                      style={{ marginLeft: "5px" }}
+                    ></i>
+                  )}
+                </a>
+                {mobileDropdownType === "nation" && (
+                  <DropdownMenu
+                    apiEndpoint={`${process.env.REACT_APP_API_URL}/api/core/nations/`}
+                    type="nation"
+                    onClose={() => {
+                      setMobileDropdownType(null);
+                      setShowMenu(false); // Đóng menu mobile khi chọn xong
+                    }}
+                  />
+                )}
+              </li>
+              <li>
+                <a
+                  onClick={() => {
+                    navigate("/newsScrip");
+                    setShowMenu(false);
+                  }}
+                  className={isActivePath("/newsScrip") ? "active" : ""}
+                >
+                  <i className="fa-solid fa-newspaper"></i> Tin tức
                 </a>
               </li>
               <li>
                 <a
                   onClick={() => {
                     navigate("/intro");
+                    setShowMenu(false);
                   }}
-                  target="main"
-                  rel="noopener noreferrer"
                   className={isActivePath("/intro") ? "active" : ""}
                 >
-                  Giới thiệu
+                  <i className="fa-solid fa-circle-info"></i> Giới thiệu
                 </a>
               </li>
               <li>
                 <a
                   onClick={() => {
-                    navigate("/TrangChu");
+                    navigate("/mylist");
+                    setShowMenu(false);
                   }}
-                  target="main"
-                  rel="noopener noreferrer"
-                  className={isActivePath("/TrangChu") ? "active" : ""}
+                  className={isActivePath("/mylist") ? "active" : ""}
                 >
-                  Danh sách của tôi
+                  <i className="fa-solid fa-list"></i> Danh sách của tôi
                 </a>
               </li>
+              {login && (
+                <>
+                  <li>
+                    <a
+                      onClick={() => {
+                        handleLogout();
+                        setShowMenu(false);
+                      }}
+                    >
+                      <i className="fa-solid fa-sign-out-alt"></i> Đăng xuất
+                    </a>
+                  </li>
+                </>
+              )}
             </ul>
           }
         </div>
         <img
           src={`${process.env.REACT_APP_API_URL}/static_sv/assets//img/img_duong/logoweb.png`}
-          alt=""
+          alt="Logo"
           style={{ width: "9%", height: "auto", cursor: "pointer" }}
           onClick={() => {
             navigate("/TrangChu");
@@ -193,8 +261,6 @@ function Nav() {
               onClick={() => {
                 navigate("/TrangChu");
               }}
-              target="main"
-              rel="noopener noreferrer"
               className={isActivePath("/TrangChu") ? "active" : ""}
             >
               Trang chủ
@@ -206,11 +272,7 @@ function Nav() {
             onMouseEnter={() => setIsDropdownVisible(true)}
             onMouseLeave={() => setIsDropdownVisible(false)}
           >
-            <a
-              target="main"
-              rel="noopener noreferrer"
-              className={isDropdownActive("genre") ? "active" : ""}
-            >
+            <a className={isDropdownActive("genre") ? "active" : ""}>
               Thể loại
             </a>
 
@@ -218,7 +280,9 @@ function Nav() {
               <DropdownMenu
                 apiEndpoint={`${process.env.REACT_APP_API_URL}/api/core/genres/`}
                 type="genre"
-                onClose={() => setIsDropdownVisible(false)}
+                onClose={() => {
+                  setIsDropdownVisible(false);
+                }}
               />
             )}
           </li>
@@ -228,11 +292,7 @@ function Nav() {
             onMouseEnter={() => setIsDropdownVisible(true)}
             onMouseLeave={() => setIsDropdownVisible(false)}
           >
-            <a
-              target="main"
-              rel="noopener noreferrer"
-              className={isDropdownActive("nation") ? "active" : ""}
-            >
+            <a className={isDropdownActive("nation") ? "active" : ""}>
               Quốc gia
             </a>
 
@@ -240,7 +300,9 @@ function Nav() {
               <DropdownMenu
                 apiEndpoint={`${process.env.REACT_APP_API_URL}/api/core/nations/`}
                 type="nation"
-                onClose={() => setIsDropdownVisible(false)}
+                onClose={() => {
+                  setIsDropdownVisible(false);
+                }}
               />
             )}
           </li>
@@ -249,8 +311,6 @@ function Nav() {
               onClick={() => {
                 navigate("/newsScrip");
               }}
-              target="main"
-              rel="noopener noreferrer"
               className={isActivePath("/newsScrip") ? "active" : ""}
             >
               Tin tức
@@ -261,8 +321,6 @@ function Nav() {
               onClick={() => {
                 navigate("/Intro");
               }}
-              target="main"
-              rel="noopener noreferrer"
               className={isActivePath("/Intro") ? "active" : ""}
             >
               Giới thiệu
@@ -273,8 +331,6 @@ function Nav() {
               onClick={() => {
                 navigate("/mylist");
               }}
-              target="main"
-              rel="noopener noreferrer"
               className={isActivePath("/mylist") ? "active" : ""}
             >
               Danh sách của tôi
@@ -303,7 +359,8 @@ function Nav() {
               <div
                 id="login"
                 onClick={(event) => {
-                  setClickUser(clickUser ? false : true);
+                  setClickUser(!clickUser);
+                  event.stopPropagation();
                 }}
               >
                 <img
@@ -312,21 +369,40 @@ function Nav() {
                       ? process.env.REACT_APP_API_URL + avt
                       : `${process.env.REACT_APP_API_URL}/static_sv/assets/img/defaultImgUser.png`
                   }
+                  alt="Avatar"
                 ></img>
 
                 <ul style={{ display: clickUser ? "flex" : "none" }}>
                   <li style={{ borderBottom: "gray solid 1px" }}>
-                    <a>Chỉnh sửa thông tin</a>
+                    <a
+                      onClick={() => {
+                        navigate("/profile");
+                        setClickUser(false);
+                      }}
+                    >
+                      <i className="fa-solid fa-user-edit"></i> Chỉnh sửa thông
+                      tin
+                    </a>
                   </li>
                   <li>
-                    <a>Tài khoản và cài đặt</a>
+                    <a
+                      onClick={() => {
+                        navigate("/settings");
+                        setClickUser(false);
+                      }}
+                    >
+                      <i className="fa-solid fa-cog"></i> Tài khoản và cài đặt
+                    </a>
                   </li>
                   <li
                     onClick={() => {
                       handleLogout();
+                      setClickUser(false);
                     }}
                   >
-                    <a>Đăng xuất</a>
+                    <a>
+                      <i className="fa-solid fa-sign-out-alt"></i> Đăng xuất
+                    </a>
                   </li>
                 </ul>
               </div>

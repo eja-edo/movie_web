@@ -1,16 +1,43 @@
 #category_page__container {
-    width: 100lvw;
+    width: 100%;
     height: auto;
     position: relative;
+
+    @media screen and (max-width: 768px) {
+        overflow-x: hidden;
+    }
 }
 
 .category_page {
     height: auto;
     width: 94%;
     margin: 0 auto;
+    padding-bottom: 30px; /* Thêm padding-bottom */
+
+    @media screen and (max-width: 768px) {
+        width: 96%;
+        padding-bottom: 25px;
+    }
+
+    @media screen and (max-width: 480px) {
+        width: 96%; /* Giảm từ 98% xuống 96% để tạo khoảng cách với lề */
+        padding-bottom: 20px;
+    }
+
     .pagination_container {
         position: relative;
-        margin-top: 50px;
+        margin-top: 70px; /* Tăng từ 50px lên 70px */
+        padding-bottom: 60px; /* Thêm padding-bottom để tạo khoảng cách với film list */
+
+        @media screen and (max-width: 768px) {
+            margin-top: 50px; /* Tăng từ 30px lên 50px */
+            padding-bottom: 50px;
+        }
+
+        @media screen and (max-width: 480px) {
+            margin-top: 40px; /* Tăng từ 20px lên 40px */
+            padding-bottom: 40px;
+        }
     }
 
     .category_page__header {
@@ -18,9 +45,32 @@
         justify-content: space-between;
         align-items: center;
         margin: 20px 0;
+
+        @media screen and (max-width: 768px) {
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        @media screen and (max-width: 480px) {
+            margin: 10px 0;
+
+            h2.category_page__title {
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+                width: 100%;
+            }
+        }
     }
 }
 
 .showdisplay__wrapper {
-    padding-top: 60px;
+    padding-top: 90px; /* Tăng từ 60px lên 90px */
+
+    @media screen and (max-width: 768px) {
+        padding-top: 80px; /* Tăng từ 50px lên 80px */
+    }
+
+    @media screen and (max-width: 480px) {
+        padding-top: 70px; /* Tăng từ 40px lên 70px */
+    }
 }
