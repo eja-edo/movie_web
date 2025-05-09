@@ -272,12 +272,13 @@ CORS_ORIGIN_WHITELIST = [
       'http://localhost:3001',
       'http://localhost:3000',
       'http://mycustomdomain.com',
-      'http://smovie.com'
+      'http://smovie.com',
+      'https://smovie.fun',
         # Thay thế bằng nguồn gốc frontend của bạn
       # ... thêm các nguồn gốc khác nếu cần
   ]
 
-ALLOWED_HOSTS = ["smovie.com","mycustomdomain.com", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["smovie.com",'smovie.fun',"mycustomdomain.com", "127.0.0.1", "localhost"]
 
 
 REST_FRAMEWORK = {
@@ -296,6 +297,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://mycustomdomain.com',
     'http://smovie.com',
+    'https://smovie.fun',
      # Thêm domain của frontend vào đâyz
     # Nếu bạn muốn cho phép tất cả các domain (không khuyến nghị):
     # CORS_ORIGIN_ALLOW_ALL = True
@@ -325,7 +327,7 @@ CORS_ALLOW_HEADERS = [
 
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = [ 'http://smovie.com','http://mycustomdomain.com','http://127.0.0.1:5500','http://127.0.0.1:3001','http://localhost:3001','http://localhost:3000', ]
+CSRF_TRUSTED_ORIGINS = [ 'https://smovie.fun','http://smovie.com','http://mycustomdomain.com','http://127.0.0.1:5500','http://127.0.0.1:3001','http://localhost:3001','http://localhost:3000', ]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -406,3 +408,4 @@ CORS_ALLOW_HEADERS = [
 
 # Django Admin settings
 # Các cài đặt cho Django Admin mặc định
+

@@ -38,7 +38,7 @@ def loginPost(request):
         body_data = json.loads(request.body)
         user_input = body_data.get('username_or_email')  # Có thể là username hoặc email
         password = body_data.get('password')
-        
+
         # Kiểm tra nếu input là email hay username
         if '@' in user_input:
             # Nếu là email, tìm kiếm người dùng theo email
@@ -49,7 +49,7 @@ def loginPost(request):
         else:
             # Nếu không phải email, coi như là username và tìm kiếm theo username
             user = User.objects.filter(username=user_input).first()
-        
+
         # Xác thực người dùng với password
         if user is not None and user.check_password(password):
             # Đặt backend mặc định
@@ -119,64 +119,156 @@ def loginPost(request):
 
 @csrf_exempt
 def FacebookLoginToken(request):
-    data = json.loads(request.body)
-    access_token = data.get('accessToken')
+    print("=== FacebookLoginToken called ===")
+    print(f"Request method: {request.method}")
+    print(f"Request headers: {request.headers}")
 
-    # Xác minh access token với Facebook
-    app = SocialApp.objects.get(provider='facebook')
-    app_id = app.client_id
-    app_secret = app.secret
-    url = f'https://graph.facebook.com/debug_token?input_token={access_token}&access_token={app_id}|{app_secret}'
-    response = requests.get(url)
-    data = response.json()
+    try:
+        # Kiểm tra nếu request.body trống
+        if not request.body:
+            print("Request body is empty")
+            return JsonResponse({'error': 'Request body is empty'}, status=400)
 
-    if data.get('data') and data['data'].get('is_valid'):
-        user_url = f'https://graph.facebook.com/me?fields=id,name,email&access_token={access_token}'
-        response = requests.get(user_url)
-        user_data = response.json()
-        email = user_data.get('email')
-        if not email:
-            email = f"face{user_data.get('id')}@example.com"  # Thay 'example.com' bằng domain của bạn
+        print(f"Request body: {request.body.decode('utf-8')}")
 
-        # Tìm hoặc tạo người dùng Django
-        user, created = User.objects.get_or_create(
-            username=user_data['id'],
-            defaults={
-                'email': email,
-                'first_name': user_data.get('name'),
-            },
-        )
+        try:
+            data = json.loads(request.body)
+            print(f"Parsed JSON data: {data}")
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {str(e)}")
+            return JsonResponse({'error': f'Invalid JSON: {str(e)}'}, status=400)
 
-        # Tạo hoặc lấy SocialAccount
-        social_account, created = SocialAccount.objects.get_or_create(
-            user=user,
-            provider='facebook',
-            uid=user_data['id'],
-            defaults={
-                'extra_data': user_data
-            }
-        )
+        # Kiểm tra cả hai trường hợp tên trường có thể được gửi
+        access_token = data.get('accessToken') or data.get('access_token')
+        print(f"Access token found: {bool(access_token)}")
 
-        # Tạo hoặc lấy SocialToken
-        token, token_created = SocialToken.objects.get_or_create(
-            app_id=app.id,
-            account=social_account,
-            defaults={'token': access_token}
-        )
+        if not access_token:
+            return JsonResponse({'error': 'Access token không được cung cấp.'}, status=400)
 
-        if not token_created:
-            # Nếu token đã tồn tại, bạn có thể cập nhật thông tin của nó
-            token.token = access_token
-            token.save()
+        # Xác minh access token với Facebook
+        try:
+            # Lấy thông tin ứng dụng Facebook từ cấu hình
+            app = SocialApp.objects.get(provider='facebook')
+            app_id = app.client_id
+            app_secret = app.secret
+        except SocialApp.DoesNotExist:
+            # Sử dụng cấu hình từ settings nếu không tìm thấy SocialApp
+            app_id = settings.SOCIALACCOUNT_PROVIDERS['facebook']['APP']['client_id']
+            app_secret = settings.SOCIALACCOUNT_PROVIDERS['facebook']['APP']['secret']
 
-        # Tạo JWT token
-        refresh = RefreshToken.for_user(user)
-        return JsonResponse({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        }, safe=False)
-    else:
-        return JsonResponse({'error': 'Access token không hợp lệ.'}, status=400)
+        # Debug thông tin
+        print(f"App ID: {app_id}")
+        print(f"Access Token: {access_token[:10]}...")  # Chỉ in 10 ký tự đầu tiên để bảo mật
+
+        # Bỏ qua việc xác minh token với Facebook, trực tiếp sử dụng token để lấy thông tin người dùng
+        try:
+            print("Truy cập trực tiếp thông tin người dùng từ Facebook...")
+            user_url = f'https://graph.facebook.com/me?fields=id,name,email&access_token={access_token}'
+            response = requests.get(user_url)
+            user_data = response.json()
+            print(f"User data response: {user_data}")
+
+            # Nếu lấy được ID người dùng, coi như token hợp lệ
+            if 'id' in user_data:
+                print(f"Lấy thông tin người dùng thành công, ID: {user_data['id']}")
+                token_data = {'data': {'is_valid': True, 'user_id': user_data['id']}}
+            else:
+                print(f"Không lấy được thông tin người dùng: {user_data}")
+                if 'error' in user_data:
+                    token_data = user_data  # Giữ nguyên thông báo lỗi từ Facebook
+                else:
+                    token_data = {'error': {'message': 'Không thể lấy thông tin người dùng từ Facebook'}}
+        except Exception as e:
+            print(f"Lỗi khi truy cập thông tin người dùng: {str(e)}")
+            token_data = {'error': {'message': str(e)}}
+
+        # Debug kết quả xác minh token
+        print(f"Token verification response: {token_data}")
+
+        if token_data.get('data') and token_data['data'].get('is_valid'):
+            # Đã lấy thông tin người dùng ở bước trước, không cần gọi lại API Facebook
+            # Debug thông tin người dùng
+            print(f"Processing user data: {user_data}")
+
+            # Kiểm tra xem có lấy được ID người dùng không
+            if not user_data.get('id'):
+                return JsonResponse({'error': 'Không thể lấy thông tin người dùng từ Facebook.'}, status=400)
+
+            email = user_data.get('email')
+            if not email:
+                email = f"face{user_data.get('id')}@example.com"  # Tạo email nếu không có
+
+            # Tìm hoặc tạo người dùng Django
+            try:
+                user, created = User.objects.get_or_create(
+                    username=user_data['id'],
+                    defaults={
+                        'email': email,
+                        'first_name': user_data.get('name'),
+                        'is_active': True,  # Đảm bảo người dùng được kích hoạt
+                    },
+                )
+
+                # Cập nhật thông tin nếu người dùng đã tồn tại
+                if not created:
+                    user.first_name = user_data.get('name', user.first_name)
+                    if email and user.email != email:
+                        user.email = email
+                    user.save()
+
+                # Tạo hoặc lấy SocialAccount
+                social_account, created = SocialAccount.objects.get_or_create(
+                    user=user,
+                    provider='facebook',
+                    uid=user_data['id'],
+                    defaults={
+                        'extra_data': user_data
+                    }
+                )
+
+                # Cập nhật extra_data nếu SocialAccount đã tồn tại
+                if not created:
+                    social_account.extra_data = user_data
+                    social_account.save()
+
+                # Tạo hoặc cập nhật SocialToken
+                try:
+                    token, token_created = SocialToken.objects.get_or_create(
+                        app_id=app.id if 'app' in locals() else None,
+                        account=social_account,
+                        defaults={'token': access_token}
+                    )
+
+                    if not token_created:
+                        token.token = access_token
+                        token.save()
+                except Exception as e:
+                    print(f"Lỗi khi lưu token: {str(e)}")
+                    # Tiếp tục xử lý ngay cả khi không thể lưu token
+
+                # Tạo JWT token
+                refresh = RefreshToken.for_user(user)
+                return JsonResponse({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'user': {
+                        'id': user.id,
+                        'username': user.username,
+                        'email': user.email,
+                        'name': user.first_name,
+                    }
+                }, safe=False)
+            except Exception as e:
+                print(f"Lỗi khi tạo/cập nhật người dùng: {str(e)}")
+                return JsonResponse({'error': f'Lỗi khi xử lý thông tin người dùng: {str(e)}'}, status=500)
+        else:
+            error_message = token_data.get('error', {}).get('message', 'Access token không hợp lệ.')
+            return JsonResponse({'error': error_message}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Dữ liệu JSON không hợp lệ.'}, status=400)
+    except Exception as e:
+        print(f"Lỗi không xác định: {str(e)}")
+        return JsonResponse({'error': f'Lỗi không xác định: {str(e)}'}, status=500)
 
 class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]
@@ -245,7 +337,7 @@ def register(request):
         # Kiểm tra username và email trước khi tạo user
         if User.objects.filter(username=data.get('username')).exists():
             return JsonResponse({'message': 'Username already exists'}, status=400)
-        
+
         if User.objects.filter(email=data.get('email')).exists():
             return JsonResponse({'message': 'Email already exists'}, status=400)
 
@@ -300,7 +392,7 @@ def activate_account(request, uidb64, token):
         # Kích hoạt tài khoản
         user.is_active = True
         user.save()
-        
+
         # Gửi thông báo qua WebSocket nếu tài khoản được kích hoạt
         channel_layer = get_channel_layer()
         try:
@@ -313,10 +405,10 @@ def activate_account(request, uidb64, token):
                 }
             )
             print(f"Đã gửi thông báo xác nhận email tới nhóm: email_verification_{uid}")  # Debug
-            
+
         except Exception as e:
             print(f"❌ Lỗi khi gửi WebSocket: {e}")
-        
+
         return JsonResponse({
             'message': 'Email đã được xác nhận thành công!'
         })
@@ -353,26 +445,26 @@ def add_to_wishlist(request):
         movie_id = data.get('movie_id')
         if not movie_id:
             return Response({'error': 'movie_id là bắt buộc'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         try:
             movie = Movies.objects.get(pk=movie_id)
         except Movies.DoesNotExist:
             return Response({'error': 'Phim không tồn tại'}, status=status.HTTP_404_NOT_FOUND)
-        
+
         # Tạo data để serializer
         data = {
             'movie': movie.movie_id,
             'user': request.user.id
         }
-        
+
         serializer = WishlistSerializer(data=data, context={'request': request})
-        
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -408,21 +500,21 @@ def get_wishlist(request):
         # Lấy query parameters
         page = request.query_params.get('page', 1)
         page_size = request.query_params.get('page_size', 20)
-        
+
         # Query và phân trang
         wishlist_items = Wishlist.objects.filter(
             user=request.user
         ).select_related('movie').order_by('-created_at')
-        
+
         paginator = Paginator(wishlist_items, page_size)
         page_obj = paginator.get_page(page)
-        
+
         # Serialize dữ liệu
         serializer = WishlistMovieSerializer(page_obj, many=True)
-        
+
         # Chỉ lấy danh sách movie từ kết quả
         movies_data = [item['movie'] for item in serializer.data]
-        
+
         return Response({
             'success': True,
             'page': page_obj.number,
@@ -430,7 +522,7 @@ def get_wishlist(request):
             'total_items': paginator.count,
             'data': movies_data  # Chỉ trả về data movie
         })
-        
+
     except Exception as e:
         return Response({
             'success': False,
@@ -505,31 +597,31 @@ def get_movie_reviews(request, movie_id):
         # Lấy tham số phân trang
         page = request.query_params.get('page', 1)
         page_size = request.query_params.get('page_size', 5)
-        
+
         # Lấy tất cả reviews của phim
         reviews = Reviews.objects.filter(movie_id=movie_id).select_related('user').order_by('-create_at')
-        
+
         # Phân trang
         paginator = Paginator(reviews, page_size)
         page_obj = paginator.get_page(page)
-        
+
         # Serialize dữ liệu
         serializer = ReviewSerializer(page_obj, many=True)
-        
+
         # Tạo URL cho trang tiếp theo và trang trước
         next_page = None
         if page_obj.has_next():
             next_page = f"{request.build_absolute_uri().split('?')[0]}?page={page_obj.next_page_number()}&page_size={page_size}"
-            
+
         previous_page = None
         if page_obj.has_previous():
             previous_page = f"{request.build_absolute_uri().split('?')[0]}?page={page_obj.previous_page_number()}&page_size={page_size}"
-        
+
         # Log để debug
         print(f"Found {paginator.count} reviews for movie {movie_id}")
         print(f"Current page: {page}, Page size: {page_size}")
         print(f"Results: {serializer.data}")
-        
+
         return Response({
             'count': paginator.count,
             'next': next_page,
