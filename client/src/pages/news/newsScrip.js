@@ -25,6 +25,24 @@ function NewsScrip() {
     navigate(`/ttcon/${id}`); // Điều hướng đến trang TTcon kèm ID
   };
 
+  // Hàm xử lý URL ảnh
+  const getImageUrl = (imageUrl) => {
+    if (!imageUrl) return "/placeholder-image.jpg";
+
+    // Nếu URL đã bắt đầu bằng http hoặc https, trả về nguyên
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      return imageUrl;
+    }
+
+    // Nếu URL bắt đầu bằng /, thêm domain
+    if (imageUrl.startsWith("/")) {
+      return `http://127.0.0.1:8000${imageUrl}`;
+    }
+
+    // Trường hợp còn lại, thêm domain và /
+    return `http://127.0.0.1:8000/${imageUrl}`;
+  };
+
   return (
     <div id="newsScrip">
       <h1 id="namett">Tin tức phim</h1>
@@ -37,7 +55,15 @@ function NewsScrip() {
             onClick={() => handleClick(news.id)}
           >
             <div className="img">
-              <img src={`${process.env.REACT_APP_API_URL}/${news.image_url}`} alt={news.title} />
+              <img
+                src={getImageUrl(news.image_url)}
+                alt={news.title}
+                onError={(e) => {
+                  console.error("Error loading image:", news.image_url);
+                  e.target.src = "/placeholder-image.jpg";
+                }}
+              />
+
             </div>
             <div>
               <header>

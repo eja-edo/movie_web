@@ -117,7 +117,7 @@ const SearchComponent = ({onSearch}) => {
                                 <Link to={`/detail/${item.movie_id}`} className="suggest-item-wrap" key={item.movie_id} onMouseEnter={() => handleMouseEnter(index)} onMouseLeave={handleMouseLeave} onClick={handleClearSearch}>
                                     <div key={index} className="suggest-item">
                                         <img src={`${process.env.REACT_APP_API_URL}${item.poster_url}`} alt={item.title} className="suggest-item-image" />
-                                        {console.log("Item: ", item)}
+                                        {/* {console.log("Item: ", item)} */}
                                         <div className="suggest-item-content">
                                             <span className="suggest-item-title">{item.title}</span>
                                         </div>
