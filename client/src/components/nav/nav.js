@@ -248,7 +248,7 @@ function Nav() {
           src={`${process.env.REACT_APP_API_URL}/static_sv/assets//img/img_duong/logoweb.png`}
           alt="Logo"
           style={{
-            width: "8%",
+            width: "100px",
             height: "auto",
             cursor: "pointer",
             padding: "0",
