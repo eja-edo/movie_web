@@ -5,6 +5,8 @@ import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayL
 import FilmList from "../../components/FilmList/FilmList";
 import movieAPI from "../../services/movieAPI";
 import Review from "../../components/review/review";
+import SEO from "../../components/SEO/SEO";
+import MovieStructuredData from "../../components/StructuredData/MovieStructuredData";
 //adasdasjdlasjdlasjdlkajflkjdlkjflakjsfkljaskfjalkfjalsfjlakfjalkjdlakdjalsjdalskdj
 const MovieDetails = () => {
   const navigate = useNavigate();
@@ -67,8 +69,29 @@ const MovieDetails = () => {
     navigate(`/category/${type}?${paramName}_id=${value}`);
   };
 
+  // Prepare SEO data if movie is available
+  const seoData = movie ? {
+    title: `${movie.title} (${movie.release_date?.substring(0, 4) || ''}) - Xem phim Full HD | SMovie`,
+    description: movie.description ?
+      `${movie.description.substring(0, 150)}... | Xem phim ${movie.title} chất lượng Full HD tại SMovie với ${movie.actors?.length || 0} diễn viên nổi tiếng` :
+      `Xem phim ${movie.title} chất lượng Full HD, thuyết minh, lồng tiếng Việt tại SMovie. Phim ${movie.genres?.map(genre => genre.name).join(', ') || ''} hay nhất ${movie.release_date?.substring(0, 4) || 'năm nay'}.`,
+    keywords: movie.genres ?
+      `${movie.title}, ${movie.genres.map(genre => genre.name).join(', ')}, ${movie.actors?.map(actor => actor.name).join(', ') || ''}, phim ${movie.release_date?.substring(0, 4) || ''}, xem phim online, phim HD, phim lẻ, phim bộ` :
+      `${movie.title}, phim hay, xem phim online, phim HD, phim lẻ, phim bộ`,
+    ogType: 'video.movie',
+    ogImage: `${process.env.REACT_APP_API_URL}${movie.poster_url?.replace(/\\/g, "/")}`,
+    ogUrl: `https://smovie.fun/detail/${id}`,
+    canonicalUrl: `https://smovie.fun/detail/${id}`,
+  } : {};
+
   return (
     <div id="detail">
+      {/* Add SEO component with movie-specific data */}
+      {movie && <SEO {...seoData} />}
+
+      {/* Add structured data for movie */}
+      {movie && <MovieStructuredData movie={movie} />}
+
       <div id="movie-container">
         {movie ? (
           <>
@@ -116,18 +139,18 @@ const MovieDetails = () => {
                   <b className="info-right_title">Thể loại:</b>{" "}
                   {Array.isArray(movie.genres) && movie.genres.length > 0
                     ? movie.genres
-                        .map((genre) => (
-                          <span
-                            key={genre.genre_id}
-                            className="clickable"
-                            onClick={() =>
-                              handleNavigate("genre", genre.genre_id)
-                            }
-                          >
-                            {genre.name}
-                          </span>
-                        ))
-                        .reduce((prev, curr) => [prev, ", ", curr])
+                      .map((genre) => (
+                        <span
+                          key={genre.genre_id}
+                          className="clickable"
+                          onClick={() =>
+                            handleNavigate("genre", genre.genre_id)
+                          }
+                        >
+                          {genre.name}
+                        </span>
+                      ))
+                      .reduce((prev, curr) => [prev, ", ", curr])
                     : "Chưa cập nhật"}
                 </p>
 
@@ -167,18 +190,18 @@ const MovieDetails = () => {
                   <b className="info-right_title">Đạo diễn:</b>{" "}
                   {movie.directors && movie.directors.length > 0
                     ? movie.directors
-                        .map((director) => (
-                          <span
-                            key={director.director_id}
-                            className="clickable"
-                            onClick={() =>
-                              handleNavigate("directors", director.director_id)
-                            }
-                          >
-                            {director.name}
-                          </span>
-                        ))
-                        .reduce((prev, curr) => [prev, ", ", curr])
+                      .map((director) => (
+                        <span
+                          key={director.director_id}
+                          className="clickable"
+                          onClick={() =>
+                            handleNavigate("directors", director.director_id)
+                          }
+                        >
+                          {director.name}
+                        </span>
+                      ))
+                      .reduce((prev, curr) => [prev, ", ", curr])
                     : "Chưa cập nhật"}
                 </p>
 
@@ -187,18 +210,18 @@ const MovieDetails = () => {
                   <b className="info-right_title">Diễn viên:</b>{" "}
                   {movie.actors && movie.actors.length > 0
                     ? movie.actors
-                        .map((actor) => (
-                          <span
-                            key={actor.actor_id}
-                            className="clickable"
-                            onClick={() =>
-                              handleNavigate("actors", actor.actor_id)
-                            }
-                          >
-                            {actor.name}
-                          </span>
-                        ))
-                        .reduce((prev, curr) => [prev, ", ", curr])
+                      .map((actor) => (
+                        <span
+                          key={actor.actor_id}
+                          className="clickable"
+                          onClick={() =>
+                            handleNavigate("actors", actor.actor_id)
+                          }
+                        >
+                          {actor.name}
+                        </span>
+                      ))
+                      .reduce((prev, curr) => [prev, ", ", curr])
                     : "Chưa cập nhật"}
                 </p>
               </div>

@@ -18,9 +18,21 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
+from apps.core.sitemaps import StaticViewSitemap, MovieSitemap, NewsSitemap, GenreSitemap, NationSitemap
+from apps.core.views_sitemap import video_sitemap
 
 # Import các handler lỗi
 from .views import bad_request, permission_denied, page_not_found, server_error
+
+# Define sitemaps dictionary
+sitemaps = {
+    'static': StaticViewSitemap,
+    'movies': MovieSitemap,
+    'news': NewsSitemap,
+    'genres': GenreSitemap,
+    'nations': NationSitemap,
+}
 
 # Đăng ký các handler lỗi
 handler400 = bad_request
@@ -39,6 +51,13 @@ urlpatterns = [
     path('api/people/', include('apps.people.urls')),
     path('api/piomotions/', include('apps.piomotions.urls')),
     path('api/core/', include('apps.core.urls')),
+
+    # Sitemap URL - accessible at /sitemap.xml
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
+         name='django.contrib.sitemaps.views'),
+
+    # Video sitemap - using our custom view
+    path('video-sitemap.xml', video_sitemap, name='video_sitemap'),
 ]
 
 # Thêm cấu hình cho media và static files

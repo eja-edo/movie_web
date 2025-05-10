@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./contintuc.scss";
 import NewsScrip from "../news/newsScrip";
+import SEO from "../../components/SEO/SEO";
+import ArticleStructuredData from "../../components/StructuredData/ArticleStructuredData";
 
 const TTcon = () => {
   const { id } = useParams(); // Lấy id từ URL
@@ -9,6 +11,9 @@ const TTcon = () => {
   console.log("🔍 ID từ URL:", id);
 
   const [htmlContent, setHtmlContent] = useState("");
+  const [newsTitle, setNewsTitle] = useState("");
+  const [newsDescription, setNewsDescription] = useState("");
+  const [newsImage, setNewsImage] = useState("");
 
   useEffect(() => {
     // Sử dụng biến môi trường thay vì URL cố định
@@ -97,6 +102,28 @@ const TTcon = () => {
           processedHtml.substring(0, 500) + "..."
         );
 
+        // Extract title, description and image for SEO
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = processedHtml;
+
+        // Extract title from h1 or h2
+        const titleElement = tempDiv.querySelector('h1') || tempDiv.querySelector('h2');
+        if (titleElement) {
+          setNewsTitle(titleElement.textContent);
+        }
+
+        // Extract description from first paragraph
+        const paragraphs = tempDiv.querySelectorAll('p');
+        if (paragraphs.length > 0) {
+          setNewsDescription(paragraphs[0].textContent);
+        }
+
+        // Extract first image for og:image
+        const images = tempDiv.querySelectorAll('img');
+        if (images.length > 0) {
+          setNewsImage(images[0].src);
+        }
+
         setHtmlContent(processedHtml);
       })
       .catch((error) => {
@@ -105,8 +132,35 @@ const TTcon = () => {
       });
   }, [id]);
 
+  // Prepare SEO data
+  const seoData = {
+    title: newsTitle ? `${newsTitle} | Tin Tức Điện Ảnh SMovie` : 'Tin tức phim mới nhất, review phim hay | SMovie',
+    description: newsDescription ?
+      `${newsDescription.substring(0, 150)}... | Đọc tin tức điện ảnh mới nhất tại SMovie` :
+      'Cập nhật tin tức phim mới nhất, review phim hay, thông tin về các bộ phim sắp ra mắt, phỏng vấn diễn viên và đạo diễn nổi tiếng. Khám phá thế giới điện ảnh cùng SMovie.',
+    keywords: 'tin tức phim, phim mới, review phim, đánh giá phim, diễn viên nổi tiếng, đạo diễn, giải trí, điện ảnh, phim sắp chiếu, phim rạp, phim bộ, phim lẻ, phim Việt Nam, phim Hàn Quốc, phim Hollywood',
+    ogType: 'article',
+    ogImage: newsImage || `${process.env.REACT_APP_API_URL}/static_sv/assets/img/img_duong/logoweb.png`,
+    ogUrl: `https://smovie.fun/ttcon/${id}`,
+    canonicalUrl: `https://smovie.fun/ttcon/${id}`,
+    // Thêm thông tin bài viết cho schema Article
+    articlePublishedTime: new Date().toISOString(), // Nếu có thời gian xuất bản thực tế, hãy sử dụng
+    articleAuthor: 'SMovie',
+  };
+
   return (
     <div className="ttcon">
+      {/* Add SEO component with news-specific data */}
+      <SEO {...seoData} />
+
+      {/* Add structured data for article */}
+      <ArticleStructuredData
+        title={newsTitle || 'Tin tức phim mới nhất'}
+        description={newsDescription || 'Cập nhật tin tức phim mới nhất tại SMovie'}
+        imageUrl={newsImage || `${process.env.REACT_APP_API_URL}/static_sv/assets/img/img_duong/logoweb.png`}
+        url={`https://smovie.fun/ttcon/${id}`}
+      />
+
       <div dangerouslySetInnerHTML={{ __html: htmlContent }} id="html-file" />
     </div>
   );

@@ -1,3 +1,22 @@
 # https://www.robotstxt.org/robotstxt.html
+# Allow all web crawlers
 User-agent: *
-Disallow:
+Allow: /
+
+# Sitemap location
+Sitemap: https://smovie.fun/sitemap.xml
+Sitemap: https://smovie.fun/video-sitemap.xml
+
+# Disallow admin areas
+Disallow: /api/admin/
+Disallow: /admin/
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Allow specific API endpoints that are needed for SEO
+Allow: /api/movies/get_thinhhanh/
+Allow: /api/movies/get_phimhot_10/
+Allow: /api/news/get-news/
+Allow: /sitemap.xml
+Allow: /video-sitemap.xml

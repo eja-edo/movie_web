@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./newsScrip.scss";
+import SEO from "../../components/SEO/SEO";
 
 function NewsScrip() {
   const navigate = useNavigate();
@@ -68,8 +69,22 @@ function NewsScrip() {
       : content;
   };
 
+  // SEO data for news page
+  const newsSeoData = {
+    title: 'Tin tức phim mới nhất, review phim hay, thông tin điện ảnh | SMovie',
+    description: 'Cập nhật tin tức phim mới nhất, review phim hay, thông tin về các bộ phim sắp ra mắt, phỏng vấn diễn viên và đạo diễn nổi tiếng. Khám phá thế giới điện ảnh cùng SMovie.',
+    keywords: 'tin tức phim, phim mới, review phim, đánh giá phim, diễn viên nổi tiếng, đạo diễn, giải trí, điện ảnh, phim sắp chiếu, phim rạp, phim bộ, phim lẻ, phim Việt Nam, phim Hàn Quốc, phim Hollywood',
+    ogType: 'website',
+    ogImage: `${process.env.REACT_APP_API_URL}/static_sv/assets/img/img_duong/logoweb.png`,
+    ogUrl: 'https://smovie.fun/newsScrip',
+    canonicalUrl: 'https://smovie.fun/newsScrip',
+  };
+
   return (
     <div id="newsScrip">
+      {/* Add SEO component */}
+      <SEO {...newsSeoData} />
+
       <h1 id="namett">Tin tức phim</h1>
 
       <div id="ListNews">

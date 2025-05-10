@@ -7,6 +7,8 @@ import CreateDisplayList from "../../components/CreateDisplayList/CreateDisplayL
 import LazyLoad from "react-lazyload";
 import movieAPI from "../../services/movieAPI";
 import ShowDisplay from "../../components/showdisplay/showdisplay";
+import SEO from "../../components/SEO/SEO";
+import WebsiteStructuredData from "../../components/StructuredData/WebsiteStructuredData";
 function TrangChu() {
   const [crHeaderVisible, setCrHeaderVisible] = useState(false);
   const [filmThinhHanh, setFilmth] = useState(null);
@@ -99,8 +101,25 @@ function TrangChu() {
     setIsVideoLoaded(true); // Đặt trạng thái video đã tải xong
   };
 
+  // Home page SEO data
+  const homeSeoData = {
+    title: 'SMovie - Trang xem phim HD online miễn phí | Phim mới cập nhật hàng ngày',
+    description: 'SMovie - Trang web xem phim trực tuyến số 1 Việt Nam với kho phim đa dạng, chất lượng HD, cập nhật phim mới hàng ngày. Phim bộ, phim lẻ, phim chiếu rạp, anime, phim hành động, tình cảm, kinh dị đều có đủ và hoàn toàn miễn phí.',
+    keywords: 'xem phim online, phim HD, phim mới, phim bộ, phim lẻ, phim chiếu rạp, phim hành động, phim tình cảm, phim kinh dị, phim Việt Nam, phim Hàn Quốc, phim Trung Quốc, phim Mỹ, anime, hoạt hình, thuyết minh, lồng tiếng',
+    ogType: 'website',
+    ogImage: `${process.env.REACT_APP_API_URL}/static_sv/assets/img/img_duong/logoweb.png`,
+    ogUrl: 'https://smovie.fun/',
+    canonicalUrl: 'https://smovie.fun/',
+  };
+
   return (
     <div id="TrangChu">
+      {/* Add SEO component with home page data */}
+      <SEO {...homeSeoData} />
+
+      {/* Add structured data for website */}
+      <WebsiteStructuredData />
+
       <BannerQC />
 
       <div className="trangchu">
