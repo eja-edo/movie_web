@@ -3,6 +3,7 @@ import React from "react";
 import "./App.css";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 import TrangChu from "./pages/home/TrangChu.js";
 import Login from "./pages/login/login.js";
@@ -18,6 +19,7 @@ import TTcon from "./pages/pagecontintuc/contintuc.js";
 import CategoryPage from "./pages/CategoryPage/CategortPage.js";
 import NewsScrip from "./pages/news/newsScrip.js";
 import MyListPage from "./pages/myList/myList.js";
+import SEO from "./components/SEO/SEO.js";
 
 function App() {
   // Không cần state showFooter nữa vì Footer sẽ luôn hiển thị
@@ -25,6 +27,9 @@ function App() {
 
   return (
     <BrowserRouter>
+      {/* Default SEO settings for the entire app */}
+      <SEO />
+
       <Nav />{" "}
       {/* Navbar is usually outside the Routes to be visible on all pages */}
       <Routes>
