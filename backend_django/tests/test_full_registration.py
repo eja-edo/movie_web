@@ -1,18 +1,14 @@
 import pandas as pd
 from selenium import webdriver
-from selenium.webdriver.edge.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
 import time
+from selenium.common.exceptions import TimeoutException
 
-# Đường dẫn đến WebDriver Edge
-edge_driver_path = "../drivers/msedgedriver.exe"  # Thay đổi đường dẫn nếu cần
-
-# Khởi tạo driver cho Microsoft Edge
-service = Service(executable_path=edge_driver_path)
-driver = webdriver.Edge(service=service)
+# Khởi tạo driver cho Microsoft Edge (không cần chỉ định đường dẫn driver)
+driver = webdriver.Edge()
 
 # Đặt thời gian chờ mặc định cho driver
 driver.implicitly_wait(60)
@@ -68,5 +64,6 @@ for idx, row in df.iterrows():  # Duyệt từng dòng trong DataFrame
         driver.save_screenshot(screenshot_path)
         print(f"Test case {idx + 1} failed due to timeout. Screenshot saved to {screenshot_path}.")
     time.sleep(1)  # Đợi một chút trước khi chuyển sang test case tiếp theo
+
 # Đóng trình duyệt
 driver.quit()
