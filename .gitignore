@@ -187,4 +187,4 @@ media/
 
 # Sản phẩm build
 /dist
-/build
+/buildbackend_django/webxemphim-daphne.sock.lock
